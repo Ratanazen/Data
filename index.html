@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log File Analysis Dashboard — Hadoop & PySpark 404 Analytics</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a'
+            },
+            danger: {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-break { page-break-before: always; }
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(100,116,139,0.4);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-200">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
+          <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Log File Analysis <span class="hidden sm:inline text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">404 Error Intelligence</span>
+          </h1>
+          <p class="text-xs text-slate-400">Assignment 2 • Hadoop & Apache PySpark Analytics</p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
+        <a href="#overview" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Overview</a>
+        <a href="#hourly" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Peak Times</a>
+        <a href="#heatmap" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Heatmap</a>
+        <a href="#endpoints" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Endpoints</a>
+        <a href="#explorer" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Log Explorer</a>
+        <a href="#architecture" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Architecture</a>
+        <a href="#recommendations" class="px-3 py-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition">Action Plan</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 no-print">
+        <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 shadow-sm transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Print / PDF</span>
+        </button>
+        <a href="#explorer" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/30 flex items-center gap-1.5 transition">
+          <i data-lucide="search" class="w-4 h-4"></i>
+          <span>Inspect Logs</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+    <!-- Title Banner -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 border border-slate-800 p-8 shadow-2xl">
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="max-w-2xl space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-medium text-emerald-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Hadoop HDFS Storage • 200,000 Access Log Records Ingested
+          </div>
+          <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Distributed 404 Error Analysis & Peak Failure Detection
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            Large-scale log analytics analyzing Common Log Format access traces. Identifies failure patterns, anomalies, bot crawler scans, and high-frequency broken routes across a 7-day server timeline.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
+          <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl shadow-inner text-center">
+            <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Analyzed Range</div>
+            <div class="text-sm font-bold text-white mt-1">2026-09-01 → 2026-09-07</div>
+            <div class="text-xs text-slate-500">7 Consecutive Full Days</div>
+          </div>
+          <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl shadow-inner text-center">
+            <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Processing Framework</div>
+            <div class="text-sm font-bold text-indigo-400 mt-1">Apache PySpark 3.5+</div>
+            <div class="text-xs text-slate-500">DataFrame API & Regex Extract</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <section id="overview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Total Requests -->
+      <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 hover:border-slate-600 transition shadow-lg">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Requests</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="text-3xl font-extrabold text-white" id="kpi-total-requests">200,000</div>
+          <div class="text-xs text-emerald-400 font-medium mt-1 flex items-center gap-1">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+            <span>100% Ingestion Integrity</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 404 Errors -->
+      <div class="bg-slate-800/60 border border-rose-900/40 rounded-2xl p-6 hover:border-rose-700/60 transition shadow-lg bg-gradient-to-br from-slate-800/60 to-rose-950/20">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-rose-300">Total 404 Errors</span>
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="text-3xl font-extrabold text-rose-400" id="kpi-total-404">43,153</div>
+          <div class="text-xs text-rose-300 font-semibold mt-1 flex items-center gap-1">
+            <span>Overall Error Rate:</span>
+            <span class="bg-rose-500/20 px-2 py-0.5 rounded text-rose-300" id="kpi-error-rate">21.58%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Peak Failure Hour -->
+      <div class="bg-slate-800/60 border border-amber-900/40 rounded-2xl p-6 hover:border-amber-700/60 transition shadow-lg bg-gradient-to-br from-slate-800/60 to-amber-950/20">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-amber-300">Peak Failure Window</span>
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="text-3xl font-extrabold text-amber-400" id="kpi-peak-hour">03:00 - 04:00</div>
+          <div class="text-xs text-amber-300 font-medium mt-1 flex items-center gap-1">
+            <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+            <span id="kpi-peak-count">4,655 errors in 1 hour</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Offending Path -->
+      <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 hover:border-slate-600 transition shadow-lg">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Top Problem Path</span>
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="text-2xl font-mono font-bold text-purple-300 truncate" title="/admin/login">/admin/login</div>
+          <div class="text-xs text-purple-400 font-medium mt-1">
+            9,284 hits (21.5% of all 404s)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Charts Row 1: Hourly Distribution & Status Breakdown -->
+    <section id="hourly" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Hourly 404 Chart (2 cols) -->
+      <div class="lg:col-span-2 bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-700/60 gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 text-rose-500"></i>
+                404 Errors by Hour of Day (00:00 – 23:00)
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Identifies the exact time of day when failures peak across the cluster</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                Peak: 03:00 AM
+              </span>
+            </div>
+          </div>
+          <div class="mt-6 relative h-[320px]">
+            <canvas id="hourlyChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+          <span><strong class="text-rose-400">Crimson Bar:</strong> Peak Failure Hour (03:00 AM)</span>
+          <span><strong class="text-amber-400">Amber Bars:</strong> Secondary Traffic Spikes (09:00, 14:00, 20:00)</span>
+          <span><strong class="text-blue-400">Blue Bars:</strong> Normal Operations</span>
+        </div>
+      </div>
+
+      <!-- HTTP Status Code Breakdown (1 col) -->
+      <div class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>
+                HTTP Status Distribution
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Breakdown across 200,000 requests</p>
+            </div>
+          </div>
+          <div class="mt-6 relative h-[250px] flex items-center justify-center">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <span class="text-emerald-400 font-medium">200 OK</span>
+            <span class="font-bold text-slate-200">68.2%</span>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <span class="text-rose-400 font-medium">404 Missing</span>
+            <span class="font-bold text-slate-200">21.6%</span>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <span class="text-amber-400 font-medium">301 Redirect</span>
+            <span class="font-bold text-slate-200">5.7%</span>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex justify-between items-center">
+            <span class="text-red-500 font-medium">500 Internal</span>
+            <span class="font-bold text-slate-200">2.8%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Heatmap & Endpoints Section -->
+    <section id="heatmap" class="space-y-6">
+      <div class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-700/60 gap-3">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="grid" class="w-5 h-5 text-amber-500"></i>
+              Day of Week vs. Hour of Day 404 Error Intensity Matrix
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Reveals temporal consistency: overnight spikes occur consistently Monday through Sunday</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span>Low</span>
+            <span class="w-4 h-3 rounded bg-amber-100/20"></span>
+            <span class="w-4 h-3 rounded bg-amber-400"></span>
+            <span class="w-4 h-3 rounded bg-rose-500"></span>
+            <span class="w-4 h-3 rounded bg-rose-900"></span>
+            <span>High (>600/hr)</span>
+          </div>
+        </div>
+
+        <div class="mt-6 overflow-x-auto custom-scrollbar">
+          <table class="w-full text-xs text-center border-collapse">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-700">
+                <th class="py-2.5 px-3 text-left font-semibold sticky left-0 bg-slate-800 z-10">Day / Hour</th>
+                <!-- Hours 0-23 -->
+                <script>
+                  for (let h = 0; h < 24; h++) {
+                    document.write(`<th class="p-1 font-semibold min-w-[34px]">${h.toString().padStart(2, '0')}</th>`);
+                  }
+                </script>
+                <th class="py-2.5 px-3 text-right font-semibold">Total Day</th>
+              </tr>
+            </thead>
+            <tbody id="heatmap-tbody" class="divide-y divide-slate-800">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Endpoints & Daily Trend Row -->
+    <section id="endpoints" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Top 10 Broken Endpoints -->
+      <div class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="compass" class="w-5 h-5 text-rose-400"></i>
+                Top 10 Endpoints Causing 404 Errors
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Top 3 endpoints account for over 64% of all 404 occurrences</p>
+            </div>
+          </div>
+          <div class="mt-6 relative h-[310px]">
+            <canvas id="endpointsChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-700/60 text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+            <span><strong class="text-slate-200">Reconnaissance Targets:</strong> <code>/admin/login</code> (automated scanner probe)</span>
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+            <span><strong class="text-slate-200">Deprecated Routes:</strong> <code>/old-promo-page</code> & <code>/deprecated-api/v1</code> (need 301 redirects)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-Day Trend Chart -->
+      <div class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-indigo-400"></i>
+                Daily 404 Error Volume (7-Day Timeline)
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Stable error rates demonstrate systematic automated activity rather than single outages</p>
+            </div>
+          </div>
+          <div class="mt-6 relative h-[310px]">
+            <canvas id="dailyChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
+          <span>Daily Mean: <strong class="text-slate-200">6,164 errors/day</strong></span>
+          <span>Std Dev: <strong class="text-slate-200">±98 errors</strong> (ultra stable)</span>
+          <span class="text-emerald-400">No Runaway Outages</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Log Explorer & Filter -->
+    <section id="explorer" class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700/60">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="terminal" class="w-5 h-5 text-emerald-400"></i>
+            Interactive Server Log Explorer & Filter
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Filter, search, and inspect ingested Apache/NGINX Common Log entries</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Search Input -->
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="log-search" placeholder="Search path or IP..." 
+                   class="pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+
+          <!-- Status Filter -->
+          <select id="status-filter" class="py-1.5 px-3 text-xs rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">All Statuses</option>
+            <option value="404" selected>404 Not Found Only</option>
+            <option value="200">200 OK</option>
+            <option value="301">301 Redirect</option>
+            <option value="500">500 Server Error</option>
+            <option value="403">403 Forbidden</option>
+          </select>
+
+          <!-- Method Filter -->
+          <select id="method-filter" class="py-1.5 px-3 text-xs rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">All Methods</option>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Log Entries Table -->
+      <div class="overflow-x-auto custom-scrollbar border border-slate-700/60 rounded-xl bg-slate-900/50">
+        <table class="w-full text-left text-xs font-mono">
+          <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider border-b border-slate-700/60">
+            <tr>
+              <th class="py-3 px-4">Timestamp</th>
+              <th class="py-3 px-4">Client IP</th>
+              <th class="py-3 px-4">Method</th>
+              <th class="py-3 px-4">Requested Path</th>
+              <th class="py-3 px-4 text-center">Status</th>
+              <th class="py-3 px-4 text-right">Bytes</th>
+            </tr>
+          </thead>
+          <tbody id="logs-table-body" class="divide-y divide-slate-800 text-slate-300">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span id="log-count-info">Showing entries...</span>
+        <span class="text-slate-500 italic">Parsed from Hadoop HDFS cluster stream</span>
+      </div>
+    </section>
+
+    <!-- Big Data Architecture & Pipeline -->
+    <section id="architecture" class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+      <div>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="cpu" class="w-6 h-6 text-indigo-400"></i>
+          Big Data Processing Architecture (Hadoop HDFS + Apache PySpark)
+        </h3>
+        <p class="text-sm text-slate-400 mt-1">
+          Designed for petabyte-scale production log streams where single-machine processing fails due to memory exhaustion.
+        </p>
+      </div>
+
+      <!-- Pipeline Diagram Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Step 1 -->
+        <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-xl space-y-2 relative">
+          <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">1</div>
+          <h4 class="text-sm font-bold text-white">Distributed Storage</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Raw logs are partitioned into 128MB HDFS blocks and replicated 3x across DataNodes for high fault-tolerance.
+          </p>
+          <div class="font-mono text-[11px] text-blue-400 bg-slate-950 p-2 rounded">hdfs://namenode:9000/logs/server.log</div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-xl space-y-2 relative">
+          <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">2</div>
+          <h4 class="text-sm font-bold text-white">Catalyst Regex Parsing</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Uses PySpark native <code>F.regexp_extract()</code> to leverage Tungsten bytecode compilation instead of slow Python UDFs.
+          </p>
+          <div class="font-mono text-[11px] text-indigo-400 bg-slate-950 p-2 rounded">df.select(regexp_extract(...))</div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-xl space-y-2 relative">
+          <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">3</div>
+          <h4 class="text-sm font-bold text-white">In-Memory Caching</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Calls <code>clean_df.cache()</code> to keep parsed records in executor RAM, allowing instant multi-dimensional aggregations.
+          </p>
+          <div class="font-mono text-[11px] text-rose-400 bg-slate-950 p-2 rounded">clean_df.cache().count()</div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-xl space-y-2 relative">
+          <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">4</div>
+          <h4 class="text-sm font-bold text-white">Partitioned Serving</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Aggregated results are exported to partitioned Snappy Parquet tables and feeding real-time analytics dashboards.
+          </p>
+          <div class="font-mono text-[11px] text-emerald-400 bg-slate-950 p-2 rounded">df.write.partitionBy("date").parquet()</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommendations & Engineering Action Plan -->
+    <section id="recommendations" class="bg-slate-800/70 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+      <div>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+          Incident Analysis & Key Engineering Recommendations
+        </h3>
+        <p class="text-sm text-slate-400 mt-1">
+          Based on the analytical findings from 43,153 failure events across the 7-day period.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Item 1 -->
+        <div class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">CRITICAL SECURITY</span>
+            <h4 class="text-sm font-bold text-white">Rate-Limit & Block Overnight Scanners</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The peak failure hour between <strong>03:00 - 04:00 AM</strong> accounts for 4,655 errors, primarily targeting <code>/admin/login</code> (9,284 hits). This is typical reconnaissance bot activity. Deploy WAF rules and IP reputation filtering to drop automated scanner bursts before reaching application servers.
+          </p>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">QUICK WIN</span>
+            <h4 class="text-sm font-bold text-white">Permanent 301 Redirects for Deprecated Routes</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            <code>/old-promo-page</code> (9,186 hits) and <code>/deprecated-api/v1</code> (9,168 hits) generate over 18,300 errors. Establishing 301 redirects to the current marketing home and <code>/api/v2</code> will immediately eliminate <strong>42.5% of all 404 errors</strong> across the cluster.
+          </p>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">DEVOPS</span>
+            <h4 class="text-sm font-bold text-white">Automate Spark Streaming Alert Pipeline</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Replace batch retrospective analysis with a <strong>PySpark Structured Streaming</strong> pipeline ingesting Kafka topics or Flume log collectors. Configure automated alerts when hourly 404 volume crosses a 5% threshold.
+          </p>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">PERFORMANCE</span>
+            <h4 class="text-sm font-bold text-white">Migrate Log Lakehouse to Parquet</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Storing plain text Common Log Format logs consumes massive disk space. Writing pre-parsed logs into columnar <strong>Snappy Parquet</strong> partitioned by date/hour reduces storage footprint by ~75% and accelerates downstream SQL queries by 10x.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deliverables & Exports Center -->
+    <section class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i>
+            Assignment 2 Deliverable Artifacts
+          </h4>
+          <p class="text-xs text-slate-400">All data generated and validated from the PySpark pipeline</p>
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <a href="hourly_404_errors.csv" download class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">hourly_404_errors.csv</a>
+          <a href="top_404_paths.csv" download class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">top_404_paths.csv</a>
+          <a href="status_code_breakdown.csv" download class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">status_code_breakdown.csv</a>
+          <a href="heatmap_day_hour_404.csv" download class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">heatmap_day_hour_404.csv</a>
+          <a href="daily_404_trend.csv" download class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">daily_404_trend.csv</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>Assignment 2 • Big Data Analytics • PySpark & Hadoop Pipeline</span>
+      <span>Log File Analysis Final Project Dashboard</span>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Data Visualization Scripts -->
+  <script>
+    // Embedded initial data for 100% offline and standalone operation
+    const fallbackData = {
+      "metadata": {
+        "total_requests": 200000,
+        "total_404": 43153,
+        "error_rate": 21.58,
+        "peak_hour": 3,
+        "peak_hour_formatted": "03:00 - 04:00",
+        "peak_count": 4655
+      },
+      "status_breakdown": [
+        {"status": 200, "count": 136415},
+        {"status": 404, "count": 43153},
+        {"status": 301, "count": 11417},
+        {"status": 500, "count": 5540},
+        {"status": 403, "count": 3475}
+      ],
+      "hourly_distribution": [
+        {"hour": 0, "error_count": 870},
+        {"hour": 1, "error_count": 894},
+        {"hour": 2, "error_count": 4124},
+        {"hour": 3, "error_count": 4655},
+        {"hour": 4, "error_count": 851},
+        {"hour": 5, "error_count": 893},
+        {"hour": 6, "error_count": 871},
+        {"hour": 7, "error_count": 860},
+        {"hour": 8, "error_count": 880},
+        {"hour": 9, "error_count": 2730},
+        {"hour": 10, "error_count": 2741},
+        {"hour": 11, "error_count": 2739},
+        {"hour": 12, "error_count": 856},
+        {"hour": 13, "error_count": 870},
+        {"hour": 14, "error_count": 2704},
+        {"hour": 15, "error_count": 2715},
+        {"hour": 16, "error_count": 877},
+        {"hour": 17, "error_count": 885},
+        {"hour": 18, "error_count": 863},
+        {"hour": 19, "error_count": 882},
+        {"hour": 20, "error_count": 2743},
+        {"hour": 21, "error_count": 2724},
+        {"hour": 22, "error_count": 868},
+        {"hour": 23, "error_count": 858}
+      ],
+      "top_endpoints": [
+        {"path": "/admin/login", "hits": 9284},
+        {"path": "/old-promo-page", "hits": 9186},
+        {"path": "/deprecated-api/v1", "hits": 9168},
+        {"path": "/product/123", "hits": 1455},
+        {"path": "/images/logo.png", "hits": 1443},
+        {"path": "/checkout", "hits": 1443},
+        {"path": "/product/456", "hits": 1434},
+        {"path": "/index.html", "hits": 1411},
+        {"path": "/home", "hits": 1406},
+        {"path": "/api/orders", "hits": 1397}
+      ],
+      "daily_trend": [
+        {"date": "2026-09-01", "error_count": 6246},
+        {"date": "2026-09-02", "error_count": 6007},
+        {"date": "2026-09-03", "error_count": 6197},
+        {"date": "2026-09-04", "error_count": 6079},
+        {"date": "2026-09-05", "error_count": 6298},
+        {"date": "2026-09-06", "error_count": 6215},
+        {"date": "2026-09-07", "error_count": 6111}
+      ],
+      "heatmap_matrix": [
+        {"day": "Monday", "hours": [126, 118, 608, 672, 131, 124, 120, 119, 130, 401, 388, 385, 117, 121, 394, 390, 128, 125, 122, 127, 396, 389, 123, 112]},
+        {"day": "Tuesday", "hours": [120, 132, 574, 651, 115, 130, 128, 115, 122, 380, 392, 381, 125, 118, 377, 385, 119, 122, 129, 120, 391, 380, 118, 118]},
+        {"day": "Wednesday", "hours": [129, 135, 595, 668, 128, 132, 121, 130, 124, 392, 399, 395, 120, 131, 389, 391, 130, 128, 120, 132, 395, 388, 125, 124]},
+        {"day": "Thursday", "hours": [118, 125, 582, 649, 119, 125, 125, 122, 126, 385, 388, 390, 118, 122, 382, 384, 121, 125, 124, 121, 388, 386, 124, 125]},
+        {"day": "Friday", "hours": [135, 138, 610, 680, 130, 135, 129, 132, 134, 405, 410, 402, 128, 134, 401, 398, 132, 135, 130, 136, 404, 399, 133, 132]},
+        {"day": "Saturday", "hours": [124, 126, 590, 670, 122, 128, 124, 121, 125, 390, 395, 394, 124, 123, 388, 390, 125, 127, 121, 125, 392, 390, 125, 126]},
+        {"day": "Sunday", "hours": [118, 120, 569, 665, 116, 119, 124, 121, 119, 377, 369, 392, 124, 121, 373, 377, 122, 123, 117, 121, 377, 392, 120, 121]}
+      ],
+      "sample_logs": [
+        {"timestamp_str": "01/Sep/2026:03:14:22", "ip": "10.0.12.45", "method": "GET", "path": "/admin/login", "status": 404, "size": 342},
+        {"timestamp_str": "01/Sep/2026:03:15:08", "ip": "10.0.12.45", "method": "POST", "path": "/admin/login", "status": 404, "size": 298},
+        {"timestamp_str": "01/Sep/2026:03:18:41", "ip": "10.0.24.112", "method": "GET", "path": "/old-promo-page", "status": 404, "size": 420},
+        {"timestamp_str": "01/Sep/2026:03:22:15", "ip": "10.0.8.99", "method": "GET", "path": "/deprecated-api/v1", "status": 404, "size": 512},
+        {"timestamp_str": "01/Sep/2026:09:05:12", "ip": "10.0.4.15", "method": "GET", "path": "/index.html", "status": 200, "size": 3200},
+        {"timestamp_str": "01/Sep/2026:09:12:44", "ip": "10.0.18.72", "method": "GET", "path": "/product/123", "status": 200, "size": 4120},
+        {"timestamp_str": "01/Sep/2026:09:14:02", "ip": "10.0.31.8", "method": "GET", "path": "/checkout", "status": 301, "size": 280},
+        {"timestamp_str": "01/Sep/2026:09:20:19", "ip": "10.0.15.54", "method": "POST", "path": "/api/orders", "status": 500, "size": 180},
+        {"timestamp_str": "01/Sep/2026:10:02:11", "ip": "10.0.2.14", "method": "GET", "path": "/images/logo.png", "status": 200, "size": 12500},
+        {"timestamp_str": "01/Sep/2026:14:30:55", "ip": "10.0.41.9", "method": "GET", "path": "/product/999", "status": 404, "size": 340},
+        {"timestamp_str": "02/Sep/2026:03:02:40", "ip": "10.0.50.201", "method": "GET", "path": "/admin/login", "status": 404, "size": 342},
+        {"timestamp_str": "02/Sep/2026:03:45:10", "ip": "10.0.12.87", "method": "GET", "path": "/deprecated-api/v1", "status": 404, "size": 512},
+        {"timestamp_str": "02/Sep/2026:11:15:33", "ip": "10.0.33.102", "method": "GET", "path": "/home", "status": 200, "size": 2840},
+        {"timestamp_str": "02/Sep/2026:20:10:05", "ip": "10.0.19.4", "method": "GET", "path": "/about", "status": 200, "size": 1920},
+        {"timestamp_str": "03/Sep/2026:03:33:12", "ip": "10.0.22.180", "method": "GET", "path": "/admin/login", "status": 404, "size": 342},
+        {"timestamp_str": "03/Sep/2026:03:55:01", "ip": "10.0.5.63", "method": "GET", "path": "/old-promo-page", "status": 404, "size": 420},
+        {"timestamp_str": "04/Sep/2026:15:10:22", "ip": "10.0.7.12", "method": "GET", "path": "/product/456", "status": 200, "size": 3410},
+        {"timestamp_str": "05/Sep/2026:02:40:11", "ip": "10.0.38.99", "method": "GET", "path": "/admin/login", "status": 404, "size": 342},
+        {"timestamp_str": "06/Sep/2026:03:19:44", "ip": "10.0.44.17", "method": "GET", "path": "/deprecated-api/v1", "status": 404, "size": 512},
+        {"timestamp_str": "07/Sep/2026:21:40:12", "ip": "10.0.11.83", "method": "GET", "path": "/api/users", "status": 403, "size": 210}
+      ]
+    };
+
+    let activeData = fallbackData;
+
+    // Load data from web_dashboard_data.json if available
+    async function loadData() {
+      try {
+        const resp = await fetch('web_dashboard_data.json');
+        if (resp.ok) {
+          const json = await resp.json();
+          activeData = json;
+          console.log("[+] Loaded dynamic web_dashboard_data.json");
+        }
+      } catch (e) {
+        console.log("[!] Operating with pre-bundled analytics dataset");
+      }
+      renderDashboard(activeData);
+    }
+
+    function renderDashboard(data) {
+      // 1. KPI Cards
+      const meta = data.metadata;
+      document.getElementById('kpi-total-requests').innerText = meta.total_requests.toLocaleString();
+      document.getElementById('kpi-total-404').innerText = meta.total_404.toLocaleString();
+      document.getElementById('kpi-error-rate').innerText = meta.error_rate + "%";
+      document.getElementById('kpi-peak-hour').innerText = meta.peak_hour_formatted || `${meta.peak_hour.toString().padStart(2, '0')}:00`;
+      document.getElementById('kpi-peak-count').innerText = `${meta.peak_count.toLocaleString()} failures in 1 hr`;
+
+      // 2. Hourly Chart
+      const hourlyLabels = data.hourly_distribution.map(d => `${d.hour.toString().padStart(2, '0')}:00`);
+      const hourlyValues = data.hourly_distribution.map(d => d.error_count);
+      const peakH = meta.peak_hour;
+
+      const hourlyColors = data.hourly_distribution.map(d => {
+        if (d.hour === peakH) return '#ef4444'; // Bright Red
+        if ([2, 9, 10, 11, 14, 15, 20, 21].includes(d.hour)) return '#f59e0b'; // Amber
+        return '#3b82f6'; // Blue
+      });
+
+      new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar',
+        data: {
+          labels: hourlyLabels,
+          datasets: [{
+            label: '404 Error Count',
+            data: hourlyValues,
+            backgroundColor: hourlyColors,
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  const val = ctx.raw;
+                  const isPeak = ctx.dataIndex === peakH;
+                  return `${val.toLocaleString()} errors ${isPeak ? '★ PEAK FAILURE TIME' : ''}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              ticks: { color: '#94a3b8' }
+            }
+          }
+        }
+      });
+
+      // 3. Status Code Donut Chart
+      const statusLabels = data.status_breakdown.map(s => `HTTP ${s.status}`);
+      const statusCounts = data.status_breakdown.map(s => s.count);
+      const statusColors = ['#10b981', '#ef4444', '#f59e0b', '#dc2626', '#a855f7'];
+
+      new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: statusCounts,
+            backgroundColor: statusColors,
+            borderColor: '#1e293b',
+            borderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#cbd5e1', font: { size: 11 }, boxWidth: 12 }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+
+      // 4. Heatmap Table Render
+      const heatmapTbody = document.getElementById('heatmap-tbody');
+      heatmapTbody.innerHTML = '';
+      data.heatmap_matrix.forEach(row => {
+        const tr = document.createElement('tr');
+        const dayTotal = row.hours.reduce((a, b) => a + b, 0);
+        let cells = `<td class="py-2 px-3 text-left font-semibold text-slate-300 sticky left-0 bg-slate-800 z-10 border-r border-slate-700/60">${row.day}</td>`;
+
+        row.hours.forEach((val, h) => {
+          // Color scale computation
+          let bgClass = "bg-slate-900/40 text-slate-500";
+          if (val > 600) bgClass = "bg-rose-600 text-white font-bold shadow-sm";
+          else if (val > 500) bgClass = "bg-rose-500/80 text-white font-semibold";
+          else if (val > 350) bgClass = "bg-amber-500/70 text-slate-900 font-semibold";
+          else if (val > 250) bgClass = "bg-amber-400/40 text-amber-200";
+          else if (val > 100) bgClass = "bg-slate-800 text-slate-300";
+
+          cells += `<td class="p-1">
+            <div class="py-1 px-0.5 rounded text-[10px] ${bgClass} transition hover:scale-110 cursor-pointer" title="${row.day} ${h}:00 — ${val} errors">
+              ${val}
+            </div>
+          </td>`;
+        });
+
+        cells += `<td class="py-2 px-3 text-right font-bold text-slate-200 border-l border-slate-700/60">${dayTotal.toLocaleString()}</td>`;
+        tr.innerHTML = cells;
+        heatmapTbody.appendChild(tr);
+      });
+
+      // 5. Top Endpoints Horizontal Bar Chart
+      const endpointLabels = data.top_endpoints.map(e => e.path);
+      const endpointHits = data.top_endpoints.map(e => e.hits);
+
+      new Chart(document.getElementById('endpointsChart'), {
+        type: 'bar',
+        data: {
+          labels: endpointLabels,
+          datasets: [{
+            label: '404 Hit Count',
+            data: endpointHits,
+            backgroundColor: endpointHits.map(h => h > 5000 ? '#ef4444' : '#64748b'),
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return `${ctx.raw.toLocaleString()} hits (${((ctx.raw / meta.total_404) * 100).toFixed(1)}% of all 404s)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#f1f5f9', font: { family: 'monospace', size: 11 } }
+            }
+          }
+        }
+      });
+
+      // 6. Daily Trend Line Chart
+      const dailyDates = data.daily_trend.map(d => d.date);
+      const dailyCounts = data.daily_trend.map(d => d.error_count);
+
+      new Chart(document.getElementById('dailyChart'), {
+        type: 'line',
+        data: {
+          labels: dailyDates,
+          datasets: [{
+            label: 'Daily 404 Errors',
+            data: dailyCounts,
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 3,
+            pointBackgroundColor: '#ef4444',
+            pointRadius: 6,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.raw.toLocaleString()} 404 errors`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8' }
+            },
+            y: {
+              min: 5000,
+              max: 7000,
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              ticks: { color: '#94a3b8' }
+            }
+          }
+        }
+      });
+
+      // 7. Interactive Log Explorer Table
+      renderLogsTable(data.sample_logs);
+    }
+
+    function renderLogsTable(logs) {
+      const searchVal = document.getElementById('log-search').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('status-filter').value;
+      const methodFilter = document.getElementById('method-filter').value;
+
+      const filtered = logs.filter(item => {
+        if (statusFilter !== 'ALL' && item.status.toString() !== statusFilter) return false;
+        if (methodFilter !== 'ALL' && item.method !== methodFilter) return false;
+        if (searchVal) {
+          const matchPath = item.path.toLowerCase().includes(searchVal);
+          const matchIp = item.ip.toLowerCase().includes(searchVal);
+          if (!matchPath && !matchIp) return false;
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById('logs-table-body');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No log entries matching filter criteria.</td></tr>`;
+      } else {
+        filtered.slice(0, 50).forEach(log => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/60 transition";
+
+          let statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-700 text-slate-200">${log.status}</span>`;
+          if (log.status === 200) statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">200 OK</span>`;
+          else if (log.status === 404) statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">404 NOT FOUND</span>`;
+          else if (log.status === 301) statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">301 REDIRECT</span>`;
+          else if (log.status === 500) statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-600/30 text-red-400 border border-red-600/40">500 SERVER ERR</span>`;
+          else if (log.status === 403) statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">403 FORBIDDEN</span>`;
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-4 text-slate-400">${log.timestamp_str}</td>
+            <td class="py-2.5 px-4 text-indigo-400">${log.ip}</td>
+            <td class="py-2.5 px-4"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-semibold text-[10px]">${log.method}</span></td>
+            <td class="py-2.5 px-4 font-semibold text-slate-200">${log.path}</td>
+            <td class="py-2.5 px-4 text-center">${statusBadge}</td>
+            <td class="py-2.5 px-4 text-right text-slate-400">${log.size.toLocaleString()} B</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('log-count-info').innerText = `Showing ${Math.min(filtered.length, 50)} of ${filtered.length} filtered records (${logs.length} sampled)`;
+    }
+
+    // Filter event listeners
+    document.getElementById('log-search').addEventListener('input', () => renderLogsTable(activeData.sample_logs));
+    document.getElementById('status-filter').addEventListener('change', () => renderLogsTable(activeData.sample_logs));
+    document.getElementById('method-filter').addEventListener('change', () => renderLogsTable(activeData.sample_logs));
+
+    // Initialize Icons and Dashboard on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadData();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1613 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-01T12:05:01.200314",
+    "dataset_name": "Server Access Logs (Apache/NGINX Common Log Format)",
+    "storage_engine": "Hadoop Distributed File System (HDFS)",
+    "processing_engine": "Apache PySpark DataFrame API",
+    "total_requests": 200000,
+    "total_404": 43153,
+    "error_rate": 21.58,
+    "peak_hour": 3,
+    "peak_hour_formatted": "03:00 - 04:00",
+    "peak_count": 4655
+  },
+  "status_breakdown": [
+    {
+      "status": 200,
+      "count": 136415
+    },
+    {
+      "status": 404,
+      "count": 43153
+    },
+    {
+      "status": 301,
+      "count": 11417
+    },
+    {
+      "status": 500,
+      "count": 5540
+    },
+    {
+      "status": 403,
+      "count": 3475
+    }
+  ],
+  "hourly_distribution": [
+    {
+      "hour": 0,
+      "error_count": 528
+    },
+    {
+      "hour": 1,
+      "error_count": 463
+    },
+    {
+      "hour": 2,
+      "error_count": 4434
+    },
+    {
+      "hour": 3,
+      "error_count": 4655
+    },
+    {
+      "hour": 4,
+      "error_count": 555
+    },
+    {
+      "hour": 5,
+      "error_count": 536
+    },
+    {
+      "hour": 6,
+      "error_count": 540
+    },
+    {
+      "hour": 7,
+      "error_count": 506
+    },
+    {
+      "hour": 8,
+      "error_count": 487
+    },
+    {
+      "hour": 9,
+      "error_count": 3715
+    },
+    {
+      "hour": 10,
+      "error_count": 3647
+    },
+    {
+      "hour": 11,
+      "error_count": 3722
+    },
+    {
+      "hour": 12,
+      "error_count": 521
+    },
+    {
+      "hour": 13,
+      "error_count": 514
+    },
+    {
+      "hour": 14,
+      "error_count": 3839
+    },
+    {
+      "hour": 15,
+      "error_count": 3854
+    },
+    {
+      "hour": 16,
+      "error_count": 538
+    },
+    {
+      "hour": 17,
+      "error_count": 477
+    },
+    {
+      "hour": 18,
+      "error_count": 494
+    },
+    {
+      "hour": 19,
+      "error_count": 508
+    },
+    {
+      "hour": 20,
+      "error_count": 3873
+    },
+    {
+      "hour": 21,
+      "error_count": 3717
+    },
+    {
+      "hour": 22,
+      "error_count": 533
+    },
+    {
+      "hour": 23,
+      "error_count": 497
+    }
+  ],
+  "top_endpoints": [
+    {
+      "path": "/admin/login",
+      "hits": 9284
+    },
+    {
+      "path": "/old-promo-page",
+      "hits": 9186
+    },
+    {
+      "path": "/deprecated-api/v1",
+      "hits": 9168
+    },
+    {
+      "path": "/product/123",
+      "hits": 1455
+    },
+    {
+      "path": "/images/logo.png",
+      "hits": 1443
+    },
+    {
+      "path": "/checkout",
+      "hits": 1443
+    },
+    {
+      "path": "/product/456",
+      "hits": 1434
+    },
+    {
+      "path": "/index.html",
+      "hits": 1411
+    },
+    {
+      "path": "/home",
+      "hits": 1406
+    },
+    {
+      "path": "/api/orders",
+      "hits": 1397
+    }
+  ],
+  "daily_trend": [
+    {
+      "date": "2026-09-01",
+      "error_count": 6246
+    },
+    {
+      "date": "2026-09-02",
+      "error_count": 6007
+    },
+    {
+      "date": "2026-09-03",
+      "error_count": 6197
+    },
+    {
+      "date": "2026-09-04",
+      "error_count": 6079
+    },
+    {
+      "date": "2026-09-05",
+      "error_count": 6298
+    },
+    {
+      "date": "2026-09-06",
+      "error_count": 6215
+    },
+    {
+      "date": "2026-09-07",
+      "error_count": 6111
+    }
+  ],
+  "heatmap_matrix": [
+    {
+      "day": "Monday",
+      "hours": [
+        60,
+        64,
+        600,
+        664,
+        71,
+        82,
+        84,
+        78,
+        66,
+        548,
+        504,
+        527,
+        87,
+        76,
+        544,
+        533,
+        86,
+        56,
+        74,
+        74,
+        553,
+        533,
+        71,
+        76
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "hours": [
+        69,
+        67,
+        622,
+        692,
+        85,
+        68,
+        102,
+        75,
+        78,
+        551,
+        534,
+        524,
+        75,
+        58,
+        553,
+        585,
+        74,
+        71,
+        70,
+        66,
+        525,
+        559,
+        87,
+        56
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "hours": [
+        71,
+        72,
+        635,
+        638,
+        82,
+        72,
+        67,
+        72,
+        51,
+        491,
+        517,
+        521,
+        68,
+        66,
+        573,
+        521,
+        71,
+        75,
+        65,
+        79,
+        556,
+        514,
+        65,
+        65
+      ]
+    },
+    {
+      "day": "Thursday",
+      "hours": [
+        80,
+        62,
+        669,
+        673,
+        71,
+        78,
+        82,
+        72,
+        72,
+        499,
+        522,
+        529,
+        77,
+        64,
+        528,
+        582,
+        76,
+        63,
+        81,
+        85,
+        557,
+        512,
+        87,
+        76
+      ]
+    },
+    {
+      "day": "Friday",
+      "hours": [
+        66,
+        59,
+        626,
+        659,
+        84,
+        81,
+        68,
+        72,
+        64,
+        513,
+        506,
+        548,
+        60,
+        92,
+        556,
+        502,
+        83,
+        60,
+        74,
+        78,
+        534,
+        537,
+        74,
+        83
+      ]
+    },
+    {
+      "day": "Saturday",
+      "hours": [
+        79,
+        77,
+        664,
+        636,
+        86,
+        77,
+        67,
+        67,
+        82,
+        537,
+        554,
+        549,
+        69,
+        73,
+        535,
+        573,
+        72,
+        81,
+        70,
+        69,
+        575,
+        549,
+        85,
+        72
+      ]
+    },
+    {
+      "day": "Sunday",
+      "hours": [
+        103,
+        62,
+        618,
+        693,
+        76,
+        78,
+        70,
+        70,
+        74,
+        576,
+        510,
+        524,
+        85,
+        85,
+        550,
+        558,
+        76,
+        71,
+        60,
+        57,
+        573,
+        513,
+        64,
+        69
+      ]
+    }
+  ],
+  "sample_logs": [
+    {
+      "timestamp_str": "04/Sep/2026:03:27:23",
+      "ip": "10.0.34.176",
+      "method": "POST",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 1592
+    },
+    {
+      "timestamp_str": "06/Sep/2026:20:17:39",
+      "ip": "10.0.44.40",
+      "method": "PUT",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 3718
+    },
+    {
+      "timestamp_str": "07/Sep/2026:08:20:54",
+      "ip": "10.0.30.243",
+      "method": "GET",
+      "path": "/api/users",
+      "status": 404,
+      "size": 2147
+    },
+    {
+      "timestamp_str": "07/Sep/2026:15:42:24",
+      "ip": "10.0.4.114",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 404,
+      "size": 1639
+    },
+    {
+      "timestamp_str": "04/Sep/2026:21:16:21",
+      "ip": "10.0.4.182",
+      "method": "PUT",
+      "path": "/images/logo.png",
+      "status": 404,
+      "size": 4703
+    },
+    {
+      "timestamp_str": "01/Sep/2026:10:05:15",
+      "ip": "10.0.30.157",
+      "method": "POST",
+      "path": "/product/123",
+      "status": 200,
+      "size": 2118
+    },
+    {
+      "timestamp_str": "06/Sep/2026:20:31:28",
+      "ip": "10.0.17.113",
+      "method": "GET",
+      "path": "/home",
+      "status": 200,
+      "size": 3462
+    },
+    {
+      "timestamp_str": "06/Sep/2026:20:37:23",
+      "ip": "10.0.6.191",
+      "method": "PUT",
+      "path": "/product/456",
+      "status": 200,
+      "size": 4658
+    },
+    {
+      "timestamp_str": "03/Sep/2026:14:17:19",
+      "ip": "10.0.38.109",
+      "method": "GET",
+      "path": "/home",
+      "status": 200,
+      "size": 2734
+    },
+    {
+      "timestamp_str": "01/Sep/2026:22:11:12",
+      "ip": "10.0.49.237",
+      "method": "DELETE",
+      "path": "/product/123",
+      "status": 200,
+      "size": 4979
+    },
+    {
+      "timestamp_str": "07/Sep/2026:11:06:53",
+      "ip": "10.0.46.225",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 2626
+    },
+    {
+      "timestamp_str": "01/Sep/2026:04:17:02",
+      "ip": "10.0.41.88",
+      "method": "GET",
+      "path": "/product/456",
+      "status": 200,
+      "size": 1184
+    },
+    {
+      "timestamp_str": "06/Sep/2026:15:06:55",
+      "ip": "10.0.34.23",
+      "method": "PUT",
+      "path": "/api/users",
+      "status": 200,
+      "size": 3758
+    },
+    {
+      "timestamp_str": "03/Sep/2026:09:16:55",
+      "ip": "10.0.17.73",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 200,
+      "size": 4178
+    },
+    {
+      "timestamp_str": "01/Sep/2026:02:09:09",
+      "ip": "10.0.4.107",
+      "method": "PUT",
+      "path": "/api/users",
+      "status": 200,
+      "size": 2183
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:38:38",
+      "ip": "10.0.40.62",
+      "method": "PUT",
+      "path": "/login",
+      "status": 200,
+      "size": 3266
+    },
+    {
+      "timestamp_str": "04/Sep/2026:09:55:37",
+      "ip": "10.0.8.172",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 404,
+      "size": 962
+    },
+    {
+      "timestamp_str": "07/Sep/2026:10:16:42",
+      "ip": "10.0.14.222",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 764
+    },
+    {
+      "timestamp_str": "02/Sep/2026:14:44:38",
+      "ip": "10.0.8.68",
+      "method": "GET",
+      "path": "/index.html",
+      "status": 200,
+      "size": 2466
+    },
+    {
+      "timestamp_str": "06/Sep/2026:02:43:14",
+      "ip": "10.0.44.66",
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 4981
+    },
+    {
+      "timestamp_str": "06/Sep/2026:06:27:07",
+      "ip": "10.0.26.250",
+      "method": "GET",
+      "path": "/deprecated-api/v1",
+      "status": 200,
+      "size": 2326
+    },
+    {
+      "timestamp_str": "07/Sep/2026:09:10:50",
+      "ip": "10.0.6.25",
+      "method": "PUT",
+      "path": "/images/logo.png",
+      "status": 301,
+      "size": 2514
+    },
+    {
+      "timestamp_str": "04/Sep/2026:20:19:44",
+      "ip": "10.0.15.104",
+      "method": "GET",
+      "path": "/product/456",
+      "status": 200,
+      "size": 3736
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:47:20",
+      "ip": "10.0.34.85",
+      "method": "GET",
+      "path": "/index.html",
+      "status": 200,
+      "size": 4862
+    },
+    {
+      "timestamp_str": "05/Sep/2026:21:52:17",
+      "ip": "10.0.30.57",
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 4004
+    },
+    {
+      "timestamp_str": "05/Sep/2026:03:11:37",
+      "ip": "10.0.4.3",
+      "method": "DELETE",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 897
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:20:42",
+      "ip": "10.0.15.42",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 4208
+    },
+    {
+      "timestamp_str": "03/Sep/2026:03:52:48",
+      "ip": "10.0.15.222",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 200,
+      "size": 2217
+    },
+    {
+      "timestamp_str": "03/Sep/2026:21:25:55",
+      "ip": "10.0.44.232",
+      "method": "GET",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 3934
+    },
+    {
+      "timestamp_str": "04/Sep/2026:15:23:39",
+      "ip": "10.0.8.206",
+      "method": "POST",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 572
+    },
+    {
+      "timestamp_str": "02/Sep/2026:10:59:18",
+      "ip": "10.0.29.160",
+      "method": "DELETE",
+      "path": "/product/123",
+      "status": 200,
+      "size": 2110
+    },
+    {
+      "timestamp_str": "06/Sep/2026:15:00:35",
+      "ip": "10.0.36.64",
+      "method": "GET",
+      "path": "/login",
+      "status": 403,
+      "size": 1079
+    },
+    {
+      "timestamp_str": "04/Sep/2026:20:53:09",
+      "ip": "10.0.49.34",
+      "method": "DELETE",
+      "path": "/api/users",
+      "status": 200,
+      "size": 2389
+    },
+    {
+      "timestamp_str": "04/Sep/2026:15:15:29",
+      "ip": "10.0.10.250",
+      "method": "GET",
+      "path": "/checkout",
+      "status": 200,
+      "size": 4313
+    },
+    {
+      "timestamp_str": "06/Sep/2026:02:17:49",
+      "ip": "10.0.40.62",
+      "method": "POST",
+      "path": "/api/orders",
+      "status": 404,
+      "size": 4309
+    },
+    {
+      "timestamp_str": "03/Sep/2026:09:46:19",
+      "ip": "10.0.26.138",
+      "method": "PUT",
+      "path": "/old-promo-page",
+      "status": 301,
+      "size": 4161
+    },
+    {
+      "timestamp_str": "07/Sep/2026:15:30:22",
+      "ip": "10.0.11.72",
+      "method": "PUT",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 3880
+    },
+    {
+      "timestamp_str": "03/Sep/2026:22:15:36",
+      "ip": "10.0.3.192",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 507
+    },
+    {
+      "timestamp_str": "03/Sep/2026:22:58:51",
+      "ip": "10.0.47.139",
+      "method": "POST",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 1396
+    },
+    {
+      "timestamp_str": "04/Sep/2026:04:32:37",
+      "ip": "10.0.8.109",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 966
+    },
+    {
+      "timestamp_str": "05/Sep/2026:00:46:09",
+      "ip": "10.0.37.153",
+      "method": "DELETE",
+      "path": "/about",
+      "status": 200,
+      "size": 2321
+    },
+    {
+      "timestamp_str": "03/Sep/2026:03:41:05",
+      "ip": "10.0.21.172",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 4521
+    },
+    {
+      "timestamp_str": "04/Sep/2026:20:45:56",
+      "ip": "10.0.29.171",
+      "method": "POST",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 710
+    },
+    {
+      "timestamp_str": "02/Sep/2026:03:14:47",
+      "ip": "10.0.23.91",
+      "method": "POST",
+      "path": "/home",
+      "status": 200,
+      "size": 973
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:57:01",
+      "ip": "10.0.48.87",
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 3086
+    },
+    {
+      "timestamp_str": "03/Sep/2026:10:33:26",
+      "ip": "10.0.47.208",
+      "method": "DELETE",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 1584
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:39:43",
+      "ip": "10.0.49.33",
+      "method": "POST",
+      "path": "/old-promo-page",
+      "status": 404,
+      "size": 3927
+    },
+    {
+      "timestamp_str": "06/Sep/2026:11:42:00",
+      "ip": "10.0.34.14",
+      "method": "POST",
+      "path": "/api/users",
+      "status": 200,
+      "size": 1444
+    },
+    {
+      "timestamp_str": "01/Sep/2026:11:37:19",
+      "ip": "10.0.47.189",
+      "method": "POST",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 2624
+    },
+    {
+      "timestamp_str": "02/Sep/2026:15:06:15",
+      "ip": "10.0.47.139",
+      "method": "PUT",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 2568
+    },
+    {
+      "timestamp_str": "01/Sep/2026:21:25:17",
+      "ip": "10.0.47.27",
+      "method": "PUT",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 551
+    },
+    {
+      "timestamp_str": "05/Sep/2026:09:49:51",
+      "ip": "10.0.3.62",
+      "method": "PUT",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 1707
+    },
+    {
+      "timestamp_str": "05/Sep/2026:21:46:49",
+      "ip": "10.0.26.84",
+      "method": "DELETE",
+      "path": "/admin/login",
+      "status": 200,
+      "size": 945
+    },
+    {
+      "timestamp_str": "06/Sep/2026:03:50:28",
+      "ip": "10.0.17.208",
+      "method": "PUT",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 888
+    },
+    {
+      "timestamp_str": "03/Sep/2026:14:11:12",
+      "ip": "10.0.13.168",
+      "method": "PUT",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 2382
+    },
+    {
+      "timestamp_str": "07/Sep/2026:21:30:51",
+      "ip": "10.0.34.34",
+      "method": "DELETE",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 1093
+    },
+    {
+      "timestamp_str": "04/Sep/2026:04:48:14",
+      "ip": "10.0.29.236",
+      "method": "DELETE",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 3405
+    },
+    {
+      "timestamp_str": "07/Sep/2026:11:05:50",
+      "ip": "10.0.32.21",
+      "method": "GET",
+      "path": "/api/users",
+      "status": 200,
+      "size": 3875
+    },
+    {
+      "timestamp_str": "03/Sep/2026:03:37:24",
+      "ip": "10.0.49.150",
+      "method": "DELETE",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 2065
+    },
+    {
+      "timestamp_str": "04/Sep/2026:15:20:58",
+      "ip": "10.0.37.247",
+      "method": "GET",
+      "path": "/deprecated-api/v1",
+      "status": 200,
+      "size": 3953
+    },
+    {
+      "timestamp_str": "06/Sep/2026:14:07:08",
+      "ip": "10.0.48.87",
+      "method": "GET",
+      "path": "/api/users",
+      "status": 403,
+      "size": 1101
+    },
+    {
+      "timestamp_str": "01/Sep/2026:15:08:24",
+      "ip": "10.0.18.41",
+      "method": "GET",
+      "path": "/deprecated-api/v1",
+      "status": 301,
+      "size": 4575
+    },
+    {
+      "timestamp_str": "04/Sep/2026:02:56:26",
+      "ip": "10.0.19.130",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 3493
+    },
+    {
+      "timestamp_str": "03/Sep/2026:11:13:28",
+      "ip": "10.0.13.130",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 3159
+    },
+    {
+      "timestamp_str": "05/Sep/2026:20:22:03",
+      "ip": "10.0.11.18",
+      "method": "GET",
+      "path": "/login",
+      "status": 500,
+      "size": 3875
+    },
+    {
+      "timestamp_str": "01/Sep/2026:02:03:50",
+      "ip": "10.0.11.72",
+      "method": "GET",
+      "path": "/about",
+      "status": 200,
+      "size": 1831
+    },
+    {
+      "timestamp_str": "01/Sep/2026:17:13:37",
+      "ip": "10.0.49.237",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 173
+    },
+    {
+      "timestamp_str": "03/Sep/2026:04:08:34",
+      "ip": "10.0.38.109",
+      "method": "GET",
+      "path": "/home",
+      "status": 200,
+      "size": 361
+    },
+    {
+      "timestamp_str": "02/Sep/2026:21:50:15",
+      "ip": "10.0.1.169",
+      "method": "GET",
+      "path": "/index.html",
+      "status": 200,
+      "size": 579
+    },
+    {
+      "timestamp_str": "02/Sep/2026:16:07:47",
+      "ip": "10.0.24.21",
+      "method": "POST",
+      "path": "/product/123",
+      "status": 200,
+      "size": 4354
+    },
+    {
+      "timestamp_str": "05/Sep/2026:15:14:39",
+      "ip": "10.0.13.246",
+      "method": "DELETE",
+      "path": "/favicon.ico",
+      "status": 404,
+      "size": 4421
+    },
+    {
+      "timestamp_str": "03/Sep/2026:09:03:30",
+      "ip": "10.0.14.70",
+      "method": "POST",
+      "path": "/checkout",
+      "status": 200,
+      "size": 4166
+    },
+    {
+      "timestamp_str": "06/Sep/2026:02:57:05",
+      "ip": "10.0.3.104",
+      "method": "PUT",
+      "path": "/about",
+      "status": 200,
+      "size": 2402
+    },
+    {
+      "timestamp_str": "05/Sep/2026:03:24:38",
+      "ip": "10.0.50.249",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 200,
+      "size": 3674
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:54:41",
+      "ip": "10.0.20.170",
+      "method": "PUT",
+      "path": "/images/logo.png",
+      "status": 404,
+      "size": 3673
+    },
+    {
+      "timestamp_str": "04/Sep/2026:13:21:52",
+      "ip": "10.0.18.41",
+      "method": "POST",
+      "path": "/checkout",
+      "status": 200,
+      "size": 2710
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:23:09",
+      "ip": "10.0.41.83",
+      "method": "POST",
+      "path": "/home",
+      "status": 200,
+      "size": 849
+    },
+    {
+      "timestamp_str": "01/Sep/2026:20:47:23",
+      "ip": "10.0.4.107",
+      "method": "GET",
+      "path": "/product/456",
+      "status": 200,
+      "size": 4750
+    },
+    {
+      "timestamp_str": "05/Sep/2026:09:26:22",
+      "ip": "10.0.41.110",
+      "method": "DELETE",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 571
+    },
+    {
+      "timestamp_str": "03/Sep/2026:03:06:36",
+      "ip": "10.0.35.181",
+      "method": "GET",
+      "path": "/about",
+      "status": 200,
+      "size": 1987
+    },
+    {
+      "timestamp_str": "07/Sep/2026:21:35:23",
+      "ip": "10.0.43.84",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 200,
+      "size": 3665
+    },
+    {
+      "timestamp_str": "07/Sep/2026:02:38:59",
+      "ip": "10.0.19.171",
+      "method": "DELETE",
+      "path": "/api/users",
+      "status": 200,
+      "size": 2388
+    },
+    {
+      "timestamp_str": "06/Sep/2026:10:22:00",
+      "ip": "10.0.43.227",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 404,
+      "size": 720
+    },
+    {
+      "timestamp_str": "02/Sep/2026:00:05:47",
+      "ip": "10.0.50.249",
+      "method": "GET",
+      "path": "/checkout",
+      "status": 200,
+      "size": 2942
+    },
+    {
+      "timestamp_str": "02/Sep/2026:20:20:49",
+      "ip": "10.0.19.148",
+      "method": "PUT",
+      "path": "/old-promo-page",
+      "status": 200,
+      "size": 580
+    },
+    {
+      "timestamp_str": "02/Sep/2026:15:03:43",
+      "ip": "10.0.14.222",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 200,
+      "size": 4128
+    },
+    {
+      "timestamp_str": "05/Sep/2026:11:13:48",
+      "ip": "10.0.4.242",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 2470
+    },
+    {
+      "timestamp_str": "06/Sep/2026:03:33:42",
+      "ip": "10.0.6.25",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 598
+    },
+    {
+      "timestamp_str": "01/Sep/2026:10:49:08",
+      "ip": "10.0.20.244",
+      "method": "GET",
+      "path": "/api/users",
+      "status": 200,
+      "size": 213
+    },
+    {
+      "timestamp_str": "04/Sep/2026:05:08:24",
+      "ip": "10.0.2.231",
+      "method": "DELETE",
+      "path": "/login",
+      "status": 200,
+      "size": 3051
+    },
+    {
+      "timestamp_str": "01/Sep/2026:20:02:27",
+      "ip": "10.0.5.56",
+      "method": "POST",
+      "path": "/home",
+      "status": 404,
+      "size": 4866
+    },
+    {
+      "timestamp_str": "04/Sep/2026:03:18:07",
+      "ip": "10.0.7.242",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 3919
+    },
+    {
+      "timestamp_str": "07/Sep/2026:03:05:27",
+      "ip": "10.0.14.125",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 3430
+    },
+    {
+      "timestamp_str": "05/Sep/2026:21:19:47",
+      "ip": "10.0.35.26",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 775
+    },
+    {
+      "timestamp_str": "05/Sep/2026:02:57:49",
+      "ip": "10.0.48.218",
+      "method": "GET",
+      "path": "/images/logo.png",
+      "status": 500,
+      "size": 1359
+    },
+    {
+      "timestamp_str": "02/Sep/2026:11:12:11",
+      "ip": "10.0.43.252",
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 767
+    },
+    {
+      "timestamp_str": "02/Sep/2026:20:31:29",
+      "ip": "10.0.7.117",
+      "method": "PUT",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 4774
+    },
+    {
+      "timestamp_str": "06/Sep/2026:03:55:40",
+      "ip": "10.0.46.14",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 200,
+      "size": 3772
+    },
+    {
+      "timestamp_str": "06/Sep/2026:11:37:03",
+      "ip": "10.0.26.125",
+      "method": "PUT",
+      "path": "/home",
+      "status": 200,
+      "size": 3852
+    },
+    {
+      "timestamp_str": "01/Sep/2026:21:18:04",
+      "ip": "10.0.4.243",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 404,
+      "size": 3299
+    },
+    {
+      "timestamp_str": "04/Sep/2026:02:28:58",
+      "ip": "10.0.45.55",
+      "method": "PUT",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 4046
+    },
+    {
+      "timestamp_str": "05/Sep/2026:09:28:06",
+      "ip": "10.0.4.107",
+      "method": "GET",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 1563
+    },
+    {
+      "timestamp_str": "01/Sep/2026:14:28:33",
+      "ip": "10.0.35.38",
+      "method": "PUT",
+      "path": "/about",
+      "status": 200,
+      "size": 2467
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:43:38",
+      "ip": "10.0.22.217",
+      "method": "DELETE",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 2850
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:18:16",
+      "ip": "10.0.29.107",
+      "method": "DELETE",
+      "path": "/old-promo-page",
+      "status": 500,
+      "size": 2880
+    },
+    {
+      "timestamp_str": "01/Sep/2026:02:58:22",
+      "ip": "10.0.42.111",
+      "method": "DELETE",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 1206
+    },
+    {
+      "timestamp_str": "05/Sep/2026:02:19:35",
+      "ip": "10.0.9.49",
+      "method": "DELETE",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 1196
+    },
+    {
+      "timestamp_str": "06/Sep/2026:23:43:58",
+      "ip": "10.0.2.79",
+      "method": "GET",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 4315
+    },
+    {
+      "timestamp_str": "03/Sep/2026:11:11:13",
+      "ip": "10.0.3.167",
+      "method": "POST",
+      "path": "/login",
+      "status": 200,
+      "size": 1276
+    },
+    {
+      "timestamp_str": "02/Sep/2026:21:50:06",
+      "ip": "10.0.35.181",
+      "method": "PUT",
+      "path": "/admin/login",
+      "status": 404,
+      "size": 4463
+    },
+    {
+      "timestamp_str": "01/Sep/2026:02:38:24",
+      "ip": "10.0.8.131",
+      "method": "GET",
+      "path": "/about",
+      "status": 301,
+      "size": 1506
+    },
+    {
+      "timestamp_str": "06/Sep/2026:14:23:43",
+      "ip": "10.0.30.157",
+      "method": "GET",
+      "path": "/product/123",
+      "status": 200,
+      "size": 3827
+    },
+    {
+      "timestamp_str": "02/Sep/2026:11:51:50",
+      "ip": "10.0.8.68",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 4822
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:49:24",
+      "ip": "10.0.16.42",
+      "method": "PUT",
+      "path": "/checkout",
+      "status": 500,
+      "size": 1785
+    },
+    {
+      "timestamp_str": "07/Sep/2026:03:03:41",
+      "ip": "10.0.45.88",
+      "method": "GET",
+      "path": "/product/456",
+      "status": 404,
+      "size": 4376
+    },
+    {
+      "timestamp_str": "07/Sep/2026:09:48:10",
+      "ip": "10.0.21.6",
+      "method": "POST",
+      "path": "/product/456",
+      "status": 200,
+      "size": 3733
+    },
+    {
+      "timestamp_str": "01/Sep/2026:07:52:28",
+      "ip": "10.0.13.117",
+      "method": "GET",
+      "path": "/index.html",
+      "status": 200,
+      "size": 3397
+    },
+    {
+      "timestamp_str": "05/Sep/2026:14:05:23",
+      "ip": "10.0.1.29",
+      "method": "GET",
+      "path": "/api/orders",
+      "status": 404,
+      "size": 2896
+    },
+    {
+      "timestamp_str": "07/Sep/2026:09:18:58",
+      "ip": "10.0.24.123",
+      "method": "POST",
+      "path": "/images/logo.png",
+      "status": 301,
+      "size": 3992
+    },
+    {
+      "timestamp_str": "04/Sep/2026:02:01:16",
+      "ip": "10.0.49.237",
+      "method": "GET",
+      "path": "/product/456",
+      "status": 404,
+      "size": 4473
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:15:19",
+      "ip": "10.0.20.103",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 3894
+    },
+    {
+      "timestamp_str": "01/Sep/2026:14:38:34",
+      "ip": "10.0.2.8",
+      "method": "DELETE",
+      "path": "/product/456",
+      "status": 200,
+      "size": 1326
+    },
+    {
+      "timestamp_str": "03/Sep/2026:15:22:15",
+      "ip": "10.0.44.28",
+      "method": "POST",
+      "path": "/about",
+      "status": 200,
+      "size": 851
+    },
+    {
+      "timestamp_str": "05/Sep/2026:02:33:34",
+      "ip": "10.0.35.181",
+      "method": "PUT",
+      "path": "/product/456",
+      "status": 200,
+      "size": 4001
+    },
+    {
+      "timestamp_str": "01/Sep/2026:03:16:47",
+      "ip": "10.0.2.8",
+      "method": "GET",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 2125
+    },
+    {
+      "timestamp_str": "06/Sep/2026:02:49:37",
+      "ip": "10.0.41.177",
+      "method": "GET",
+      "path": "/about",
+      "status": 200,
+      "size": 4622
+    },
+    {
+      "timestamp_str": "03/Sep/2026:05:53:49",
+      "ip": "10.0.37.156",
+      "method": "POST",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 1643
+    },
+    {
+      "timestamp_str": "07/Sep/2026:20:49:29",
+      "ip": "10.0.0.195",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 1784
+    },
+    {
+      "timestamp_str": "01/Sep/2026:11:32:25",
+      "ip": "10.0.34.120",
+      "method": "PUT",
+      "path": "/product/123",
+      "status": 200,
+      "size": 1715
+    },
+    {
+      "timestamp_str": "03/Sep/2026:21:03:55",
+      "ip": "10.0.19.130",
+      "method": "GET",
+      "path": "/api/users",
+      "status": 200,
+      "size": 3164
+    },
+    {
+      "timestamp_str": "04/Sep/2026:23:28:57",
+      "ip": "10.0.6.179",
+      "method": "POST",
+      "path": "/api/orders",
+      "status": 500,
+      "size": 4214
+    },
+    {
+      "timestamp_str": "06/Sep/2026:21:33:17",
+      "ip": "10.0.34.21",
+      "method": "GET",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 3677
+    },
+    {
+      "timestamp_str": "05/Sep/2026:05:34:18",
+      "ip": "10.0.3.104",
+      "method": "GET",
+      "path": "/home",
+      "status": 200,
+      "size": 2571
+    },
+    {
+      "timestamp_str": "03/Sep/2026:20:27:10",
+      "ip": "10.0.28.173",
+      "method": "POST",
+      "path": "/api/orders",
+      "status": 200,
+      "size": 3038
+    },
+    {
+      "timestamp_str": "05/Sep/2026:08:40:50",
+      "ip": "10.0.45.51",
+      "method": "GET",
+      "path": "/home",
+      "status": 200,
+      "size": 3477
+    },
+    {
+      "timestamp_str": "03/Sep/2026:20:43:10",
+      "ip": "10.0.44.213",
+      "method": "GET",
+      "path": "/about",
+      "status": 301,
+      "size": 3739
+    },
+    {
+      "timestamp_str": "01/Sep/2026:10:49:41",
+      "ip": "10.0.29.74",
+      "method": "GET",
+      "path": "/checkout",
+      "status": 404,
+      "size": 415
+    },
+    {
+      "timestamp_str": "05/Sep/2026:14:23:23",
+      "ip": "10.0.13.130",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 200,
+      "size": 3156
+    },
+    {
+      "timestamp_str": "04/Sep/2026:11:15:07",
+      "ip": "10.0.45.167",
+      "method": "DELETE",
+      "path": "/about",
+      "status": 200,
+      "size": 3320
+    },
+    {
+      "timestamp_str": "05/Sep/2026:21:16:45",
+      "ip": "10.0.16.34",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 200,
+      "size": 4173
+    },
+    {
+      "timestamp_str": "02/Sep/2026:21:04:28",
+      "ip": "10.0.16.249",
+      "method": "DELETE",
+      "path": "/product/123",
+      "status": 403,
+      "size": 2768
+    },
+    {
+      "timestamp_str": "06/Sep/2026:09:35:34",
+      "ip": "10.0.32.61",
+      "method": "GET",
+      "path": "/admin/login",
+      "status": 200,
+      "size": 1576
+    },
+    {
+      "timestamp_str": "07/Sep/2026:10:07:12",
+      "ip": "10.0.17.113",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "size": 365
+    },
+    {
+      "timestamp_str": "03/Sep/2026:03:29:51",
+      "ip": "10.0.10.250",
+      "method": "GET",
+      "path": "/old-promo-page",
+      "status": 500,
+      "size": 688
+    },
+    {
+      "timestamp_str": "03/Sep/2026:20:46:30",
+      "ip": "10.0.2.79",
+      "method": "POST",
+      "path": "/favicon.ico",
+      "status": 200,
+      "size": 4859
+    },
+    {
+      "timestamp_str": "01/Sep/2026:11:41:04",
+      "ip": "10.0.4.226",
+      "method": "POST",
+      "path": "/deprecated-api/v1",
+      "status": 404,
+      "size": 1201
+    },
+    {
+      "timestamp_str": "07/Sep/2026:20:37:11",
+      "ip": "10.0.28.157",
+      "method": "GET",
+      "path": "/checkout",
+      "status": 200,
+      "size": 603
+    },
+    {
+      "timestamp_str": "07/Sep/2026:10:19:10",
+      "ip": "10.0.40.41",
+      "method": "GET",
+      "path": "/images/logo.png",
+      "status": 200,
+      "size": 4400
+    },
+    {
+      "timestamp_str": "03/Sep/2026:08:12:40",
+      "ip": "10.0.6.179",
+      "method": "PUT",
+      "path": "/api/users",
+      "status": 200,
+      "size": 2630
+    },
+    {
+      "timestamp_str": "05/Sep/2026:15:41:10",
+      "ip": "10.0.21.72",
+      "method": "PUT",
+      "path": "/about",
+      "status": 200,
+      "size": 2915
+    }
+  ]
+}

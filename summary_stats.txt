@@ -1,0 +1,3 @@
+total_requests=200000
+total_404=43153
+error_rate=21.58
