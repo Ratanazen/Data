@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="srvGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="#0f172a"/>
+  <!-- Server Unit 1 -->
+  <rect x="18" y="20" width="64" height="16" rx="4" fill="#1e293b" stroke="url(#srvGrad)" stroke-width="2"/>
+  <circle cx="28" cy="28" r="2.5" fill="#10b981"/>
+  <circle cx="36" cy="28" r="2.5" fill="#06b6d4"/>
+  <line x1="46" y1="28" x2="74" y2="28" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Server Unit 2 -->
+  <rect x="18" y="42" width="64" height="16" rx="4" fill="#1e293b" stroke="url(#srvGrad)" stroke-width="2"/>
+  <circle cx="28" cy="50" r="2.5" fill="#10b981"/>
+  <circle cx="36" cy="50" r="2.5" fill="#f59e0b"/>
+  <line x1="46" y1="50" x2="74" y2="50" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Server Unit 3 -->
+  <rect x="18" y="64" width="64" height="16" rx="4" fill="#1e293b" stroke="url(#srvGrad)" stroke-width="2"/>
+  <circle cx="28" cy="72" r="2.5" fill="#ff0055"/>
+  <circle cx="36" cy="72" r="2.5" fill="#8b5cf6"/>
+  <line x1="46" y1="72" x2="74" y2="72" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+</svg>
