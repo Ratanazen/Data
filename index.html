@@ -64,7 +64,7 @@
       border-radius: 4px;
     }
     .glass-dark {
-      background: rgba(11, 15, 25, 0.82);
+      background: rgba(11, 15, 25, 0.85);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
     }
@@ -83,6 +83,57 @@
     .neon-border-violet {
       border: 1px solid rgba(139, 92, 246, 0.3);
       box-shadow: 0 0 20px rgba(139, 92, 246, 0.12);
+    }
+    
+    /* Dual Theme (Light Mode) CSS Overrides */
+    html:not(.dark) body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    html:not(.dark) .glass-dark {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border-color: rgba(203, 213, 225, 0.8) !important;
+    }
+    html:not(.dark) .glass-card {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
+    }
+    html:not(.dark) .text-white {
+      color: #0f172a !important;
+    }
+    html:not(.dark) .text-slate-100 {
+      color: #0f172a !important;
+    }
+    html:not(.dark) .text-slate-200 {
+      color: #1e293b !important;
+    }
+    html:not(.dark) .text-slate-300 {
+      color: #334155 !important;
+    }
+    html:not(.dark) .text-slate-400 {
+      color: #64748b !important;
+    }
+    html:not(.dark) .bg-slate-900 {
+      background-color: #f1f5f9 !important;
+      color: #1e293b !important;
+    }
+    html:not(.dark) .bg-slate-950 {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+    }
+    html:not(.dark) .border-slate-800,
+    html:not(.dark) .border-slate-800\/80 {
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) input,
+    html:not(.dark) select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    html:not(.dark) .bg-obsidian-950 {
+      background-color: #f8fafc !important;
     }
   </style>
 </head>
@@ -145,11 +196,23 @@
       </nav>
 
       <!-- Action & Theme Controls -->
-      <div class="flex items-center space-x-2.5 no-print">
+      <div class="flex items-center space-x-2 no-print">
+        <!-- Dark/Light Theme Toggle -->
+        <button id="theme-toggle-btn" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition shadow-sm" title="Toggle Dark/Light Mode">
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
+        </button>
+
+        <!-- GitHub Repo Link -->
+        <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="hidden sm:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="GitHub Repository">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>GitHub</span>
+        </a>
+
         <!-- Print / PDF Button -->
-        <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 flex items-center gap-1.5 shadow-sm transition" title="Print to PDF">
+        <button onclick="window.print()" class="hidden md:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="Print to PDF">
           <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-400"></i>
-          <span class="hidden sm:inline">Export PDF</span>
+          <span>PDF</span>
         </button>
 
         <!-- HTML Report Link -->
@@ -161,11 +224,54 @@
         <!-- Jump to Log Explorer -->
         <a href="#explorer" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-cyber-crimson to-purple-600 hover:from-rose-500 hover:to-indigo-500 text-white shadow-lg shadow-rose-600/30 flex items-center gap-1.5 transition">
           <i data-lucide="search" class="w-3.5 h-3.5"></i>
-          <span>Inspect Logs</span>
+          <span>Inspect</span>
         </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition" aria-label="Toggle Navigation Menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobile-menu" class="hidden lg:hidden glass-dark border-b border-slate-800/80 px-4 py-4 space-y-3 sticky top-16 z-40">
+    <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-300">
+      <a href="#overview" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <img src="assets/chart-bar.svg" class="w-4 h-4" alt="Overview"> Overview
+      </a>
+      <a href="#hourly" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <img src="assets/clock.svg" class="w-4 h-4" alt="Peak Times"> Peak Times
+      </a>
+      <a href="#heatmap" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <img src="assets/heatmap.svg" class="w-4 h-4" alt="Heatmap"> Heatmap
+      </a>
+      <a href="#endpoints" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> Endpoints
+      </a>
+      <a href="#explorer" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Log Explorer
+      </a>
+      <a href="#architecture" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <img src="assets/spark.svg" class="w-4 h-4" alt="Architecture"> Architecture
+      </a>
+      <a href="#recommendations" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <img src="assets/shield-check.svg" class="w-4 h-4" alt="Action Plan"> Action Plan
+      </a>
+      <a href="#deliverables" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Deliverables
+      </a>
+    </div>
+    <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2">
+      <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-center flex items-center justify-center gap-1.5 text-slate-200">
+        <i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub Repo
+      </a>
+      <button onclick="window.print()" class="py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-slate-200 flex items-center justify-center gap-1.5">
+        <i data-lucide="printer" class="w-3.5 h-3.5"></i> PDF
+      </button>
+    </div>
+  </div>
 
   <!-- Ambient Radiant Mesh Glows -->
   <div class="relative overflow-hidden">
@@ -574,14 +680,44 @@
         <!-- Log Entries Table -->
         <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-2xl bg-slate-950/80">
           <table class="w-full text-left text-xs font-mono">
-            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 select-none">
               <tr>
-                <th class="py-3 px-4">Timestamp (UTC)</th>
-                <th class="py-3 px-4">Client IP</th>
-                <th class="py-3 px-4">Method</th>
-                <th class="py-3 px-4">Requested Endpoint</th>
-                <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-right">Size</th>
+                <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('timestamp_str')">
+                  <div class="flex items-center gap-1">
+                    <span>Timestamp (UTC)</span>
+                    <span id="sort-timestamp_str" class="text-indigo-400 font-bold">↕</span>
+                  </div>
+                </th>
+                <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('ip')">
+                  <div class="flex items-center gap-1">
+                    <span>Client IP</span>
+                    <span id="sort-ip" class="text-slate-600">↕</span>
+                  </div>
+                </th>
+                <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('method')">
+                  <div class="flex items-center gap-1">
+                    <span>Method</span>
+                    <span id="sort-method" class="text-slate-600">↕</span>
+                  </div>
+                </th>
+                <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('path')">
+                  <div class="flex items-center gap-1">
+                    <span>Requested Endpoint</span>
+                    <span id="sort-path" class="text-slate-600">↕</span>
+                  </div>
+                </th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-white transition" onclick="sortBy('status')">
+                  <div class="flex items-center justify-center gap-1">
+                    <span>Status</span>
+                    <span id="sort-status" class="text-slate-600">↕</span>
+                  </div>
+                </th>
+                <th class="py-3 px-4 text-right cursor-pointer hover:text-white transition" onclick="sortBy('size')">
+                  <div class="flex items-center justify-end gap-1">
+                    <span>Size</span>
+                    <span id="sort-size" class="text-slate-600">↕</span>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody id="logs-table-body" class="divide-y divide-slate-800/80 text-slate-300">
@@ -590,9 +726,31 @@
           </table>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-slate-400">
-          <span id="log-count-info">Showing entries...</span>
-          <span class="text-slate-500 italic">Common Log Format • Ingested via Hadoop HDFS</span>
+        <!-- Table Pagination Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1 text-xs text-slate-400">
+          <div class="flex items-center gap-3">
+            <span id="log-count-info" class="font-medium text-slate-300">Showing entries...</span>
+            <span class="text-slate-600">|</span>
+            <label class="flex items-center gap-1.5 text-slate-400">
+              <span>Per page:</span>
+              <select id="page-size-select" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-prev-page" onclick="changePage(-1)" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition">
+              <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+            </button>
+            <span id="page-indicator" class="px-3 py-1 rounded-xl bg-slate-950 font-mono text-slate-300 border border-slate-800">Page 1 / 1</span>
+            <button id="btn-next-page" onclick="changePage(1)" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition">
+              Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -725,14 +883,14 @@
       </section>
 
       <!-- Deliverables & Artifact Download Center -->
-      <section class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
+      <section id="deliverables" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h4 class="text-base font-bold text-white flex items-center gap-2">
               <i data-lucide="download" class="w-5 h-5 text-indigo-400"></i>
               <span>Assignment Deliverables & Artifact Center</span>
             </h4>
-            <p class="text-xs text-slate-400">Download CSV tables and high-resolution chart images directly</p>
+            <p class="text-xs text-slate-400">Download CSV tables, pipeline scripts, Jupyter notebook, and analysis reports directly</p>
           </div>
           <div class="flex flex-wrap gap-2 text-xs">
             <a href="hourly_404_errors.csv" download class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 transition flex items-center gap-1.5">
@@ -750,12 +908,26 @@
             <a href="daily_404_trend.csv" download class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 transition flex items-center gap-1.5">
               <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-indigo-400"></i> daily_404_trend.csv
             </a>
+            <a href="run_analysis.py" download class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 transition flex items-center gap-1.5">
+              <i data-lucide="code" class="w-3.5 h-3.5 text-emerald-400"></i> run_analysis.py
+            </a>
+            <a href="Log_File_Analysis_Report.html" class="px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/50 text-indigo-300 transition flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-400"></i> Log_File_Analysis_Report.html
+            </a>
+            <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 transition flex items-center gap-1.5">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub Repo
+            </a>
           </div>
         </div>
       </section>
 
     </main>
   </div>
+
+  <!-- Floating Back-to-Top Button -->
+  <button id="back-to-top-btn" class="fixed bottom-6 right-6 z-40 p-3 rounded-full bg-slate-900/95 text-white border border-slate-700 shadow-2xl opacity-0 pointer-events-none transition-all duration-300 hover:bg-cyber-crimson hover:scale-110 flex items-center justify-center no-print" title="Back to Top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
 
   <!-- Footer -->
   <footer class="border-t border-slate-800/80 bg-obsidian-950 py-8 text-center text-xs text-slate-500">
@@ -764,8 +936,16 @@
         <img src="assets/favicon.svg" alt="Logo" class="w-5 h-5">
         <span class="font-semibold text-slate-400">Assignment 2 • Big Data Analytics • Hadoop HDFS & Apache PySpark</span>
       </div>
-      <div>
-        <span>Built with PySpark, Chart.js & Tailwind CSS • Group IDK</span>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-400 flex items-center gap-1 transition">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i> Ratanazen/Data
+        </a>
+        <span>•</span>
+        <a href="Log_File_Analysis_Report.html" class="hover:text-indigo-400 flex items-center gap-1 transition">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Report HTML
+        </a>
+        <span>•</span>
+        <span>Group IDK</span>
       </div>
     </div>
   </footer>
@@ -1035,7 +1215,7 @@
           cells += `<td class="p-1">
             <div class="py-1 px-0.5 rounded-lg text-[10px] ${bgClass} transition hover:scale-125 cursor-pointer select-none"
                  onmouseover="inspectHeatmapCell('${row.day}', ${h}, ${val}, '${threat}', '${badgeColor}')"
-                 onclick="applyChip('404', '')">
+                 onclick="filterByHeatmapCell('${row.day}', ${h})" title="Click to view ${row.day} ${h.toString().padStart(2, '0')}:00 logs">
               ${val}
             </div>
           </td>`;
@@ -1157,43 +1337,118 @@
       renderLogsTable(data.sample_logs);
     }
 
+    // Pagination & Sorting State
+    let currentPage = 1;
+    let pageSize = 15;
+    let sortColumn = 'timestamp_str';
+    let sortDirection = 'asc';
+
     // Heatmap Cell Inspector Hover Callback
     function inspectHeatmapCell(day, hour, val, threat, badgeColor) {
       const descEl = document.getElementById('inspect-desc');
       const badgeEl = document.getElementById('inspect-badge');
-      descEl.innerHTML = `<strong>${day}</strong> at <strong>${hour.toString().padStart(2, '0')}:00 – ${(hour+1).toString().padStart(2, '0')}:00 UTC</strong>: <span class="text-rose-400 font-bold">${val.toLocaleString()} errors</span>`;
+      const hourPadded = hour.toString().padStart(2, '0');
+      const nextHourPadded = (hour + 1).toString().padStart(2, '0');
+      descEl.innerHTML = `<strong>${day}</strong> at <strong>${hourPadded}:00 – ${nextHourPadded}:00 UTC</strong>: <span class="text-rose-400 font-bold">${val.toLocaleString()} 404 errors</span> <span class="text-slate-400 font-normal">(Click cell to view logs)</span>`;
       badgeEl.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeColor}`;
       badgeEl.innerText = threat;
       badgeEl.classList.remove('hidden');
     }
 
-    // Log Table Filtering & Rendering
+    // Heatmap Cell Click Handler: Jump & Filter by Hour
+    function filterByHeatmapCell(day, hour) {
+      const hourPadded = hour.toString().padStart(2, '0');
+      document.getElementById('status-filter').value = '404';
+      document.getElementById('log-search').value = `:${hourPadded}:`;
+      currentPage = 1;
+      renderLogsTable(activeData.sample_logs);
+      document.getElementById('explorer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Table Column Sorting
+    function sortBy(col) {
+      if (sortColumn === col) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = col;
+        sortDirection = 'asc';
+      }
+      updateSortIndicators();
+      renderLogsTable(activeData.sample_logs);
+    }
+
+    function updateSortIndicators() {
+      const cols = ['timestamp_str', 'ip', 'method', 'path', 'status', 'size'];
+      cols.forEach(c => {
+        const el = document.getElementById(`sort-${c}`);
+        if (el) {
+          if (c === sortColumn) {
+            el.innerText = sortDirection === 'asc' ? '▲' : '▼';
+            el.className = 'text-indigo-400 font-bold';
+          } else {
+            el.innerText = '↕';
+            el.className = 'text-slate-600';
+          }
+        }
+      });
+    }
+
+    // Pagination Navigation
+    function changePage(delta) {
+      currentPage += delta;
+      renderLogsTable(activeData.sample_logs);
+    }
+
+    // Log Table Filtering, Sorting & Rendering
     function renderLogsTable(logs) {
+      if (!logs) return;
       const searchVal = document.getElementById('log-search').value.toLowerCase().trim();
       const statusFilter = document.getElementById('status-filter').value;
       const methodFilter = document.getElementById('method-filter').value;
 
-      const filtered = logs.filter(item => {
+      let filtered = logs.filter(item => {
         if (statusFilter !== 'ALL' && item.status.toString() !== statusFilter) return false;
         if (methodFilter !== 'ALL' && item.method !== methodFilter) return false;
         if (searchVal) {
           const matchPath = item.path.toLowerCase().includes(searchVal);
           const matchIp = item.ip.toLowerCase().includes(searchVal);
           const matchMethod = item.method.toLowerCase().includes(searchVal);
-          if (!matchPath && !matchIp && !matchMethod) return false;
+          const matchTime = item.timestamp_str.toLowerCase().includes(searchVal);
+          if (!matchPath && !matchIp && !matchMethod && !matchTime) return false;
         }
         return true;
       });
 
+      // Sort records
+      filtered.sort((a, b) => {
+        let valA = a[sortColumn];
+        let valB = b[sortColumn];
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      const totalRecords = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const pageLogs = filtered.slice(startIndex, startIndex + pageSize);
+
       const tbody = document.getElementById('logs-table-body');
       tbody.innerHTML = '';
 
-      if (filtered.length === 0) {
+      if (pageLogs.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No log entries matching filter criteria.</td></tr>`;
       } else {
-        filtered.slice(0, 50).forEach(log => {
+        pageLogs.forEach(log => {
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-850/60 transition";
+          tr.className = "hover:bg-slate-800/40 dark:hover:bg-slate-800/60 transition";
 
           let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-800 text-slate-200">${log.status}</span>`;
           if (log.status === 200) statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">200 OK</span>`;
@@ -1206,7 +1461,7 @@
             <td class="py-2.5 px-4 text-slate-400 font-mono">${log.timestamp_str}</td>
             <td class="py-2.5 px-4 text-indigo-400 font-mono font-semibold">${log.ip}</td>
             <td class="py-2.5 px-4"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-bold text-[10px]">${log.method}</span></td>
-            <td class="py-2.5 px-4 font-semibold text-slate-200 font-mono">${log.path}</td>
+            <td class="py-2.5 px-4 font-semibold text-slate-200 font-mono truncate max-w-xs" title="${log.path}">${log.path}</td>
             <td class="py-2.5 px-4 text-center">${statusBadge}</td>
             <td class="py-2.5 px-4 text-right text-slate-400 font-mono">${log.size.toLocaleString()} B</td>
           `;
@@ -1214,12 +1469,22 @@
         });
       }
 
-      document.getElementById('log-count-info').innerText = `Showing ${Math.min(filtered.length, 50)} of ${filtered.length} filtered records (${logs.length} sampled)`;
+      // Update counter and controls
+      const startDisplay = totalRecords === 0 ? 0 : startIndex + 1;
+      const endDisplay = Math.min(startIndex + pageSize, totalRecords);
+      document.getElementById('log-count-info').innerText = `Showing ${startDisplay}–${endDisplay} of ${totalRecords.toLocaleString()} entries`;
+      document.getElementById('page-indicator').innerText = `Page ${currentPage} of ${totalPages}`;
+      
+      const btnPrev = document.getElementById('btn-prev-page');
+      const btnNext = document.getElementById('btn-next-page');
+      if (btnPrev) btnPrev.disabled = (currentPage <= 1);
+      if (btnNext) btnNext.disabled = (currentPage >= totalPages);
     }
 
     function applyChip(status, search) {
       document.getElementById('status-filter').value = status;
       document.getElementById('log-search').value = search;
+      currentPage = 1;
       renderLogsTable(activeData.sample_logs);
       document.getElementById('explorer').scrollIntoView({ behavior: 'smooth' });
     }
@@ -1228,6 +1493,7 @@
       document.getElementById('status-filter').value = 'ALL';
       document.getElementById('method-filter').value = 'ALL';
       document.getElementById('log-search').value = '';
+      currentPage = 1;
       renderLogsTable(activeData.sample_logs);
     }
 
@@ -1269,11 +1535,122 @@
       link.click();
     }
 
-    document.getElementById('log-search').addEventListener('input', () => renderLogsTable(activeData.sample_logs));
-    document.getElementById('status-filter').addEventListener('change', () => renderLogsTable(activeData.sample_logs));
-    document.getElementById('method-filter').addEventListener('change', () => renderLogsTable(activeData.sample_logs));
+    // Chart.js Cross-Theme Styling Adapter
+    function updateChartsTheme(theme) {
+      const isDark = theme === 'dark';
+      const textColor = isDark ? '#94a3b8' : '#475569';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
+      const tooltipBg = isDark ? '#030712' : '#ffffff';
+      const tooltipTitle = isDark ? '#f8fafc' : '#0f172a';
+      const tooltipBody = isDark ? '#e2e8f0' : '#334155';
+      const tooltipBorder = isDark ? '#334155' : '#cbd5e1';
 
+      Object.values(chartInstances).forEach(chart => {
+        if (!chart) return;
+        if (chart.options.scales) {
+          if (chart.options.scales.x) {
+            if (chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
+            if (chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
+          }
+          if (chart.options.scales.y) {
+            if (chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
+            if (chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
+          }
+        }
+        if (chart.options.plugins && chart.options.plugins.tooltip) {
+          chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+          chart.options.plugins.tooltip.titleColor = tooltipTitle;
+          chart.options.plugins.tooltip.bodyColor = tooltipBody;
+          chart.options.plugins.tooltip.borderColor = tooltipBorder;
+        }
+        if (chart.config.type === 'doughnut') {
+          chart.data.datasets[0].borderColor = isDark ? '#030712' : '#ffffff';
+          if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+            chart.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#334155';
+          }
+        }
+        chart.update();
+      });
+    }
+
+    // Theme Switcher Logic
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+      updateChartsTheme(theme);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Event Listeners
+    document.getElementById('log-search').addEventListener('input', () => {
+      currentPage = 1;
+      renderLogsTable(activeData.sample_logs);
+    });
+    document.getElementById('status-filter').addEventListener('change', () => {
+      currentPage = 1;
+      renderLogsTable(activeData.sample_logs);
+    });
+    document.getElementById('method-filter').addEventListener('change', () => {
+      currentPage = 1;
+      renderLogsTable(activeData.sample_logs);
+    });
+    document.getElementById('page-size-select').addEventListener('change', (e) => {
+      pageSize = parseInt(e.target.value, 10);
+      currentPage = 1;
+      renderLogsTable(activeData.sample_logs);
+    });
+
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const nextTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        setTheme(nextTheme);
+      });
+    }
+
+    // Mobile Hamburger Menu
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+    }
+
+    // Floating Back-to-Top Button
+    const backToTopBtn = document.getElementById('back-to-top-btn');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 350) {
+          backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+          backToTopBtn.classList.add('opacity-100', 'pointer-events-auto');
+        } else {
+          backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto');
+          backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+        }
+      });
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // Initial Execution
     document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
       lucide.createIcons();
       loadData();
     });
