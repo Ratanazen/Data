@@ -1,5 +1,5 @@
 """
-Test Suite for Log File Analysis Pipeline
+Test Suite for Log File Analysis Pipeline (Cross-Platform)
 """
 
 import os
@@ -7,15 +7,16 @@ import re
 import json
 import csv
 import unittest
+from pathlib import Path
 
-DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIR = Path(__file__).resolve().parent.parent
 
 class TestLogFileAnalysis(unittest.TestCase):
 
     def test_01_server_log_exists(self):
-        log_path = os.path.join(DIR, 'server.log')
-        self.assertTrue(os.path.exists(log_path), "server.log must exist")
-        self.assertGreater(os.path.getsize(log_path), 1_000_000, "server.log should be > 1MB")
+        log_path = DIR / 'server.log'
+        self.assertTrue(log_path.exists(), "server.log must exist")
+        self.assertGreater(log_path.stat().st_size, 1_000_000, "server.log should be > 1MB")
 
     def test_02_regex_pattern(self):
         pattern = re.compile(
@@ -31,29 +32,28 @@ class TestLogFileAnalysis(unittest.TestCase):
         self.assertEqual(m.group(6), '342')
 
     def test_03_summary_stats(self):
-        stats_path = os.path.join(DIR, 'summary_stats.txt')
-        self.assertTrue(os.path.exists(stats_path), "summary_stats.txt must exist")
-        with open(stats_path) as f:
+        stats_path = DIR / 'summary_stats.txt'
+        self.assertTrue(stats_path.exists(), "summary_stats.txt must exist")
+        with open(stats_path, 'r', encoding='utf-8') as f:
             content = f.read()
         self.assertIn('total_requests=200000', content)
         self.assertIn('total_404=43153', content)
         self.assertIn('error_rate=21.58', content)
 
     def test_04_hourly_errors_csv(self):
-        csv_path = os.path.join(DIR, 'hourly_404_errors.csv')
-        self.assertTrue(os.path.exists(csv_path), "hourly_404_errors.csv must exist")
-        with open(csv_path) as f:
+        csv_path = DIR / 'hourly_404_errors.csv'
+        self.assertTrue(csv_path.exists(), "hourly_404_errors.csv must exist")
+        with open(csv_path, 'r', encoding='utf-8') as f:
             reader = list(csv.DictReader(f))
         self.assertEqual(len(reader), 24, "Must have exactly 24 hourly rows")
-        # Find peak hour
         peak_row = max(reader, key=lambda r: int(r['error_count']))
         self.assertEqual(int(peak_row['hour']), 3, "Peak failure hour must be 3 (03:00 AM)")
         self.assertGreater(int(peak_row['error_count']), 4000)
 
     def test_05_status_code_breakdown_csv(self):
-        csv_path = os.path.join(DIR, 'status_code_breakdown.csv')
-        self.assertTrue(os.path.exists(csv_path), "status_code_breakdown.csv must exist")
-        with open(csv_path) as f:
+        csv_path = DIR / 'status_code_breakdown.csv'
+        self.assertTrue(csv_path.exists(), "status_code_breakdown.csv must exist")
+        with open(csv_path, 'r', encoding='utf-8') as f:
             reader = list(csv.DictReader(f))
         statuses = {int(r['status']): int(r['count']) for r in reader}
         self.assertIn(200, statuses)
@@ -62,9 +62,9 @@ class TestLogFileAnalysis(unittest.TestCase):
         self.assertEqual(statuses[200], 136415)
 
     def test_06_top_endpoints_csv(self):
-        csv_path = os.path.join(DIR, 'top_404_paths.csv')
-        self.assertTrue(os.path.exists(csv_path), "top_404_paths.csv must exist")
-        with open(csv_path) as f:
+        csv_path = DIR / 'top_404_paths.csv'
+        self.assertTrue(csv_path.exists(), "top_404_paths.csv must exist")
+        with open(csv_path, 'r', encoding='utf-8') as f:
             reader = list(csv.DictReader(f))
         self.assertEqual(len(reader), 10, "Must have top 10 endpoints")
         self.assertEqual(reader[0]['path'], '/admin/login')
@@ -77,14 +77,14 @@ class TestLogFileAnalysis(unittest.TestCase):
             '404_daily_trend.png'
         ]
         for img in images:
-            img_path = os.path.join(DIR, img)
-            self.assertTrue(os.path.exists(img_path), f"{img} must exist")
-            self.assertGreater(os.path.getsize(img_path), 10_000, f"{img} should be > 10KB")
+            img_path = DIR / img
+            self.assertTrue(img_path.exists(), f"{img} must exist")
+            self.assertGreater(img_path.stat().st_size, 10_000, f"{img} should be > 10KB")
 
     def test_08_web_dashboard_data_json(self):
-        json_path = os.path.join(DIR, 'web_dashboard_data.json')
-        self.assertTrue(os.path.exists(json_path), "web_dashboard_data.json must exist")
-        with open(json_path) as f:
+        json_path = DIR / 'web_dashboard_data.json'
+        self.assertTrue(json_path.exists(), "web_dashboard_data.json must exist")
+        with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         self.assertIn('metadata', data)
         self.assertIn('hourly_distribution', data)
@@ -94,14 +94,22 @@ class TestLogFileAnalysis(unittest.TestCase):
         self.assertEqual(data['metadata']['peak_hour'], 3)
 
     def test_09_web_dashboard_html(self):
-        html_path = os.path.join(DIR, 'index.html')
-        self.assertTrue(os.path.exists(html_path), "index.html must exist")
+        html_path = DIR / 'index.html'
+        self.assertTrue(html_path.exists(), "index.html must exist")
         with open(html_path, 'r', encoding='utf-8') as f:
             html = f.read()
         self.assertIn('hourlyChart', html)
         self.assertIn('statusChart', html)
         self.assertIn('endpointsChart', html)
         self.assertIn('heatmap', html)
+        self.assertIn('assets/favicon.svg', html)
+
+    def test_10_serve_mime_types(self):
+        import serve
+        handler = serve.CrossPlatformHandler
+        self.assertEqual(handler.extensions_map.get('.svg'), 'image/svg+xml')
+        self.assertEqual(handler.extensions_map.get('.json'), 'application/json')
+        self.assertEqual(handler.extensions_map.get('.js'), 'application/javascript')
 
 if __name__ == '__main__':
     unittest.main()

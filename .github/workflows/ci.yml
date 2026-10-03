@@ -1,0 +1,58 @@
+name: Cross-Platform CI (Linux, macOS, Windows)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 🧪 Run Automated Unit Tests
+      run: |
+        python -m unittest discover -s tests -p "test_*.py" -v
+
+    - name: ⚡ Execute Analysis Pipeline
+      run: |
+        python run_analysis.py
+
+    - name: 📄 Export HTML Report
+      run: |
+        python export_report.py
+
+    - name: 🔍 Verify Deliverable Artifacts
+      shell: bash
+      run: |
+        echo "Checking generated deliverables..."
+        for file in hourly_404_errors.csv status_code_breakdown.csv heatmap_day_hour_404.csv top_404_paths.csv daily_404_trend.csv summary_stats.txt 404_errors_by_hour.png 404_heatmap_day_hour.png top_404_paths.png 404_daily_trend.png index.html Log_File_Analysis_Report.html; do
+          if [ ! -f "$file" ]; then
+            echo "::error file=$file::Missing deliverable $file"
+            exit 1
+          fi
+          echo "  ✓ $file exists"
+        done
+        echo "All deliverables verified successfully on ${{ runner.os }}!"

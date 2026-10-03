@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-10-03T14:46:30.914399",
+    "generated_at": "2026-10-03T15:09:48.474132",
     "dataset_name": "Server Access Logs (Apache/NGINX Common Log Format)",
     "storage_engine": "Hadoop Distributed File System (HDFS)",
     "processing_engine": "Apache PySpark DataFrame API",
@@ -8,7 +8,7 @@
     "total_404": 43153,
     "error_rate": 21.58,
     "peak_hour": 3,
-    "peak_hour_formatted": "03:00 - 04:00",
+    "peak_hour_formatted": "03:00 - 04:00 AM",
     "peak_count": 4655
   },
   "status_breakdown": [

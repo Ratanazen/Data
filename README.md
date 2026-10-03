@@ -2,11 +2,12 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Hadoop](https://img.shields.io/badge/Hadoop-HDFS%20Distributed-FFC107?style=for-the-badge&logo=apachehadoop&logoColor=black)
 ![PySpark](https://img.shields.io/badge/Apache%20Spark-PySpark%20DataFrame-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Tests](https://img.shields.io/badge/Unit%20Tests-9%2F9%20Passing-22C55E?style=for-the-badge&logo=checkmarx&logoColor=white)
+![CI Tests](https://img.shields.io/badge/CI%20Matrix-10%2F10%20Tests%20Passing-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)
 
 <br/>
 
@@ -23,11 +24,12 @@
 - [🎯 1. Project Overview](#-1-project-overview)
 - [⚡ 2. Key Analytical Findings](#-2-key-analytical-findings)
 - [🏗️ 3. Big Data Architecture](#️-3-big-data-architecture)
-- [🚀 4. Full Build & Execution Configuration](#-4-full-build--execution-configuration)
-  - [Method A: Makefile (Quickest)](#method-a-makefile-quickest)
-  - [Method B: Automated Build Script (`./build.sh`)](#method-b-automated-build-script-buildsh)
-  - [Method C: Docker & Docker Compose](#method-c-docker--docker-compose)
-- [🧪 5. Automated Testing Suite](#-5-automated-testing-suite)
+- [💻 4. Cross-Platform Execution Guide](#-4-cross-platform-execution-guide)
+  - [🪟 Windows (Batch, PowerShell, or 1-Click)](#-windows-batch-powershell-or-1-click)
+  - [🍎 macOS (Make or Bash)](#-macos-make-or-bash)
+  - [🐧 Linux (Make or Bash)](#-linux-make-or-bash)
+  - [🐳 Docker Container (Any OS)](#-docker-container-any-os)
+- [🧪 5. Automated Testing & CI Matrix](#-5-automated-testing--ci-matrix)
 - [📁 6. Repository Layout & Deliverables](#-6-repository-layout--deliverables)
 - [🛡️ 7. Tactical Incident Recommendations](#️-7-tactical-incident-recommendations)
 
@@ -37,12 +39,12 @@
 
 Production server clusters generate gigabytes of telemetry every hour. When elevated error rates threaten user experience, identifying **when** failures spike, **which** endpoints trigger them, and **why** they happen is a core data engineering challenge.
 
-This project delivers an end-to-end Big Data analysis pipeline:
+This project delivers a complete, cross-platform Big Data analysis pipeline:
 1. **Hadoop HDFS Storage Simulation**: Models distributed 128MB block chunking with 3x replica fault tolerance.
 2. **PySpark DataFrame Engine**: Distributed regex parsing (`F.regexp_extract`) leveraging Catalyst query optimization and Tungsten JVM bytecode compilation.
 3. **In-Memory Caching (`.cache()`)**: Persists cleaned DataFrames in executor RAM for instantaneous multi-dimensional aggregations.
 4. **Interactive Web Dashboard**: Modern, responsive analytics dashboard (`index.html`) featuring real-time Chart.js visualizations, day-by-hour heatmap matrix, and log explorer.
-5. **Full Build Configuration**: Production-ready `Makefile`, `build.sh`, `pyproject.toml`, `requirements.txt`, and `Dockerfile`.
+5. **Full Cross-Platform Build Configuration**: Works seamlessly on **Windows**, **macOS**, and **Linux** with `Makefile`, `build.sh`, `build.bat`, `build.ps1`, `run.bat`, `pyproject.toml`, and `Dockerfile`.
 
 ---
 
@@ -102,66 +104,84 @@ The pipeline ingested and analyzed a 7-day server access log dataset of **200,00
 
 ---
 
-## 🚀 4. Full Build & Execution Configuration
+## 💻 4. Cross-Platform Execution Guide
 
-### Method A: Makefile (Quickest)
+### 🪟 Windows (Batch, PowerShell, or 1-Click)
+
+#### Option 1: 1-Click Double-Click
+Double-click [`run.bat`](run.bat) in File Explorer. It automatically runs tests, builds data, and opens the Web Dashboard in your browser!
+
+#### Option 2: Command Prompt (cmd)
+```cmd
+REM 1. Audit environment and deliverables
+build.bat check
+
+REM 2. Run tests and regenerate all artifacts
+build.bat all
+
+REM 3. Launch the Web Dashboard
+build.bat web
+```
+
+#### Option 3: PowerShell
+```powershell
+# Run complete pipeline
+.\build.ps1 all
+
+# Launch the Web Dashboard on port 8080
+.\build.ps1 web -Port 8080
+```
+
+---
+
+### 🍎 macOS (Make or Bash)
 
 ```bash
-# View interactive menu of all available targets
-make help
-
-# Run full sequence: clean, check environment, run unit tests, and build artifacts
+# Using Makefile
 make all
-
-# Start the interactive Web Dashboard (http://localhost:8080)
 make web
-# (or specify custom port: make web PORT=3000)
 
-# Run unit tests
-make test
+# Or using the build script
+./build.sh all
+./build.sh web
 ```
 
-### Method B: Automated Build Script (`./build.sh`)
+---
+
+### 🐧 Linux (Make or Bash)
 
 ```bash
-# Check dependencies and deliverable files
-./build.sh check
+# Using Makefile
+make all
+make web
 
-# Run data pipeline and regenerate figures/CSVs
-./build.sh build
-
-# Launch the Web Dashboard
-./build.sh web --port=8080
-
-# Re-export standalone HTML report
-./build.sh report
-
-# Run test suite
-./build.sh test
+# Or using the build script
+./build.sh all
+./build.sh web
 ```
 
-### Method C: Docker & Docker Compose
+---
 
-Run the entire pipeline in an isolated, containerized environment:
+### 🐳 Docker Container (Any OS)
+
+Run the entire pipeline in a clean, reproducible container:
 
 ```bash
-# Build and run with Docker Compose
 docker compose up --build
-
 # Open http://localhost:8080 in your browser
 ```
 
 ---
 
-## 🧪 5. Automated Testing Suite
+## 🧪 5. Automated Testing & CI Matrix
 
-The repository includes a complete automated test suite in [`tests/test_analysis.py`](tests/test_analysis.py) verifying pipeline accuracy:
+The repository includes an automated test suite in [`tests/test_analysis.py`](tests/test_analysis.py) and continuous integration across **Linux**, **macOS**, and **Windows** via GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ```bash
 python -m unittest tests/test_analysis.py
 ```
 
-### Test Coverage (9 Test Cases):
+### Test Coverage (10 Test Cases):
 - `test_01_server_log_exists`: Ensures `server.log` is present and intact (>1MB).
 - `test_02_regex_pattern`: Verifies Common Log Format parser against sample lines.
 - `test_03_summary_stats`: Verifies exact values in `summary_stats.txt` (200k total, 43,153 errors, 21.58%).
@@ -170,7 +190,8 @@ python -m unittest tests/test_analysis.py
 - `test_06_top_endpoints_csv`: Validates top 10 endpoints and flags `/admin/login`.
 - `test_07_chart_images_generated`: Verifies all 4 high-resolution `.png` figures are rendered (>10KB).
 - `test_08_web_dashboard_data_json`: Validates schema and structure of the dashboard JSON feed.
-- `test_09_web_dashboard_html`: Checks critical UI containers in `index.html`.
+- `test_09_web_dashboard_html`: Checks critical UI containers and SVG favicon in `index.html`.
+- `test_10_serve_mime_types`: Ensures proper `.svg`, `.json`, `.js`, and `.css` MIME mappings on Windows/Mac.
 
 ---
 
@@ -179,18 +200,24 @@ python -m unittest tests/test_analysis.py
 ```text
 Assignment2/
 ├── index.html                     # 🌐 Interactive Web Dashboard (Chart.js, Heatmap, Explorer)
-├── serve.py                       # 🚀 Web Server launcher with port auto-detection
+├── serve.py                       # 🚀 Cross-Platform Web Server with MIME mapping & auto-port
 ├── run_analysis.py                # 🐍 Standalone data processing & visualization pipeline
 ├── export_report.py               # 📄 HTML report generator with styled formatting
 ├── fix_notebooks.py               # 🛠️ Notebook validation and cell cleanup script
 │
-├── Makefile                       # ⚙️ Master build configuration
-├── build.sh                       # 📜 Automation shell script with full CLI flags
+├── build.bat                      # 🪟 Windows Command Prompt build script
+├── build.ps1                      # 🪟 Windows & Mac PowerShell automation script
+├── run.bat                        # 🪟 Windows 1-Click desktop launcher
+├── Makefile                       # ⚙️ Master POSIX build configuration
+├── build.sh                       # 📜 Master Unix shell automation script
 ├── Dockerfile                     # 🐳 Container build specification
 ├── docker-compose.yml             # 🐳 Multi-service orchestration config
 ├── pyproject.toml                 # 📦 Modern Python project metadata & tool settings
 ├── requirements.txt               # 📋 Pinned dependencies list
 ├── .editorconfig                  # 📐 Code styling and formatting rules
+│
+├── .github/                       # 🤖 GitHub CI Workflows
+│   └── workflows/ci.yml           # Cross-platform matrix test on Linux, Mac, & Windows
 │
 ├── assets/                        # 🎨 Visual & SVG Assets
 │   ├── favicon.svg                # 🌟 Glowing activity pulse favicon
@@ -199,7 +226,7 @@ Assignment2/
 │   └── architecture.svg           # 🏗️ System architecture SVG diagram
 │
 ├── tests/                         # 🧪 Automated Test Suite
-│   └── test_analysis.py           # 9 unit tests verifying pipeline integrity
+│   └── test_analysis.py           # 10 unit tests verifying pipeline integrity
 │
 ├── server.log                     # 🪵 200,000 raw server access records
 ├── Log_File_Analysis_PySpark.ipynb # 📓 Main PySpark Jupyter Notebook
