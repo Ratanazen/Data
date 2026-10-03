@@ -1,65 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <title>Log File Analysis Report — PySpark & Hadoop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📄 Log File Analysis Executive Report — Hadoop & PySpark</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      body { background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .shadow-2xl { box-shadow: none !important; }
+      .border { border-color: #cbd5e1 !important; }
+      .bg-slate-900, .bg-slate-950 { background: white !important; color: black !important; }
+      h1, h2, h3, strong { color: black !important; }
+      p, li, td { color: #334155 !important; }
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen py-10 px-4 sm:px-8">
-  <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 sm:p-12 shadow-2xl space-y-6">
-    <div class="flex items-center justify-between pb-4 border-b border-slate-800 text-xs text-slate-400">
-      <span>Assignment 2 • Hadoop & PySpark</span>
-      <div class="flex gap-3">
-        <a href="index.html" class="text-indigo-400 hover:underline">← Open Web Dashboard</a>
-        <button onclick="window.print()" class="text-slate-300 hover:underline">Print Report</button>
-      </div>
+<body class="bg-slate-950 text-slate-200 min-h-screen py-8 px-4 sm:px-6 lg:px-8 font-sans antialiased">
+  
+  <!-- Navigation Top Bar -->
+  <header class="max-w-4xl mx-auto mb-6 flex items-center justify-between no-print">
+    <div class="flex items-center gap-2">
+      <img src="assets/favicon.svg" alt="Logo" class="w-6 h-6">
+      <span class="text-xs font-bold text-slate-400">Assignment 2 • Hadoop & Apache PySpark</span>
     </div>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-lg transition">
+        <span>🌐</span> Open Web Dashboard
+      </a>
+      <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+        <span>🖨️</span> Print / PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- Document Card -->
+  <main class="max-w-4xl mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-12 shadow-2xl space-y-6">
     <div class="my-4 leading-relaxed"><div align="center">
 
-<h1 class="text-3xl font-extrabold text-white mb-2">📊 Log File Analysis Report</h1>
+<h1 class="text-3xl font-black text-white mb-2">📊 Log File Analysis Report</h1>
 
-<h3 class="text-lg font-bold text-slate-200 mt-6 mb-2">Counting 404 Errors and Identifying Peak Failure Times Using Hadoop & PySpark</h3>
+<h3 class="text-base font-bold text-slate-200 mt-6 mb-2 flex items-center gap-2"><span>🔹</span> Counting 404 Errors and Identifying Peak Failure Times Using Hadoop & PySpark</h3>
 
 <em class="text-slate-300">Final Project Report — Group IDK</em>
 
 ---
 
 </div></div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">1. Objective</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🎯</span>1. Objective</h2>
 
 This project analyzes a large web server access log to:
 
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Count</strong> the total number of "404 Not Found" errors</li>
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Identify</strong> the time of day when failures happen most often</li>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Count</strong> the total number of "404 Not Found" errors</li>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Identify</strong> the time of day when failures happen most often</li>
 
-...using a distributed processing pipeline built on <strong class="text-white font-semibold">Hadoop (HDFS)</strong> for storage and <strong class="text-white font-semibold">Apache PySpark</strong> for parallel processing.
+...using a distributed processing pipeline built on <strong class="text-white font-bold">Hadoop (HDFS)</strong> for storage and <strong class="text-white font-bold">Apache PySpark</strong> for parallel processing.
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">2. Methodology / Pipeline</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">⚙️</span>2. Methodology / Pipeline</h2>
 
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Raw server logs are stored in <strong class="text-white font-semibold">Hadoop Distributed File System (HDFS)</strong>, which splits and replicates massive log files across cluster nodes for fault-tolerant, scalable storage.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1"><strong class="text-white font-semibold">PySpark</strong> reads the log file as a distributed DataFrame and parses each line with a regular expression (Common Log Format) into structured fields: IP, timestamp, HTTP method, path, status code, and response size.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Malformed lines are filtered out, and the cleaned DataFrame is <strong class="text-white font-semibold">cached</strong> in memory since it is queried repeatedly.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Spark's <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">groupBy</code>/aggregate operations count 404 occurrences overall, by hour of day, by day of week, and by endpoint (path).</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Final aggregated results (small enough to fit in memory) are converted to Pandas and visualized with Matplotlib/Seaborn, and exported to CSV.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Raw server logs are stored in <strong class="text-white font-bold">Hadoop Distributed File System (HDFS)</strong>, which splits and replicates massive log files across cluster nodes for fault-tolerant, scalable storage.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">PySpark</strong> reads the log file as a distributed DataFrame and parses each line with a regular expression (Common Log Format) into structured fields: IP, timestamp, HTTP method, path, status code, and response size.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Malformed lines are filtered out, and the cleaned DataFrame is <strong class="text-white font-bold">cached</strong> in memory since it is queried repeatedly.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Spark's <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">groupBy</code>/aggregate operations count 404 occurrences overall, by hour of day, by day of week, and by endpoint (path).</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Final aggregated results (small enough to fit in memory) are converted to Pandas and visualized with Matplotlib/Seaborn, and exported to CSV.</li>
 
-<strong class="text-white font-semibold">Pipeline diagram:</strong>
+<strong class="text-white font-bold">Pipeline diagram:</strong>
 
-<code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs"></code>`
+<code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold"></code>`
 Server Logs  --->  Hadoop HDFS  --->  PySpark  --->  Pandas / Visualization
  (nginx/apache)     (storage)       (processing)         (insight)
-<code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs"></code>`
+<code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold"></code>`
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">3. Dataset Summary</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">📊</span>3. Dataset Summary</h2>
 
-The analysis was run on a log file containing <strong class="text-white font-semibold">200,000 requests</strong> spanning a 7-day period.
+The analysis was run on a log file containing <strong class="text-white font-bold">200,000 requests</strong> spanning a 7-day period.
 
-<div class="overflow-x-auto my-4"><table class="min-w-full divide-y divide-slate-700 border border-slate-700 rounded-lg text-sm"><tr class="bg-slate-800 text-white font-semibold"><th class="px-4 py-2 border-b border-slate-700 text-left">Metric</th><th class="px-4 py-2 border-b border-slate-700 text-left">Value</th></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">Total requests analyzed</td><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">200,000</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">Total 404 errors</td><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">43,153</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">404 error rate</td><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">21.58%</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">Peak failure hour</td><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">3:00 – 4:00 AM</strong></td></tr></table></div>
+<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden"><tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]"><th class="px-4 py-3 border-b border-slate-700">Metric</th><th class="px-4 py-3 border-b border-slate-700">Value</th></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">Total requests analyzed</td><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">200,000</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">Total 404 errors</td><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">43,153</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">404 error rate</td><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">21.58%</strong></td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">Peak failure hour</td><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">3:00 – 4:00 AM</strong></td></tr></table></div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">4. HTTP Status Code Breakdown</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🥧</span>4. HTTP Status Code Breakdown</h2>
 
-<div class="overflow-x-auto my-4"><table class="min-w-full divide-y divide-slate-700 border border-slate-700 rounded-lg text-sm"><tr class="bg-slate-800 text-white font-semibold"><th class="px-4 py-2 border-b border-slate-700 text-left">Status Code</th><th class="px-4 py-2 border-b border-slate-700 text-left">Count</th><th class="px-4 py-2 border-b border-slate-700 text-left">% of Total</th></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">200 (OK)</td><td class="px-4 py-2 border-b border-slate-800">136,415</td><td class="px-4 py-2 border-b border-slate-800">68.2%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">404 (Not Found)</td><td class="px-4 py-2 border-b border-slate-800">43,153</td><td class="px-4 py-2 border-b border-slate-800">21.6%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">301 (Redirect)</td><td class="px-4 py-2 border-b border-slate-800">11,417</td><td class="px-4 py-2 border-b border-slate-800">5.7%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">500 (Server Error)</td><td class="px-4 py-2 border-b border-slate-800">5,540</td><td class="px-4 py-2 border-b border-slate-800">2.8%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">403 (Forbidden)</td><td class="px-4 py-2 border-b border-slate-800">3,475</td><td class="px-4 py-2 border-b border-slate-800">1.7%</td></tr></table></div>
+<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden"><tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]"><th class="px-4 py-3 border-b border-slate-700">Status Code</th><th class="px-4 py-3 border-b border-slate-700">Count</th><th class="px-4 py-3 border-b border-slate-700">% of Total</th></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">200 (OK)</td><td class="px-4 py-2.5 font-medium">136,415</td><td class="px-4 py-2.5 font-medium">68.2%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">404 (Not Found)</td><td class="px-4 py-2.5 font-medium">43,153</td><td class="px-4 py-2.5 font-medium">21.6%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">301 (Redirect)</td><td class="px-4 py-2.5 font-medium">11,417</td><td class="px-4 py-2.5 font-medium">5.7%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">500 (Server Error)</td><td class="px-4 py-2.5 font-medium">5,540</td><td class="px-4 py-2.5 font-medium">2.8%</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">403 (Forbidden)</td><td class="px-4 py-2.5 font-medium">3,475</td><td class="px-4 py-2.5 font-medium">1.7%</td></tr></table></div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">5. 404 Errors by Hour of Day</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">⏰</span>5. 404 Errors by Hour of Day</h2>
 
 Errors are heavily concentrated in specific hours rather than spread evenly across the day, pointing to two distinct causes: automated bot/scanner traffic overnight, and genuine user traffic during business-hour peaks.
 
@@ -71,13 +95,13 @@ Errors are heavily concentrated in specific hours rather than spread evenly acro
 
 </div>
 
-<strong class="text-white font-semibold">Top hours by 404 count:</strong>
+<strong class="text-white font-bold">Top hours by 404 count:</strong>
 
-<div class="overflow-x-auto my-4"><table class="min-w-full divide-y divide-slate-700 border border-slate-700 rounded-lg text-sm"><tr class="bg-slate-800 text-white font-semibold"><th class="px-4 py-2 border-b border-slate-700 text-left">Hour</th><th class="px-4 py-2 border-b border-slate-700 text-left">404 Count</th></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">02:00</td><td class="px-4 py-2 border-b border-slate-800">4,434</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">03:00</td><td class="px-4 py-2 border-b border-slate-800">4,655</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">09:00</td><td class="px-4 py-2 border-b border-slate-800">3,715</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">10:00</td><td class="px-4 py-2 border-b border-slate-800">3,647</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">11:00</td><td class="px-4 py-2 border-b border-slate-800">3,722</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">14:00</td><td class="px-4 py-2 border-b border-slate-800">3,839</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">15:00</td><td class="px-4 py-2 border-b border-slate-800">3,854</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">20:00</td><td class="px-4 py-2 border-b border-slate-800">3,873</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">21:00</td><td class="px-4 py-2 border-b border-slate-800">3,717</td></tr></table></div>
+<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden"><tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]"><th class="px-4 py-3 border-b border-slate-700">Hour</th><th class="px-4 py-3 border-b border-slate-700">404 Count</th></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">02:00</td><td class="px-4 py-2.5 font-medium">4,434</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">03:00</td><td class="px-4 py-2.5 font-medium">4,655</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">09:00</td><td class="px-4 py-2.5 font-medium">3,715</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">10:00</td><td class="px-4 py-2.5 font-medium">3,647</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">11:00</td><td class="px-4 py-2.5 font-medium">3,722</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">14:00</td><td class="px-4 py-2.5 font-medium">3,839</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">15:00</td><td class="px-4 py-2.5 font-medium">3,854</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">20:00</td><td class="px-4 py-2.5 font-medium">3,873</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">21:00</td><td class="px-4 py-2.5 font-medium">3,717</td></tr></table></div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">6. Error Pattern by Day of Week and Hour</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🗺️</span>6. Error Pattern by Day of Week and Hour</h2>
 
-The heatmap below cross-references day of week with hour of day, showing that the overnight error spike (~02:00–03:00) is consistent across <strong class="text-white font-semibold">all seven days</strong> — a strong signal that this is automated/bot traffic rather than a one-off incident.
+The heatmap below cross-references day of week with hour of day, showing that the overnight error spike (~02:00–03:00) is consistent across <strong class="text-white font-bold">all seven days</strong> — a strong signal that this is automated/bot traffic rather than a one-off incident.
 
 <div align="center">
 
@@ -87,7 +111,7 @@ The heatmap below cross-references day of week with hour of day, showing that th
 
 </div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">7. Top Endpoints Causing 404 Errors</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🎯</span>7. Top Endpoints Causing 404 Errors</h2>
 
 Three endpoints dominate the 404 count and account for the majority of overnight errors, while all other endpoints show a low, comparable baseline from normal user typos/broken links.
 
@@ -99,9 +123,9 @@ Three endpoints dominate the 404 count and account for the majority of overnight
 
 </div>
 
-<div class="overflow-x-auto my-4"><table class="min-w-full divide-y divide-slate-700 border border-slate-700 rounded-lg text-sm"><tr class="bg-slate-800 text-white font-semibold"><th class="px-4 py-2 border-b border-slate-700 text-left">Path</th><th class="px-4 py-2 border-b border-slate-700 text-left">404 Hits</th></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/admin/login</td><td class="px-4 py-2 border-b border-slate-800">9,284</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/old-promo-page</td><td class="px-4 py-2 border-b border-slate-800">9,186</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/deprecated-api/v1</td><td class="px-4 py-2 border-b border-slate-800">9,168</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/product/123</td><td class="px-4 py-2 border-b border-slate-800">1,455</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/images/logo.png</td><td class="px-4 py-2 border-b border-slate-800">1,443</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/checkout</td><td class="px-4 py-2 border-b border-slate-800">1,443</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/product/456</td><td class="px-4 py-2 border-b border-slate-800">1,434</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/index.html</td><td class="px-4 py-2 border-b border-slate-800">1,411</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/home</td><td class="px-4 py-2 border-b border-slate-800">1,406</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800">/api/orders</td><td class="px-4 py-2 border-b border-slate-800">1,397</td></tr></table></div>
+<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden"><tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]"><th class="px-4 py-3 border-b border-slate-700">Path</th><th class="px-4 py-3 border-b border-slate-700">404 Hits</th></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/admin/login</td><td class="px-4 py-2.5 font-medium">9,284</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/old-promo-page</td><td class="px-4 py-2.5 font-medium">9,186</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/deprecated-api/v1</td><td class="px-4 py-2.5 font-medium">9,168</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/product/123</td><td class="px-4 py-2.5 font-medium">1,455</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/images/logo.png</td><td class="px-4 py-2.5 font-medium">1,443</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/checkout</td><td class="px-4 py-2.5 font-medium">1,443</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/product/456</td><td class="px-4 py-2.5 font-medium">1,434</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/index.html</td><td class="px-4 py-2.5 font-medium">1,411</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/home</td><td class="px-4 py-2.5 font-medium">1,406</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium">/api/orders</td><td class="px-4 py-2.5 font-medium">1,397</td></tr></table></div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">8. Daily Trend</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">📈</span>8. Daily Trend</h2>
 
 404 error volume is stable day-over-day (roughly 6,000–6,300 per day), indicating a persistent, ongoing issue rather than a one-time spike caused by a single deploy.
 
@@ -113,31 +137,35 @@ Three endpoints dominate the 404 count and account for the majority of overnight
 
 </div>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">9. Key Findings</h2>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Out of 200,000 total requests, <strong class="text-white font-semibold">43,153 (21.58%)</strong> returned a 404 error — a notably high rate for a production system.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">The single worst hour for failures is <strong class="text-white font-semibold">3:00–4:00 AM</strong>, with roughly 3.5–4x the errors seen during quiet daytime hours.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Three endpoints — <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/admin/login</code>, <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/old-promo-page</code>, and <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/deprecated-api/v1</code> — are responsible for the overnight spike, consistent with automated scanners probing for an admin panel and hitting deprecated pages.</li>
-<li class="ml-4 list-disc text-slate-300 text-sm my-1">Daytime 404 spikes (09:00–11:00, 14:00–15:00, 20:00–21:00) align with normal peak business-hour traffic, most likely caused by broken links or outdated bookmarks.</li>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🔍</span>9. Key Findings</h2>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Out of 200,000 total requests, <strong class="text-white font-bold">43,153 (21.58%)</strong> returned a 404 error — a notably high rate for a production system.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">The single worst hour for failures is <strong class="text-white font-bold">3:00–4:00 AM</strong>, with roughly 3.5–4x the errors seen during quiet daytime hours.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Three endpoints — <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/admin/login</code>, <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/old-promo-page</code>, and <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/deprecated-api/v1</code> — are responsible for the overnight spike, consistent with automated scanners probing for an admin panel and hitting deprecated pages.</li>
+<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">Daytime 404 spikes (09:00–11:00, 14:00–15:00, 20:00–21:00) align with normal peak business-hour traffic, most likely caused by broken links or outdated bookmarks.</li>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">10. Recommendations</h2>
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Remove or permanently redirect (301)</strong> <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/old-promo-page</code> and <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/deprecated-api/v1</code> to eliminate a large share of 404s immediately.</li>
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Investigate and rate-limit</strong> the source IPs repeatedly hitting <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">/admin/login</code> overnight — consistent with a brute-force/reconnaissance scan.</li>
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Set up a recurring PySpark job</strong> to continuously monitor the 404 rate and alert if it exceeds a defined threshold.</li>
-<li class="ml-4 list-decimal text-slate-300 text-sm my-1"><strong class="text-white font-semibold">Store aggregated results as partitioned Parquet files</strong> on HDFS for fast historical querying by a dashboard tool.</li>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🛡️</span>10. Recommendations</h2>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Remove or permanently redirect (301)</strong> <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/old-promo-page</code> and <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/deprecated-api/v1</code> to eliminate a large share of 404s immediately.</li>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Investigate and rate-limit</strong> the source IPs repeatedly hitting <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">/admin/login</code> overnight — consistent with a brute-force/reconnaissance scan.</li>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Set up a recurring PySpark job</strong> to continuously monitor the 404 rate and alert if it exceeds a defined threshold.</li>
+<li class="ml-4 list-decimal text-slate-300 text-sm my-1.5"><strong class="text-white font-bold">Store aggregated results as partitioned Parquet files</strong> on HDFS for fast historical querying by a dashboard tool.</li>
 </div>
-<div class="my-4 leading-relaxed"><h2 class="text-xl font-bold text-white mt-8 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">11. Technology Stack</h2>
+<div class="my-4 leading-relaxed"><h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center"><span class="mr-2">🏗️</span>11. Technology Stack</h2>
 
-<div class="overflow-x-auto my-4"><table class="min-w-full divide-y divide-slate-700 border border-slate-700 rounded-lg text-sm"><tr class="bg-slate-800 text-white font-semibold"><th class="px-4 py-2 border-b border-slate-700 text-left">Component</th><th class="px-4 py-2 border-b border-slate-700 text-left">Role</th></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">Hadoop HDFS</strong></td><td class="px-4 py-2 border-b border-slate-800">Distributed, fault-tolerant storage for massive raw log files</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">Apache PySpark</strong></td><td class="px-4 py-2 border-b border-slate-800">Distributed parsing, cleaning, and aggregation (regex extraction, groupBy, caching)</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">Pandas</strong></td><td class="px-4 py-2 border-b border-slate-800">Converting small aggregated results for plotting</td></tr><tr class="hover:bg-slate-800/40 text-slate-300"><td class="px-4 py-2 border-b border-slate-800"><strong class="text-white font-semibold">Matplotlib / Seaborn</strong></td><td class="px-4 py-2 border-b border-slate-800">Visualization (bar chart, heatmap, trend line)</td></tr></table></div>
+<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden"><tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]"><th class="px-4 py-3 border-b border-slate-700">Component</th><th class="px-4 py-3 border-b border-slate-700">Role</th></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">Hadoop HDFS</strong></td><td class="px-4 py-2.5 font-medium">Distributed, fault-tolerant storage for massive raw log files</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">Apache PySpark</strong></td><td class="px-4 py-2.5 font-medium">Distributed parsing, cleaning, and aggregation (regex extraction, groupBy, caching)</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">Pandas</strong></td><td class="px-4 py-2.5 font-medium">Converting small aggregated results for plotting</td></tr><tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition"><td class="px-4 py-2.5 font-medium"><strong class="text-white font-bold">Matplotlib / Seaborn</strong></td><td class="px-4 py-2.5 font-medium">Visualization (bar chart, heatmap, trend line)</td></tr></table></div>
 
 ---
 
 <div align="center">
 
-<em class="text-slate-300">This report was generated from <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs">Log_File_Analysis_PySpark.ipynb</code>. See that notebook for full runnable PySpark code.</em>
+<em class="text-slate-300">This report was generated from <code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">Log_File_Analysis_PySpark.ipynb</code>. See that notebook for full runnable PySpark code.</em>
 
 </div>
 </div>
 
-  </div>
+  </main>
+
+  <footer class="max-w-4xl mx-auto mt-8 text-center text-xs text-slate-500 py-4 no-print">
+    Assignment 2 Log File Analysis • Apache PySpark & Hadoop Pipeline • Group IDK
+  </footer>
 </body>
 </html>
