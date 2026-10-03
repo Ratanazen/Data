@@ -11,7 +11,7 @@ This script executes the complete data pipeline:
   2. Parses fields with regular expressions
   3. Computes 404 error counts, error rates, and peak failure hours
   4. Generates aggregation CSV files (UTF-8 encoded)
-  5. Produces high-resolution chart images (.png)
+  5. Produces high-resolution chart images (.png) with upgraded modern color palette
   6. Exports structured JSON data for the interactive Web Dashboard
 """
 
@@ -36,7 +36,7 @@ LOG_PATTERN = re.compile(
 )
 
 def ensure_server_log(log_path):
-    """Ensure server.log exists; if missing, generate identical reproducible 200,000 lines."""
+    """Ensure server.log exists; if missing, generate reproducible 200,000 records."""
     if log_path.exists():
         return
     print(f"[!] {log_path.name} not found. Generating reproducible 200,000 records...")
@@ -179,71 +179,96 @@ def analyze_and_export(df, out_dir=BASE_DIR):
     daily_trend.to_csv(daily_file, index=False, encoding='utf-8')
     print(f"[+] Saved: {daily_file.name}")
 
-    # Generate Chart Visualizations (cross-platform fonts & dpi)
-    print("\n[*] Generating high-resolution chart images (.png)...")
-    sns.set_theme(style="whitegrid")
+    # Generate Chart Visualizations with Upgraded Modern Cyber Observatory Colors
+    print("\n[*] Generating high-resolution chart images (.png) with upgraded color palette...")
+    
+    # Modern styling theme
+    plt.rcParams['figure.facecolor'] = '#0a0f1d'
+    plt.rcParams['axes.facecolor'] = '#0f172a'
+    plt.rcParams['text.color'] = '#f8fafc'
+    plt.rcParams['axes.labelcolor'] = '#94a3b8'
+    plt.rcParams['xtick.color'] = '#cbd5e1'
+    plt.rcParams['ytick.color'] = '#cbd5e1'
+    plt.rcParams['grid.color'] = '#1e293b'
 
     # Chart 1: Hourly 404 Errors Bar Chart
-    plt.figure(figsize=(13, 6))
-    colors = ['#dc2626' if h == peak_hour else '#2563eb' for h in hourly_counts['hour']]
-    bars = plt.bar(hourly_counts['hour'], hourly_counts['error_count'], color=colors, edgecolor='#1e293b', linewidth=0.8)
-    plt.title(f"404 Errors by Hour of Day (Peak Hour: {peak_hour:02d}:00 with {peak_count:,} Errors)",
-              fontsize=14, fontweight='bold', pad=15)
-    plt.xlabel("Hour of Day (00:00 - 23:00)", fontsize=11, fontweight='bold')
-    plt.ylabel("Number of 404 Errors", fontsize=11, fontweight='bold')
-    plt.xticks(range(24))
+    fig, ax = plt.subplots(figsize=(13, 6))
+    colors = []
+    for h in hourly_counts['hour']:
+        if h == peak_hour:
+            colors.append('#ff0055') # Vibrant Neon Crimson
+        elif h in [2, 9, 10, 11, 14, 15, 20, 21]:
+            colors.append('#f59e0b') # Radiant Cyber Amber
+        else:
+            colors.append('#0284c7') # Electric Cyan
+
+    bars = ax.bar(hourly_counts['hour'], hourly_counts['error_count'], color=colors, edgecolor='#1e293b', linewidth=1)
+    ax.set_title(f"404 Error Distribution by Hour of Day (Peak Window: {peak_hour:02d}:00 with {peak_count:,} Errors)",
+                 fontsize=14, fontweight='bold', pad=15, color='#ffffff')
+    ax.set_xlabel("Hour of Day (00:00 - 23:00 UTC)", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Number of 404 Failures", fontsize=11, fontweight='bold')
+    ax.set_xticks(range(24))
+    ax.grid(True, linestyle='--', alpha=0.5)
+
     for bar, count in zip(bars, hourly_counts['error_count']):
         if count == peak_count:
-            plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 50,
-                     f"PEAK\n{count:,}", ha='center', va='bottom', fontsize=9, fontweight='bold', color='#dc2626')
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 50,
+                    f"PEAK\n{count:,}", ha='center', va='bottom', fontsize=9, fontweight='bold', color='#ff0055')
     plt.tight_layout()
-    plt.savefig(out_dir / "404_errors_by_hour.png", dpi=200)
+    plt.savefig(out_dir / "404_errors_by_hour.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
     print("[+] Generated: 404_errors_by_hour.png")
 
     # Chart 2: Heatmap Day of Week vs Hour
-    plt.figure(figsize=(15, 6))
-    sns.heatmap(heatmap_df, cmap="YlOrRd", linewidths=0.5, linecolor='#e2e8f0',
-                cbar_kws={'label': '404 Error Count'})
-    plt.title("404 Error Heatmap: Day of Week vs Hour of Day", fontsize=14, fontweight='bold', pad=15)
-    plt.xlabel("Hour of Day (00:00 - 23:00)", fontsize=11, fontweight='bold')
-    plt.ylabel("Day of Week", fontsize=11, fontweight='bold')
+    fig, ax = plt.subplots(figsize=(15, 6))
+    cmap = sns.color_palette("rocket_r", as_cmap=True)
+    sns.heatmap(heatmap_df, cmap=cmap, linewidths=0.7, linecolor='#0a0f1d',
+                cbar_kws={'label': '404 Error Volume'}, ax=ax)
+    ax.set_title("404 Error Heatmap: Day of Week vs Hour of Day (Temporal Bot Analysis)",
+                 fontsize=14, fontweight='bold', pad=15, color='#ffffff')
+    ax.set_xlabel("Hour of Day (00:00 - 23:00 UTC)", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Day of Week", fontsize=11, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(out_dir / "404_heatmap_day_hour.png", dpi=200)
+    plt.savefig(out_dir / "404_heatmap_day_hour.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
     print("[+] Generated: 404_heatmap_day_hour.png")
 
     # Chart 3: Top 10 Paths Bar Chart
-    plt.figure(figsize=(11, 6))
-    palette = sns.color_palette("Reds_r", n_colors=len(top_paths))
-    barplot = sns.barplot(data=top_paths, y='path', x='hits', hue='path', palette=palette, legend=False)
-    plt.title("Top 10 Endpoints Causing 404 Errors", fontsize=14, fontweight='bold', pad=15)
-    plt.xlabel("404 Hit Count", fontsize=11, fontweight='bold')
-    plt.ylabel("Endpoint Path", fontsize=11, fontweight='bold')
+    fig, ax = plt.subplots(figsize=(11, 6))
+    palette = ['#ff0055', '#f43f5e', '#e11d48', '#8b5cf6', '#7c3aed', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6']
+    barplot = sns.barplot(data=top_paths, y='path', x='hits', hue='path', palette=palette, legend=False, ax=ax)
+    ax.set_title("Top 10 Endpoints Causing 404 Errors (Targeted Reconnaissance)",
+                 fontsize=14, fontweight='bold', pad=15, color='#ffffff')
+    ax.set_xlabel("404 Hit Count", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Endpoint Path", fontsize=11, fontweight='bold')
+    ax.grid(True, linestyle='--', alpha=0.4, axis='x')
     for p in barplot.patches:
         val = int(p.get_width())
         barplot.annotate(f"{val:,}", (p.get_width() + 100, p.get_y() + p.get_height() / 2),
-                         va='center', fontsize=9, fontweight='bold')
-    plt.xlim(0, max(top_paths['hits']) * 1.15)
+                         va='center', fontsize=9, fontweight='bold', color='#f1f5f9')
+    ax.set_xlim(0, max(top_paths['hits']) * 1.15)
     plt.tight_layout()
-    plt.savefig(out_dir / "top_404_paths.png", dpi=200)
+    plt.savefig(out_dir / "top_404_paths.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
     print("[+] Generated: top_404_paths.png")
 
     # Chart 4: Daily Trend Line Chart
-    plt.figure(figsize=(12, 5))
-    plt.plot(daily_trend['date'], daily_trend['error_count'], marker='o', color='#dc2626',
-             linewidth=2.5, markersize=8, markerfacecolor='#991b1b')
-    plt.title("404 Errors Over Time (Daily Trend across 7 Days)", fontsize=14, fontweight='bold', pad=15)
-    plt.xlabel("Date", fontsize=11, fontweight='bold')
-    plt.ylabel("404 Error Count", fontsize=11, fontweight='bold')
-    plt.ylim(min(daily_trend['error_count']) * 0.9, max(daily_trend['error_count']) * 1.1)
+    fig, ax = plt.subplots(figsize=(12, 5))
+    ax.plot(daily_trend['date'], daily_trend['error_count'], marker='o', color='#8b5cf6',
+            linewidth=3, markersize=8, markerfacecolor='#ff0055', markeredgecolor='#ffffff', markeredgewidth=1.5)
+    ax.fill_between(daily_trend['date'], daily_trend['error_count'], min(daily_trend['error_count']) * 0.9,
+                    color='#8b5cf6', alpha=0.15)
+    ax.set_title("Daily 404 Error Volume (7-Day Telemetry Timeline)", fontsize=14, fontweight='bold', pad=15, color='#ffffff')
+    ax.set_xlabel("Date", fontsize=11, fontweight='bold')
+    ax.set_ylabel("404 Error Count", fontsize=11, fontweight='bold')
+    ax.grid(True, linestyle='--', alpha=0.4)
+    ax.set_ylim(min(daily_trend['error_count']) * 0.9, max(daily_trend['error_count']) * 1.1)
     for _, row in daily_trend.iterrows():
-        plt.annotate(f"{row['error_count']:,}", (row['date'], row['error_count'] + 40),
-                     ha='center', fontsize=9, fontweight='bold')
+        ax.annotate(f"{row['error_count']:,}", (row['date'], row['error_count'] + 40),
+                    ha='center', fontsize=9, fontweight='bold', color='#ffffff')
     plt.xticks(rotation=30)
     plt.tight_layout()
-    plt.savefig(out_dir / "404_daily_trend.png", dpi=200)
+    plt.savefig(out_dir / "404_daily_trend.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
     print("[+] Generated: 404_daily_trend.png")
 

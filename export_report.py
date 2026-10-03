@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
 Convert Log_File_Analysis_Report.ipynb into an executive-grade HTML report
-with custom styling, SVG icons, emojis, and print-ready layout.
+with upgraded Obsidian & Neon Cyberpunk palette, custom SVG icons, and print styling.
 """
 
 import json
 import re
 import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 def markdown_to_html(md_text):
     lines = md_text.split('\n')
@@ -17,7 +20,7 @@ def markdown_to_html(md_text):
     def flush_table(tbl):
         if not tbl:
             return ""
-        html = '<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-700/80 rounded-xl overflow-hidden">'
+        html = '<div class="overflow-x-auto my-5"><table class="w-full text-xs text-left border-collapse border border-slate-800 rounded-2xl overflow-hidden shadow-lg">'
         header_done = False
         for line in tbl:
             cells = [c.strip() for c in line.strip().strip('|').split('|')]
@@ -25,14 +28,14 @@ def markdown_to_html(md_text):
                 header_done = True
                 continue
             if not header_done:
-                html += '<tr class="bg-slate-800 text-slate-100 font-bold uppercase tracking-wider text-[11px]">'
+                html += '<tr class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-100 font-bold uppercase tracking-wider text-[11px] border-b border-slate-700">'
                 for c in cells:
-                    html += f'<th class="px-4 py-3 border-b border-slate-700">{c}</th>'
+                    html += f'<th class="px-4 py-3 border-r border-slate-800/80">{c}</th>'
                 html += '</tr>'
             else:
-                html += '<tr class="hover:bg-slate-800/40 text-slate-300 border-b border-slate-800 transition">'
+                html += '<tr class="hover:bg-slate-800/50 text-slate-300 border-b border-slate-850 transition">'
                 for c in cells:
-                    html += f'<td class="px-4 py-2.5 font-medium">{c}</td>'
+                    html += f'<td class="px-4 py-2.5 font-medium border-r border-slate-850/60">{c}</td>'
                 html += '</tr>'
         html += '</table></div>'
         return html
@@ -53,41 +56,41 @@ def markdown_to_html(md_text):
 
     text = '\n'.join(output_lines)
 
-    # Emoji mappings for section headers
-    section_emojis = {
-        '1. Objective': '🎯',
-        '2. Methodology / Pipeline': '⚙️',
-        '3. Dataset Summary': '📊',
-        '4. HTTP Status Code Breakdown': '🥧',
-        '5. 404 Errors by Hour of Day': '⏰',
-        '6. Error Pattern by Day of Week and Hour': '🗺️',
-        '7. Top Endpoints Causing 404 Errors': '🎯',
-        '8. Daily Trend': '📈',
-        '9. Key Findings': '🔍',
-        '10. Recommendations': '🛡️',
-        '11. Technology Stack': '🏗️',
-        '12. Deliverables & Interactive Web Dashboard': '📦'
+    # Section Icons & Colors Map
+    section_icons = {
+        '1. Objective': ('assets/chart-bar.svg', 'text-sky-400'),
+        '2. Methodology / Pipeline': ('assets/spark.svg', 'text-amber-400'),
+        '3. Dataset Summary': ('assets/chart-bar.svg', 'text-indigo-400'),
+        '4. HTTP Status Code Breakdown': ('assets/chart-bar.svg', 'text-emerald-400'),
+        '5. 404 Errors by Hour of Day': ('assets/clock.svg', 'text-rose-400'),
+        '6. Error Pattern by Day of Week and Hour': ('assets/heatmap.svg', 'text-amber-400'),
+        '7. Top Endpoints Causing 404 Errors': ('assets/shield-check.svg', 'text-purple-400'),
+        '8. Daily Trend': ('assets/chart-bar.svg', 'text-indigo-400'),
+        '9. Key Findings': ('assets/shield-check.svg', 'text-rose-400'),
+        '10. Recommendations': ('assets/shield-check.svg', 'text-emerald-400'),
+        '11. Technology Stack': ('assets/hadoop.svg', 'text-amber-400'),
+        '12. Deliverables & Interactive Web Dashboard': ('assets/favicon.svg', 'text-cyan-400')
     }
 
     def replace_h2(m):
         header_title = m.group(1).strip()
-        emoji = ""
-        for k, v in section_emojis.items():
+        icon_html = '<span class="w-2.5 h-2.5 rounded-full bg-rose-500 mr-2"></span>'
+        for k, (icon_src, icon_color) in section_icons.items():
             if k in header_title:
-                emoji = f'<span class="mr-2">{v}</span>'
+                icon_html = f'<img src="{icon_src}" class="w-5 h-5 mr-2.5 inline-block" alt="icon">'
                 break
-        return f'<h2 class="text-xl font-extrabold text-white mt-8 mb-4 pb-2 border-b border-slate-800 flex items-center">{emoji}{header_title}</h2>'
+        return f'<h2 class="text-xl font-extrabold text-white mt-10 mb-4 pb-2.5 border-b border-slate-800 flex items-center">{icon_html}{header_title}</h2>'
 
     text = re.sub(r'^## (.*?)$', replace_h2, text, flags=re.M)
-    text = re.sub(r'^### (.*?)$', r'<h3 class="text-base font-bold text-slate-200 mt-6 mb-2 flex items-center gap-2"><span>🔹</span> \1</h3>', text, flags=re.M)
-    text = re.sub(r'^# (.*?)$', r'<h1 class="text-3xl font-black text-white mb-2">\1</h1>', text, flags=re.M)
+    text = re.sub(r'^### (.*?)$', r'<h3 class="text-base font-bold text-slate-200 mt-6 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded bg-indigo-500"></span> \1</h3>', text, flags=re.M)
+    text = re.sub(r'^# (.*?)$', r'<h1 class="text-3xl font-black text-white mb-2 bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">\1</h1>', text, flags=re.M)
 
     # Bold & italic formatting
     text = re.sub(r'\*\*(.*?)\*\*', r'<strong class="text-white font-bold">\1</strong>', text)
     text = re.sub(r'\*(.*?)\*', r'<em class="text-slate-300">\1</em>', text)
 
     # Inline code
-    text = re.sub(r'`(.*?)`', r'<code class="px-1.5 py-0.5 rounded bg-slate-800 text-rose-400 font-mono text-xs font-semibold">\1</code>', text)
+    text = re.sub(r'`(.*?)`', r'<code class="px-1.5 py-0.5 rounded-md bg-slate-800 text-rose-400 font-mono text-xs font-semibold">\1</code>', text)
 
     # Lists
     text = re.sub(r'^- (.*?)$', r'<li class="ml-4 list-disc text-slate-300 text-sm my-1.5">\1</li>', text, flags=re.M)
@@ -96,7 +99,8 @@ def markdown_to_html(md_text):
     return text
 
 def generate_report():
-    with open('Log_File_Analysis_Report.ipynb', 'r', encoding='utf-8') as f:
+    report_nb_path = BASE_DIR / 'Log_File_Analysis_Report.ipynb'
+    with open(report_nb_path, 'r', encoding='utf-8') as f:
         nb = json.load(f)
 
     body_html = ""
@@ -129,21 +133,21 @@ def generate_report():
   
   <!-- Navigation Top Bar -->
   <header class="max-w-4xl mx-auto mb-6 flex items-center justify-between no-print">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2.5">
       <img src="assets/favicon.svg" alt="Logo" class="w-6 h-6">
-      <span class="text-xs font-bold text-slate-400">Assignment 2 • Hadoop & Apache PySpark</span>
+      <span class="text-xs font-bold text-slate-300">Assignment 2 • Hadoop & Apache PySpark</span>
     </div>
     <div class="flex items-center gap-3">
-      <a href="index.html" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-lg transition">
+      <a href="index.html" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white flex items-center gap-1.5 shadow-lg transition">
         <span>🌐</span> Open Web Dashboard
       </a>
-      <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+      <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
         <span>🖨️</span> Print / PDF
       </button>
     </div>
   </header>
 
-  <!-- Document Card -->
+  <!-- Document Card with Obsidian Backdrop -->
   <main class="max-w-4xl mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-12 shadow-2xl space-y-6">
     {body_html}
   </main>
@@ -155,9 +159,10 @@ def generate_report():
 </html>
 """
 
-    with open('Log_File_Analysis_Report.html', 'w', encoding='utf-8') as f:
+    out_file = BASE_DIR / 'Log_File_Analysis_Report.html'
+    with open(out_file, 'w', encoding='utf-8') as f:
         f.write(html_content)
-    print("[+] Generated: Log_File_Analysis_Report.html")
+    print(f"[+] Generated: {out_file.name}")
 
 if __name__ == '__main__':
     generate_report()
