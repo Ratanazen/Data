@@ -14,22 +14,68 @@
 ### 🚀 Level 3: Advanced (Focus: Full-Stack & Big Data)
 **Topic:** *Ingest massive server log files into Hadoop. Use PySpark to count "404 Error" occurrences and visualize the time of day most failures happen.*
 
-[🌐 Live Interactive Web Dashboard](index.html) • [📄 Full Written HTML Report](Log_File_Analysis_Report.html) • [📓 Main PySpark Notebook](Log_File_Analysis_PySpark.ipynb)
+[🌐 Live Interactive Web Dashboard](index.html) • [📄 Full Written HTML Report](Log_File_Analysis_Report.html) • [📓 Main PySpark Notebook](Log_File_Analysis_PySpark.ipynb) • [⚡ Quick Start Guide](QUICKSTART.md)
 
 ---
 
 </div>
 
+## 📥 How to Clone & Run Locally in 60 Seconds
+
+### Step 1: Clone the Repo
+```bash
+git clone https://github.com/Ratanazen/Data.git
+cd Data
+```
+
+### Step 2: Choose Your Platform
+
+#### 🪟 Windows Users:
+- **Easiest**: Simply **double-click** `run.bat` in File Explorer!
+- **Or via Command Prompt**:
+  ```cmd
+  pip install -r requirements.txt
+  build.bat all
+  build.bat web
+  ```
+- **Or via PowerShell**:
+  ```powershell
+  pip install -r requirements.txt
+  .\build.ps1 all
+  .\build.ps1 web
+  ```
+
+#### 🍎 macOS Users:
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+./build.sh all
+./build.sh web
+```
+
+#### 🐧 Linux Users:
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+./build.sh all
+./build.sh web
+```
+
+#### 🐳 Docker Users (Zero Local Dependencies):
+```bash
+docker compose up --build
+```
+
+👉 Once running, open **[http://localhost:8080/](http://localhost:8080/)** in your browser!
+
+---
+
 ## 📑 Table of Contents
 - [🎯 1. Project Overview](#-1-project-overview)
 - [⚡ 2. Key Analytical Findings](#-2-key-analytical-findings)
 - [🏗️ 3. Big Data Architecture](#️-3-big-data-architecture)
-- [💻 4. Cross-Platform Execution Guide](#-4-cross-platform-execution-guide)
-  - [🪟 Windows (Batch, PowerShell, or 1-Click)](#-windows-batch-powershell-or-1-click)
-  - [🍎 macOS (Make or Bash)](#-macos-make-or-bash)
-  - [🐧 Linux (Make or Bash)](#-linux-make-or-bash)
-  - [🐳 Docker Container (Any OS)](#-docker-container-any-os)
-- [🧪 5. Automated Testing & CI Matrix](#-5-automated-testing--ci-matrix)
+- [💻 4. Comprehensive Execution Commands](#-4-comprehensive-execution-commands)
+- [🧪 5. Automated Testing Suite](#-5-automated-testing-suite)
 - [📁 6. Repository Layout & Deliverables](#-6-repository-layout--deliverables)
 - [🛡️ 7. Tactical Incident Recommendations](#️-7-tactical-incident-recommendations)
 
@@ -104,81 +150,43 @@ The pipeline ingested and analyzed a 7-day server access log dataset of **200,00
 
 ---
 
-## 💻 4. Cross-Platform Execution Guide
+## 💻 4. Comprehensive Execution Commands
 
-### 🪟 Windows (Batch, PowerShell, or 1-Click)
+### Using `make` (macOS / Linux):
+```bash
+make help    # View colorized interactive help menu
+make install # Create venv & install dependencies
+make all     # Full pipeline: clean, check, test, build
+make web     # Start local web server (http://localhost:8080)
+make test    # Run all 10 automated unit tests
+```
 
-#### Option 1: 1-Click Double-Click
-Double-click [`run.bat`](run.bat) in File Explorer. It automatically runs tests, builds data, and opens the Web Dashboard in your browser!
+### Using `./build.sh` (macOS / Linux):
+```bash
+./build.sh check        # Audit environment and deliverables
+./build.sh build        # Run pipeline and regenerate outputs
+./build.sh web          # Launch web dashboard
+./build.sh web --port=3000 # Specify custom port
+./build.sh test         # Run unit tests
+```
 
-#### Option 2: Command Prompt (cmd)
+### Using `build.bat` (Windows):
 ```cmd
-REM 1. Audit environment and deliverables
 build.bat check
-
-REM 2. Run tests and regenerate all artifacts
-build.bat all
-
-REM 3. Launch the Web Dashboard
+build.bat build
 build.bat web
-```
-
-#### Option 3: PowerShell
-```powershell
-# Run complete pipeline
-.\build.ps1 all
-
-# Launch the Web Dashboard on port 8080
-.\build.ps1 web -Port 8080
+build.bat test
+build.bat all
 ```
 
 ---
 
-### 🍎 macOS (Make or Bash)
-
-```bash
-# Using Makefile
-make all
-make web
-
-# Or using the build script
-./build.sh all
-./build.sh web
-```
-
----
-
-### 🐧 Linux (Make or Bash)
-
-```bash
-# Using Makefile
-make all
-make web
-
-# Or using the build script
-./build.sh all
-./build.sh web
-```
-
----
-
-### 🐳 Docker Container (Any OS)
-
-Run the entire pipeline in a clean, reproducible container:
-
-```bash
-docker compose up --build
-# Open http://localhost:8080 in your browser
-```
-
----
-
-## 🧪 5. Automated Testing & CI Matrix
+## 🧪 5. Automated Testing Suite
 
 The repository includes an automated test suite in [`tests/test_analysis.py`](tests/test_analysis.py) and continuous integration across **Linux**, **macOS**, and **Windows** via GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ```bash
-python -m unittest tests/test_analysis.py
+python -m unittest tests/test_analysis.py -v
 ```
 
 ### Test Coverage (10 Test Cases):
@@ -204,6 +212,7 @@ Assignment2/
 ├── run_analysis.py                # 🐍 Standalone data processing & visualization pipeline
 ├── export_report.py               # 📄 HTML report generator with styled formatting
 ├── fix_notebooks.py               # 🛠️ Notebook validation and cell cleanup script
+├── QUICKSTART.md                  # ⚡ 60-Second Clone & Run Guide
 │
 ├── build.bat                      # 🪟 Windows Command Prompt build script
 ├── build.ps1                      # 🪟 Windows & Mac PowerShell automation script
