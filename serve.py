@@ -18,6 +18,16 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 DEFAULT_PORT = 8080
 BASE_DIR = Path(__file__).resolve().parent
 
+# Ensure UTF-8 console output across all platforms
+if sys.platform.startswith('win'):
+    try:
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        if hasattr(sys.stderr, 'reconfigure'):
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 class CrossPlatformHandler(SimpleHTTPRequestHandler):
     # Explicit MIME types map to prevent Windows Registry MIME misconfigurations
     extensions_map = {

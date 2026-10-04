@@ -41,19 +41,19 @@ switch ($Action.ToLower()) {
     "check" {
         Show-Header "🔍 Checking Environment & Deliverables"
         Write-Host "[*] Python interpreter: $Python" -ForegroundColor Blue
-        & $Python -c "import pandas, numpy, matplotlib, seaborn; print('  [✓] Core analytics libraries available')"
+        & $Python -c "import pandas, numpy, matplotlib, seaborn; print('  [OK] Core analytics libraries available')"
         if (Test-Path "server.log") {
-            Write-Host "  [✓] server.log exists" -ForegroundColor Green
+            Write-Host "  [OK] server.log exists" -ForegroundColor Green
         } else {
             Write-Host "  [!] server.log missing" -ForegroundColor Yellow
         }
         $files = @("hourly_404_errors.csv", "status_code_breakdown.csv", "heatmap_day_hour_404.csv",
                    "top_404_paths.csv", "daily_404_trend.csv", "summary_stats.txt",
                    "404_errors_by_hour.png", "404_heatmap_day_hour.png", "top_404_paths.png",
-                   "404_daily_trend.png", "index.html")
+                   "404_daily_trend.png", "index.html", "docker-compose.cluster.yml", "cluster-configs\yarn-site.xml")
         foreach ($f in $files) {
             if (Test-Path $f) {
-                Write-Host "  [✓] $f" -ForegroundColor Green
+                Write-Host "  [OK] $f" -ForegroundColor Green
             } else {
                 Write-Host "  [!] $f MISSING" -ForegroundColor Red
             }

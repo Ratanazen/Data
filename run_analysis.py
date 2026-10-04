@@ -21,6 +21,16 @@ import re
 import json
 import random
 import argparse
+
+# Ensure UTF-8 console output across all platforms (Windows cmd/PowerShell, macOS, Linux)
+if sys.platform.startswith('win'):
+    try:
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        if hasattr(sys.stderr, 'reconfigure'):
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 from datetime import datetime, timedelta
 from pathlib import Path
 import pandas as pd
@@ -523,7 +533,7 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
         json.dump(dashboard_data, f, indent=2)
     print(f"[+] Saved: {json_file.name}")
 
-    print("\n[✓] All pipeline deliverables generated successfully!")
+    print("\n[+] All pipeline deliverables generated successfully!")
 
 def main():
     parser = argparse.ArgumentParser(description="Log File Analysis Pipeline & Big Data Cluster Config Generator")
@@ -543,10 +553,11 @@ def main():
         storage_tb_per_node=args.storage
     )
 
-    if args.generate_cluster_config:
-        generate_cluster_configs(sizing, args.generate_cluster_config)
-        if args.skip_analysis:
-            return
+    cluster_out = Path(args.generate_cluster_config) if args.generate_cluster_config else (BASE_DIR / 'cluster-configs')
+    generate_cluster_configs(sizing, cluster_out)
+
+    if args.skip_analysis:
+        return
 
     df = parse_logs(LOG_FILE)
     analyze_and_export(df, BASE_DIR, cluster_sizing=sizing)

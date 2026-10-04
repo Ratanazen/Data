@@ -7,7 +7,18 @@ with upgraded Obsidian & Neon Cyberpunk palette, custom SVG icons, and print sty
 import json
 import re
 import os
+import sys
 from pathlib import Path
+
+# Ensure UTF-8 console output across all platforms
+if sys.platform.startswith('win'):
+    try:
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        if hasattr(sys.stderr, 'reconfigure'):
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 BASE_DIR = Path(__file__).resolve().parent
 

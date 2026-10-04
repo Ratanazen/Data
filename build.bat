@@ -58,7 +58,7 @@ echo   check   - Audit environment, packages, and deliverables
 echo   build   - Run data pipeline, generate CSVs, PNGs, and JSON
 echo   web     - Launch local Web Dashboard (default port 8080)
 echo   report  - Re-export standalone HTML report
-echo   test    - Run 10 automated unit tests
+echo   test    - Run 14 automated unit tests
 echo   clean   - Delete pycache and temporary files
 echo   all     - Full sequence: clean, check, test, build
 echo.
@@ -75,7 +75,7 @@ if exist "server.log" (
 ) else (
     echo [!] server.log missing
 )
-for %%f in (hourly_404_errors.csv status_code_breakdown.csv heatmap_day_hour_404.csv top_404_paths.csv daily_404_trend.csv summary_stats.txt 404_errors_by_hour.png 404_heatmap_day_hour.png top_404_paths.png 404_daily_trend.png index.html) do (
+for %%f in (hourly_404_errors.csv status_code_breakdown.csv heatmap_day_hour_404.csv top_404_paths.csv daily_404_trend.csv summary_stats.txt 404_errors_by_hour.png 404_heatmap_day_hour.png top_404_paths.png 404_daily_trend.png index.html docker-compose.cluster.yml cluster-configs\yarn-site.xml) do (
     if exist "%%f" (
         echo [v] %%f
     ) else (
