@@ -111,5 +111,53 @@ class TestLogFileAnalysis(unittest.TestCase):
         self.assertEqual(handler.extensions_map.get('.json'), 'application/json')
         self.assertEqual(handler.extensions_map.get('.js'), 'application/javascript')
 
+    def test_11_cluster_sizing_computation(self):
+        from run_analysis import compute_cluster_sizing
+        sizing = compute_cluster_sizing(num_nodes=4, cores_per_node=8, ram_gb_per_node=32, storage_tb_per_node=2.0)
+        self.assertEqual(sizing['num_nodes'], 4)
+        self.assertEqual(sizing['usable_cores_per_node'], 7) # 8 - 1
+        self.assertEqual(sizing['usable_ram_per_node_gb'], 30) # 32 - 2
+        self.assertEqual(sizing['executor_cores'], 5) # min(5, 7)
+        self.assertGreaterEqual(sizing['total_executors'], 1)
+        self.assertGreaterEqual(sizing['overhead_memory_mb'], 384)
+        self.assertGreater(sizing['shuffle_partitions'], 0)
+        self.assertAlmostEqual(sizing['usable_hdfs_tb'], round(8.0 / 3.0, 2))
+
+    def test_12_generate_cluster_configs(self):
+        import tempfile
+        from run_analysis import compute_cluster_sizing, generate_cluster_configs
+        sizing = compute_cluster_sizing(num_nodes=4, cores_per_node=8, ram_gb_per_node=32)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generate_cluster_configs(sizing, tmpdir)
+            p = Path(tmpdir)
+            for fname in ['spark-defaults.conf', 'core-site.xml', 'hdfs-site.xml', 'yarn-site.xml']:
+                f = p / fname
+                self.assertTrue(f.exists(), f"{fname} must be generated")
+                self.assertGreater(f.stat().st_size, 50, f"{fname} must be non-empty")
+
+    def test_13_docker_compose_cluster(self):
+        compose_path = DIR / 'docker-compose.cluster.yml'
+        self.assertTrue(compose_path.exists(), "docker-compose.cluster.yml must exist")
+        with open(compose_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        self.assertIn('namenode:', content)
+        self.assertIn('datanode:', content)
+        self.assertIn('spark-master:', content)
+        self.assertIn('spark-worker:', content)
+        self.assertIn('dashboard:', content)
+
+    def test_14_web_dashboard_advanced_features(self):
+        html_path = DIR / 'index.html'
+        with open(html_path, 'r', encoding='utf-8') as f:
+            html = f.read()
+        self.assertIn('id="log-inspector-modal"', html)
+        self.assertIn('id="chart-zoom-modal"', html)
+        self.assertIn('calc-nodes', html)
+        self.assertIn('updateClusterCalculations', html)
+        self.assertIn('openLogInspector', html)
+        self.assertIn('exportFilteredLogsJSON', html)
+        self.assertIn('exportFilteredLogsMarkdown', html)
+        self.assertIn('yarn-site', html)
+
 if __name__ == '__main__':
     unittest.main()

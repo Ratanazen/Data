@@ -20,6 +20,7 @@ import sys
 import re
 import json
 import random
+import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
 import pandas as pd
@@ -120,7 +121,173 @@ def parse_logs(log_path):
     df['day_of_week'] = df['timestamp'].dt.day_name()
     return df
 
-def analyze_and_export(df, out_dir=BASE_DIR):
+def compute_cluster_sizing(num_nodes=4, cores_per_node=8, ram_gb_per_node=32, storage_tb_per_node=2.0):
+    """
+    Computes mathematically optimal Apache Spark and Hadoop YARN cluster configurations
+    following Apache Big Data production sizing guidelines.
+    """
+    usable_cores_per_node = max(1, int(cores_per_node) - 1)
+    usable_ram_per_node = max(2, int(ram_gb_per_node) - 2)
+
+    # 4 to 5 cores per executor is optimal for HDFS I/O without JVM GC pauses
+    executor_cores = min(5, usable_cores_per_node)
+    executors_per_node = max(1, usable_cores_per_node // executor_cores)
+
+    # 1 executor allocated for ApplicationMaster / Spark Driver
+    total_executors = max(1, (int(num_nodes) * executors_per_node) - 1)
+    total_cluster_cores = total_executors * executor_cores
+
+    # Reserve 10% memory for off-heap / overhead
+    raw_mem_per_exec = usable_ram_per_node / executors_per_node
+    executor_memory_gb = max(1, int(raw_mem_per_exec * 0.90))
+    overhead_memory_mb = max(384, int(executor_memory_gb * 1024 * 0.10))
+    driver_memory_gb = min(16, max(4, executor_memory_gb))
+
+    # 2-3 tasks per core for optimal shuffle partition distribution
+    shuffle_partitions = max(8, total_cluster_cores * 3)
+    default_parallelism = max(8, total_cluster_cores * 2)
+
+    raw_storage_tb = round(float(num_nodes) * float(storage_tb_per_node), 2)
+    usable_hdfs_tb = round(raw_storage_tb / 3.0, 2)  # 3x replication
+
+    return {
+        'num_nodes': int(num_nodes),
+        'cores_per_node': int(cores_per_node),
+        'ram_gb_per_node': int(ram_gb_per_node),
+        'storage_tb_per_node': float(storage_tb_per_node),
+        'usable_cores_per_node': usable_cores_per_node,
+        'usable_ram_per_node_gb': usable_ram_per_node,
+        'executor_cores': executor_cores,
+        'executors_per_node': executors_per_node,
+        'total_executors': total_executors,
+        'total_cluster_cores': total_cluster_cores,
+        'executor_memory_gb': executor_memory_gb,
+        'overhead_memory_mb': overhead_memory_mb,
+        'driver_memory_gb': driver_memory_gb,
+        'shuffle_partitions': shuffle_partitions,
+        'default_parallelism': default_parallelism,
+        'raw_storage_tb': raw_storage_tb,
+        'usable_hdfs_tb': usable_hdfs_tb,
+        'yarn_nodemanager_mb': usable_ram_per_node * 1024,
+        'yarn_nodemanager_vcores': usable_cores_per_node
+    }
+
+def generate_cluster_configs(sizing, output_dir):
+    """Generates production-ready Big Data cluster configuration files."""
+    out_path = Path(output_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+
+    spark_defaults = f"""# Spark Default Configuration for Hadoop HDFS / YARN Cluster
+spark.master                     yarn
+spark.submit.deployMode          client
+spark.app.name                   NasaLogAnalyticsPipeline
+spark.driver.memory              {sizing['driver_memory_gb']}g
+spark.executor.instances         {sizing['total_executors']}
+spark.executor.memory            {sizing['executor_memory_gb']}g
+spark.executor.memoryOverhead    {sizing['overhead_memory_mb']}m
+spark.executor.cores             {sizing['executor_cores']}
+spark.sql.adaptive.enabled       true
+spark.sql.adaptive.coalescePartitions.enabled true
+spark.sql.shuffle.partitions     {sizing['shuffle_partitions']}
+spark.default.parallelism        {sizing['default_parallelism']}
+spark.serializer                 org.apache.spark.serializer.KryoSerializer
+spark.eventLog.enabled           true
+spark.eventLog.dir               hdfs://namenode:9000/spark-logs
+spark.history.fs.logDirectory    hdfs://namenode:9000/spark-logs
+spark.sql.parquet.compression.codec snappy
+"""
+    (out_path / "spark-defaults.conf").write_text(spark_defaults, encoding='utf-8')
+
+    core_site = """<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode:9000</value>
+    <description>Default Hadoop Distributed File System URI</description>
+  </property>
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+    <description>128KB buffer for large streaming log files</description>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/opt/hadoop/tmp</value>
+  </property>
+</configuration>
+"""
+    (out_path / "core-site.xml").write_text(core_site, encoding='utf-8')
+
+    hdfs_site = f"""<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+    <description>Default block replication factor across DataNodes</description>
+  </property>
+  <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+    <description>128MB HDFS block size for parallel PySpark ingestion</description>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/opt/hadoop/data/nameNode</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/opt/hadoop/data/dataNode</value>
+  </property>
+  <property>
+    <name>dfs.permissions.enabled</name>
+    <value>false</value>
+  </property>
+</configuration>
+"""
+    (out_path / "hdfs-site.xml").write_text(hdfs_site, encoding='utf-8')
+
+    yarn_site = f"""<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>{sizing['yarn_nodemanager_mb']}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>{sizing['yarn_nodemanager_vcores']}</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>{sizing['yarn_nodemanager_mb']}</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>1024</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>spark_shuffle,mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.spark_shuffle.class</name>
+    <value>org.apache.spark.network.yarn.YarnShuffleService</value>
+  </property>
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+</configuration>
+"""
+    (out_path / "yarn-site.xml").write_text(yarn_site, encoding='utf-8')
+    print(f"[+] Cluster configs generated in: {out_path.resolve()}")
+
+def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
+    if cluster_sizing is None:
+        cluster_sizing = compute_cluster_sizing(num_nodes=4, cores_per_node=8, ram_gb_per_node=32)
+
     print("\n[*] Performing aggregations and generating deliverables...")
     total_requests = len(df)
     error_404_df = df[df['status'] == 404]
@@ -315,14 +482,24 @@ def analyze_and_export(df, out_dir=BASE_DIR):
             'pyspark': {
                 'version': '3.5.1',
                 'spark_master': 'spark://spark-master:7077',
-                'driver_memory': '4 GB',
-                'executor_memory': '8 GB',
-                'executor_cores': 4,
+                'driver_memory': f"{cluster_sizing['driver_memory_gb']} GB",
+                'executor_memory': f"{cluster_sizing['executor_memory_gb']} GB",
+                'executor_cores': cluster_sizing['executor_cores'],
+                'executor_instances': cluster_sizing['total_executors'],
                 'catalyst_optimizer': 'Enabled (Tungsten Bytecode Generation)',
                 'cache_storage_level': 'MEMORY_AND_DISK',
-                'default_parallelism': 8,
-                'adaptive_query_execution': 'Enabled'
+                'default_parallelism': cluster_sizing['default_parallelism'],
+                'adaptive_query_execution': 'Enabled',
+                'shuffle_partitions': cluster_sizing['shuffle_partitions']
             },
+            'yarn': {
+                'nodemanager_memory_mb': cluster_sizing['yarn_nodemanager_mb'],
+                'nodemanager_vcores': cluster_sizing['yarn_nodemanager_vcores'],
+                'scheduler_min_mb': 1024,
+                'scheduler_max_mb': cluster_sizing['yarn_nodemanager_mb'],
+                'aux_services': 'spark_shuffle,mapreduce_shuffle'
+            },
+            'cluster_sizing': cluster_sizing,
             'telemetry': {
                 'cpu_utilization_pct': 18.4,
                 'executor_memory_used_pct': 42.1,
@@ -349,8 +526,30 @@ def analyze_and_export(df, out_dir=BASE_DIR):
     print("\n[✓] All pipeline deliverables generated successfully!")
 
 def main():
+    parser = argparse.ArgumentParser(description="Log File Analysis Pipeline & Big Data Cluster Config Generator")
+    parser.add_argument('--generate-cluster-config', nargs='?', const='./cluster-configs', help="Generate Big Data config files into specified directory")
+    parser.add_argument('--nodes', type=int, default=4, help="Number of worker nodes for cluster sizing")
+    parser.add_argument('--cores', type=int, default=8, help="CPU cores per worker node")
+    parser.add_argument('--ram', type=int, default=32, help="RAM (GB) per worker node")
+    parser.add_argument('--storage', type=float, default=2.0, help="Storage (TB) per worker node")
+    parser.add_argument('--skip-analysis', action='store_true', help="Skip log parsing, only generate cluster configs")
+
+    args = parser.parse_args()
+
+    sizing = compute_cluster_sizing(
+        num_nodes=args.nodes,
+        cores_per_node=args.cores,
+        ram_gb_per_node=args.ram,
+        storage_tb_per_node=args.storage
+    )
+
+    if args.generate_cluster_config:
+        generate_cluster_configs(sizing, args.generate_cluster_config)
+        if args.skip_analysis:
+            return
+
     df = parse_logs(LOG_FILE)
-    analyze_and_export(df, BASE_DIR)
+    analyze_and_export(df, BASE_DIR, cluster_sizing=sizing)
 
 if __name__ == '__main__':
     main()

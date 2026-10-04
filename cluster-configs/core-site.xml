@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode:9000</value>
+    <description>Default Hadoop Distributed File System URI</description>
+  </property>
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+    <description>128KB buffer for large streaming log files</description>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/opt/hadoop/tmp</value>
+  </property>
+</configuration>

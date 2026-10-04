@@ -7,7 +7,7 @@
 ![Hadoop](https://img.shields.io/badge/Hadoop-HDFS%20Distributed-FFC107?style=for-the-badge&logo=apachehadoop&logoColor=black)
 ![PySpark](https://img.shields.io/badge/Apache%20Spark-PySpark%20DataFrame-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![CI Tests](https://img.shields.io/badge/CI%20Matrix-10%2F10%20Tests%20Passing-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)
+![CI Tests](https://img.shields.io/badge/CI%20Matrix-14%2F14%20Tests%20Passing-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)
 
 <br/>
 
@@ -63,7 +63,11 @@ pip install -r requirements.txt
 
 #### 🐳 Docker Users (Zero Local Dependencies):
 ```bash
+# Standalone Web Dashboard
 docker compose up --build
+
+# Full Production Big Data Stack (Hadoop HDFS + Spark Master/Worker + Dashboard)
+docker compose -f docker-compose.cluster.yml up -d
 ```
 
 👉 Once running, open **[http://localhost:8080/](http://localhost:8080/)** in your browser!
@@ -89,8 +93,9 @@ This project delivers a complete, cross-platform Big Data analysis pipeline:
 1. **Hadoop HDFS Storage Simulation**: Models distributed 128MB block chunking with 3x replica fault tolerance.
 2. **PySpark DataFrame Engine**: Distributed regex parsing (`F.regexp_extract`) leveraging Catalyst query optimization and Tungsten JVM bytecode compilation.
 3. **In-Memory Caching (`.cache()`)**: Persists cleaned DataFrames in executor RAM for instantaneous multi-dimensional aggregations.
-4. **Interactive Web Dashboard**: Modern, responsive analytics dashboard (`index.html`) featuring real-time Chart.js visualizations, day-by-hour heatmap matrix, and log explorer.
-5. **Full Cross-Platform Build Configuration**: Works seamlessly on **Windows**, **macOS**, and **Linux** with `Makefile`, `build.sh`, `build.bat`, `build.ps1`, `run.bat`, `pyproject.toml`, and `Dockerfile`.
+4. **Interactive Web Dashboard**: Modern, responsive analytics dashboard (`index.html`) featuring real-time Chart.js visualizations, day-by-hour heatmap matrix, Log Entry Deep-Dive Inspector modal with WAF rule generator, Fullscreen Chart Presentation zoom, multi-format log table exporter (CSV, JSON, Markdown, Clipboard TSV), and dynamic alert threshold tuning.
+5. **Big Data Cluster Sizing & Config Generator**: Production cluster sizing calculator (`run_analysis.py --generate-cluster-config`), automated XML/conf generation (`spark-defaults.conf`, `core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`), and multi-container Docker cluster orchestration (`docker-compose.cluster.yml`).
+6. **Full Cross-Platform Build Configuration**: Works seamlessly on **Windows**, **macOS**, and **Linux** with `Makefile`, `build.sh`, `build.bat`, `build.ps1`, `run.bat`, `pyproject.toml`, and `Dockerfile`.
 
 ---
 
@@ -179,6 +184,21 @@ build.bat test
 build.bat all
 ```
 
+### Big Data Cluster & Configuration Commands:
+```bash
+# Generate tuned Hadoop HDFS & Spark cluster XML/conf files
+python run_analysis.py --generate-cluster-config --nodes 4 --cores 8 --ram 32 --storage 2.0
+
+# Start multi-container distributed cluster (HDFS NameNode/DataNode, Spark Master/Worker, Web Dashboard)
+docker compose -f docker-compose.cluster.yml up -d
+
+# Check cluster service health
+docker compose -f docker-compose.cluster.yml ps
+
+# Stop cluster
+docker compose -f docker-compose.cluster.yml down
+```
+
 ---
 
 ## 🧪 5. Automated Testing Suite
@@ -189,7 +209,7 @@ The repository includes an automated test suite in [`tests/test_analysis.py`](te
 python -m unittest tests/test_analysis.py -v
 ```
 
-### Test Coverage (10 Test Cases):
+### Test Coverage (14 Test Cases):
 - `test_01_server_log_exists`: Ensures `server.log` is present and intact (>1MB).
 - `test_02_regex_pattern`: Verifies Common Log Format parser against sample lines.
 - `test_03_summary_stats`: Verifies exact values in `summary_stats.txt` (200k total, 43,153 errors, 21.58%).
@@ -200,6 +220,10 @@ python -m unittest tests/test_analysis.py -v
 - `test_08_web_dashboard_data_json`: Validates schema and structure of the dashboard JSON feed.
 - `test_09_web_dashboard_html`: Checks critical UI containers and SVG favicon in `index.html`.
 - `test_10_serve_mime_types`: Ensures proper `.svg`, `.json`, `.js`, and `.css` MIME mappings on Windows/Mac.
+- `test_11_cluster_sizing_computation`: Validates Spark executor cores, memory overhead, shuffle partitions, and HDFS sizing math.
+- `test_12_generate_cluster_configs`: Validates automated output of `spark-defaults.conf`, `core-site.xml`, `hdfs-site.xml`, and `yarn-site.xml`.
+- `test_13_docker_compose_cluster`: Validates multi-service topology configuration (NameNode, DataNode, Spark Master, Spark Worker, Dashboard).
+- `test_14_web_dashboard_advanced_features`: Validates Log Inspector modal, Chart Zoom modal, Resource Tuner, and Multi-Format exporters in `index.html`.
 
 ---
 
@@ -220,10 +244,17 @@ Assignment2/
 ├── Makefile                       # ⚙️ Master POSIX build configuration
 ├── build.sh                       # 📜 Master Unix shell automation script
 ├── Dockerfile                     # 🐳 Container build specification
-├── docker-compose.yml             # 🐳 Multi-service orchestration config
+├── docker-compose.yml             # 🐳 Standalone web dashboard container orchestration
+├── docker-compose.cluster.yml     # 🐳 Multi-node Big Data cluster stack (HDFS + Spark + Dashboard)
 ├── pyproject.toml                 # 📦 Modern Python project metadata & tool settings
 ├── requirements.txt               # 📋 Pinned dependencies list
 ├── .editorconfig                  # 📐 Code styling and formatting rules
+│
+├── cluster-configs/               # ⚙️ Generated Production Big Data Configuration Files
+│   ├── spark-defaults.conf        # PySpark executor & driver resource allocation
+│   ├── core-site.xml              # Hadoop HDFS default filesystem URI & IPC configs
+│   ├── hdfs-site.xml              # HDFS block size (128MB) & replication (3x) settings
+│   └── yarn-site.xml              # YARN NodeManager & FairScheduler memory limits
 │
 ├── .github/                       # 🤖 GitHub CI Workflows
 │   └── workflows/ci.yml           # Cross-platform matrix test on Linux, Mac, & Windows
@@ -235,7 +266,7 @@ Assignment2/
 │   └── architecture.svg           # 🏗️ System architecture SVG diagram
 │
 ├── tests/                         # 🧪 Automated Test Suite
-│   └── test_analysis.py           # 10 unit tests verifying pipeline integrity
+│   └── test_analysis.py           # 14 unit tests verifying pipeline integrity
 │
 ├── server.log                     # 🪵 200,000 raw server access records
 ├── Log_File_Analysis_PySpark.ipynb # 📓 Main PySpark Jupyter Notebook

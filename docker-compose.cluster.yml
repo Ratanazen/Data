@@ -1,0 +1,122 @@
+networks:
+  bigdata-net:
+    driver: bridge
+    name: bigdata-net
+
+volumes:
+  hadoop_namenode:
+    name: hadoop_namenode
+  hadoop_datanode:
+    name: hadoop_datanode
+  spark_events:
+    name: spark_events
+
+services:
+  # =========================================================================
+  # 1. Apache Hadoop HDFS NameNode
+  # =========================================================================
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-namenode
+    restart: unless-stopped
+    ports:
+      - "9870:9870"   # HDFS NameNode Web UI
+      - "9000:9000"   # HDFS RPC Filesystem Port
+    environment:
+      - CLUSTER_NAME=Hadoop-LogAnalytics-Cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HDFS_CONF_dfs_replication=1
+      - HDFS_CONF_dfs_blocksize=134217728
+      - HDFS_CONF_dfs_permissions_enabled=false
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    networks:
+      - bigdata-net
+
+  # =========================================================================
+  # 2. Apache Hadoop HDFS DataNode
+  # =========================================================================
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-datanode
+    restart: unless-stopped
+    depends_on:
+      - namenode
+    ports:
+      - "9864:9864"   # HDFS DataNode Web UI
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HDFS_CONF_dfs_replication=1
+      - HDFS_CONF_dfs_blocksize=134217728
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    networks:
+      - bigdata-net
+
+  # =========================================================================
+  # 3. Apache Spark Master Node (PySpark 3.5.1)
+  # =========================================================================
+  spark-master:
+    image: bitnami/spark:3.5.1
+    container_name: spark-master
+    restart: unless-stopped
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_WEBUI_PORT=8080
+    ports:
+      - "8081:8080"   # Spark Master Web UI (mapped to 8081 to avoid conflict)
+      - "7077:7077"   # Spark Master RPC port
+    volumes:
+      - .:/opt/bitnami/spark/work:rw
+      - spark_events:/opt/bitnami/spark/events
+    networks:
+      - bigdata-net
+
+  # =========================================================================
+  # 4. Apache Spark Worker Node
+  # =========================================================================
+  spark-worker:
+    image: bitnami/spark:3.5.1
+    container_name: spark-worker-1
+    restart: unless-stopped
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=4G
+      - SPARK_WORKER_CORES=4
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8082:8081"   # Spark Worker Web UI
+    volumes:
+      - .:/opt/bitnami/spark/work:rw
+    networks:
+      - bigdata-net
+
+  # =========================================================================
+  # 5. Interactive Log File Analytics Web Dashboard
+  # =========================================================================
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: log-analytics-dashboard
+    restart: unless-stopped
+    ports:
+      - "8080:8080"   # Main Web Dashboard
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - bigdata-net

@@ -48,7 +48,7 @@ jobs:
       shell: bash
       run: |
         echo "Checking generated deliverables..."
-        for file in hourly_404_errors.csv status_code_breakdown.csv heatmap_day_hour_404.csv top_404_paths.csv daily_404_trend.csv summary_stats.txt 404_errors_by_hour.png 404_heatmap_day_hour.png top_404_paths.png 404_daily_trend.png index.html Log_File_Analysis_Report.html; do
+        for file in hourly_404_errors.csv status_code_breakdown.csv heatmap_day_hour_404.csv top_404_paths.csv daily_404_trend.csv summary_stats.txt 404_errors_by_hour.png 404_heatmap_day_hour.png top_404_paths.png 404_daily_trend.png index.html Log_File_Analysis_Report.html docker-compose.cluster.yml cluster-configs/yarn-site.xml; do
           if [ ! -f "$file" ]; then
             echo "::error file=$file::Missing deliverable $file"
             exit 1

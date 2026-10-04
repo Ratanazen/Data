@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-10-03T15:45:54.855786",
+    "generated_at": "2026-10-04T10:21:12.631054",
     "dataset_name": "Server Access Logs (Apache/NGINX Common Log Format)",
     "storage_engine": "Hadoop Distributed File System (HDFS)",
     "processing_engine": "Apache PySpark DataFrame API",
@@ -1625,13 +1625,43 @@
     "pyspark": {
       "version": "3.5.1",
       "spark_master": "spark://spark-master:7077",
-      "driver_memory": "4 GB",
-      "executor_memory": "8 GB",
-      "executor_cores": 4,
+      "driver_memory": "16 GB",
+      "executor_memory": "27 GB",
+      "executor_cores": 5,
+      "executor_instances": 3,
       "catalyst_optimizer": "Enabled (Tungsten Bytecode Generation)",
       "cache_storage_level": "MEMORY_AND_DISK",
-      "default_parallelism": 8,
-      "adaptive_query_execution": "Enabled"
+      "default_parallelism": 30,
+      "adaptive_query_execution": "Enabled",
+      "shuffle_partitions": 45
+    },
+    "yarn": {
+      "nodemanager_memory_mb": 30720,
+      "nodemanager_vcores": 7,
+      "scheduler_min_mb": 1024,
+      "scheduler_max_mb": 30720,
+      "aux_services": "spark_shuffle,mapreduce_shuffle"
+    },
+    "cluster_sizing": {
+      "num_nodes": 4,
+      "cores_per_node": 8,
+      "ram_gb_per_node": 32,
+      "storage_tb_per_node": 2.0,
+      "usable_cores_per_node": 7,
+      "usable_ram_per_node_gb": 30,
+      "executor_cores": 5,
+      "executors_per_node": 1,
+      "total_executors": 3,
+      "total_cluster_cores": 15,
+      "executor_memory_gb": 27,
+      "overhead_memory_mb": 2764,
+      "driver_memory_gb": 16,
+      "shuffle_partitions": 45,
+      "default_parallelism": 30,
+      "raw_storage_tb": 8.0,
+      "usable_hdfs_tb": 2.67,
+      "yarn_nodemanager_mb": 30720,
+      "yarn_nodemanager_vcores": 7
     },
     "telemetry": {
       "cpu_utilization_pct": 18.4,
