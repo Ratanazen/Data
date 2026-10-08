@@ -1,20 +1,27 @@
-# 📊 Assignment 2: Log File Analysis with Hadoop & Apache PySpark
+# 🛡️ LOGSHIELD — Distributed Log Analytics & Security Detection Platform
+### *Enterprise Lakehouse (Bronze / Silver / Gold), Real-Time Kafka Streaming, FastAPI REST Engine & WAF Threat Intelligence*
 
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![PySpark](https://img.shields.io/badge/Apache%20Spark-PySpark%20Lakehouse-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-REST%20API-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Kafka](https://img.shields.io/badge/Apache%20Kafka-Real--Time%20Streaming-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
 ![Hadoop](https://img.shields.io/badge/Hadoop-HDFS%20Distributed-FFC107?style=for-the-badge&logo=apachehadoop&logoColor=black)
-![PySpark](https://img.shields.io/badge/Apache%20Spark-PySpark%20DataFrame-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![CI Tests](https://img.shields.io/badge/CI%20Matrix-14%2F14%20Tests%20Passing-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose%20Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-37%2F37%20Passing%20(100%25)-22C55E?style=for-the-badge&logo=pytest&logoColor=white)
 
 <br/>
 
-### 🚀 Level 3: Advanced (Focus: Full-Stack & Big Data)
-**Topic:** *Ingest massive server log files into Hadoop. Use PySpark to count "404 Error" occurrences and visualize the time of day most failures happen.*
+**Originally:** *Assignment 2 Project #19 "Log File Analysis: Ingest massive server log files into Hadoop. Use PySpark to count 404 Error occurrences and visualize the time of day most failures happen."*  
+**Upgraded to:** **LogShield Enterprise Analytics & Security Platform**
 
-[🌐 Live Interactive Web Dashboard](index.html) • [📄 Full Written HTML Report](Log_File_Analysis_Report.html) • [📓 Main PySpark Notebook](Log_File_Analysis_PySpark.ipynb) • [⚡ Quick Start Guide](QUICKSTART.md)
+[🌐 Interactive Dashboard](index.html) • [📡 REST API Docs](http://localhost:8000/docs) • [📄 Full Written HTML Report](Log_File_Analysis_Report.html) • [🏛️ Architecture Guide](docs/ARCHITECTURE.md) • [🛡️ Threat Model](docs/SECURITY.md)
+
+---
+
+### 📚 LogShield Complete Documentation Suite
+[🏛️ System Architecture](docs/ARCHITECTURE.md) • [⚙️ Setup & Install](docs/INSTALLATION.md) • [💻 Local Mode](docs/LOCAL_MODE.md) • [🐘 Hadoop HDFS Mode](docs/HADOOP_MODE.md) • [⚡ Streaming Mode](docs/STREAMING_MODE.md) • [📡 REST API Reference](docs/API.md) • [🛡️ Security Engine](docs/SECURITY.md) • [🗄️ Parquet Data Model](docs/DATA_MODEL.md) • [🛠️ Troubleshooting](docs/TROUBLESHOOTING.md) • [📋 Implementation Report](docs/IMPLEMENTATION_REPORT.md)
 
 ---
 

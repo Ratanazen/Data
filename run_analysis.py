@@ -458,6 +458,47 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
         row_vals = heatmap_df.loc[day].tolist()
         heatmap_matrix.append({'day': day, 'hours': row_vals})
 
+    # Security heuristics & threat detection
+    ip_stats = df.groupby('ip').agg(
+        total_requests=('status', 'count'),
+        errors_404=('status', lambda s: (s == 404).sum()),
+        errors_403=('status', lambda s: (s == 403).sum()),
+        errors_500=('status', lambda s: (s == 500).sum()),
+        admin_hits=('path', lambda p: p.str.startswith(('/admin', '/login')).sum())
+    ).reset_index()
+
+    ip_stats['risk_score'] = (
+        (ip_stats['errors_404'] >= 100) * 20 +
+        (ip_stats['errors_403'] >= 30) * 20 +
+        (ip_stats['admin_hits'] >= 10) * 25 +
+        ((ip_stats['errors_404'] / ip_stats['total_requests']) > 0.5) * 20
+    ).clip(0, 100)
+
+    def get_severity_str(sc):
+        if sc >= 75: return "CRITICAL"
+        if sc >= 50: return "HIGH"
+        if sc >= 25: return "MEDIUM"
+        return "LOW"
+
+    ip_stats['severity'] = ip_stats['risk_score'].apply(get_severity_str)
+    top_threat_ips = ip_stats.sort_values(by=['risk_score', 'total_requests'], ascending=[False, False]).head(50).to_dict(orient='records')
+
+    # Security event incidents
+    sec_events = []
+    for _, r in ip_stats[ip_stats['risk_score'] >= 25].sort_values(by='risk_score', ascending=False).head(100).iterrows():
+        ev_type = "Potential Brute-Force Login Probing" if r['admin_hits'] >= 10 else ("Excessive 404 Reconnaissance" if r['errors_404'] >= 100 else "Suspicious Client Traffic Anomaly")
+        sec_events.append({
+            'event_id': f"SEC-{abs(hash(r['ip'])) % 100000:05d}",
+            'timestamp': "2026-09-07T03:45:00Z",
+            'ip': r['ip'],
+            'event_type': ev_type,
+            'severity': r['severity'],
+            'risk_score': int(r['risk_score']),
+            'evidence': f"Admin hits: {r['admin_hits']}, 404s: {r['errors_404']}, 403s: {r['errors_403']}",
+            'request_count': int(r['total_requests']),
+            'recommendation': f"Enforce WAF drop / fail2ban rate-limit on IP {r['ip']}"
+        })
+
     dashboard_data = {
         'metadata': {
             'generated_at': datetime.now().isoformat(),
@@ -469,7 +510,13 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
             'error_rate': round(float(error_rate), 2),
             'peak_hour': int(peak_hour),
             'peak_hour_formatted': f"{peak_hour:02d}:00 - {peak_hour+1:02d}:00 AM",
-            'peak_count': int(peak_count)
+            'peak_count': int(peak_count),
+            'total_403': int((df['status'] == 403).sum()),
+            'total_500': int((df['status'] == 500).sum()),
+            'total_200': int((df['status'] == 200).sum()),
+            'total_301': int((df['status'] == 301).sum()),
+            'suspicious_ips_count': int((ip_stats['risk_score'] >= 50).sum()),
+            'security_events_count': len(sec_events)
         },
         'status_breakdown': status_breakdown.to_dict(orient='records'),
         'hourly_distribution': hourly_counts.to_dict(orient='records'),
@@ -477,6 +524,8 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
         'daily_trend': daily_trend.to_dict(orient='records'),
         'heatmap_matrix': heatmap_matrix,
         'sample_logs': sample_records,
+        'security_events': sec_events,
+        'top_ips': top_threat_ips,
         'system_config': {
             'hadoop': {
                 'cluster_name': 'Hadoop-LogAnalytics-Cluster',

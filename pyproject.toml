@@ -27,8 +27,13 @@ test = [
 ]
 
 [project.scripts]
+logshield = "src.logshield.cli.main:main"
 log-analysis = "run_analysis:main"
 log-web = "serve:run_server"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

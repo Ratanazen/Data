@@ -12,5 +12,18 @@ __pycache__/
 # OS / Editor files
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/
+# Environment secrets
+.env
+
+# Testing & Linting
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Data Lakehouse Artifacts (generated at runtime)
+data/bronze/
+data/silver/
+data/gold/
+data/quarantine/
+data/raw/*.log
+

@@ -2,10 +2,9 @@
 Test Suite for Log File Analysis Pipeline (Cross-Platform)
 """
 
-import os
-import re
-import json
 import csv
+import json
+import re
 import unittest
 from pathlib import Path
 
@@ -125,6 +124,7 @@ class TestLogFileAnalysis(unittest.TestCase):
 
     def test_12_generate_cluster_configs(self):
         import tempfile
+
         from run_analysis import compute_cluster_sizing, generate_cluster_configs
         sizing = compute_cluster_sizing(num_nodes=4, cores_per_node=8, ram_gb_per_node=32)
         with tempfile.TemporaryDirectory() as tmpdir:
