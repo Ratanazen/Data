@@ -116,12 +116,27 @@ LogShield uses an empirical, transparent rule-based risk evaluation model:
 ## 5. Serving & Presentation Layer
 
 * **FastAPI Backend**: Asynchronous REST API serving 11 endpoints with automatic OpenAPI documentation.
-* **Dashboard V2**: Modern HTML5/Tailwind/Chart.js dashboard featuring:
-  - 7 Executive KPI Cards
+* **Dashboard V2**: Modern HTML5/Tailwind/Lucide/Chart.js dashboard featuring:
+  - 7 Executive KPI Cards (with dynamic peak hour error metrics)
   - Interactive 24-Hour Peak Failure Bar Chart
   - HTTP Status Donut Chart
   - 7x24 Failure Intensity Heatmap with Cell Inspector
   - Dedicated Security Incident Intelligence Table
   - Top Client IP Threat Matrix with Quick WAF Block Buttons
   - Live Log Explorer with multi-column filtering and pagination
+  - Interactive 5-Stage Lakehouse Pipeline Flow Stepper with runtime contracts and CLI snippets
+  - High-contrast Light Mode theme styling and global Escape key modal dismissal
   - Dual Mode: Dynamic FastAPI connectivity with zero-dependency static JSON fallback.
+
+---
+
+## 6. 5-Stage Lakehouse Pipeline Lifecycle
+
+| Stage | Name | Role & Architecture | Format In | Format Out | Fault Tolerance Policy |
+|---|---|---|---|---|---|
+| **1** | **Edge Intake** | Filebeat / Flume / Syslog agents | Raw Server Access Logs | Buffered spool chunks | Local disk spooling (24h backpressure buffer) |
+| **2** | **Quarantine & Bronze** | HDFS landing zone & dead-letter routing | Buffered spool chunks | `data/bronze/` & `corrupt_logs.json` | 3x HDFS DataNode replication |
+| **3** | **Silver Normalization** | PySpark Catalyst regexp_extract & type casts | Bronze HDFS blocks | `data/silver/` (partitioned Parquet) | RDD lineage graph automatic recomputation |
+| **4** | **Gold Analytics** | Spark Window aggregations & Threat Engine | Silver Parquet DataFrames | `data/gold/` & `analysis_summary.json` | Adaptive Query Execution (AQE) partition coalescing |
+| **5** | **Serving Layer** | FastAPI asynchronous REST & Web UI | Gold Parquet tables & JSON | REST JSON endpoints & Dashboard UI | Stateless Uvicorn workers behind health checks |
+
