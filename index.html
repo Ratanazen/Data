@@ -114,16 +114,30 @@
     html:not(.dark) .text-slate-400 {
       color: #64748b !important;
     }
-    html:not(.dark) .bg-slate-900 {
-      background-color: #f1f5f9 !important;
+    html:not(.dark) .bg-slate-900,
+    html:not(.dark) [class*="bg-slate-900"] {
+      background-color: #f8fafc !important;
       color: #1e293b !important;
     }
-    html:not(.dark) .bg-slate-950 {
+    html:not(.dark) .bg-slate-950,
+    html:not(.dark) [class*="bg-slate-950"] {
       background-color: #ffffff !important;
       color: #1e293b !important;
     }
     html:not(.dark) .border-slate-800,
-    html:not(.dark) .border-slate-800\/80 {
+    html:not(.dark) [class*="border-slate-800"],
+    html:not(.dark) [class*="border-slate-700"] {
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) [class*="divide-slate-800"] > * + * {
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) tr:hover {
+      background-color: #f1f5f9 !important;
+    }
+    html:not(.dark) pre {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
       border-color: #e2e8f0 !important;
     }
     html:not(.dark) input,
@@ -170,22 +184,22 @@
         </a>
       </div>
 
-      <!-- Navigation Links with Configured Icons -->
+      <!-- Navigation Links with Configured Lucide Icons -->
       <nav class="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-300">
         <a href="#overview" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <img src="assets/chart-bar.svg" class="w-4 h-4" alt="Overview"> Overview
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i> Overview
         </a>
         <a href="#hourly" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <img src="assets/clock.svg" class="w-4 h-4" alt="Traffic"> Traffic
+          <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i> Traffic
         </a>
         <a href="#heatmap" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <img src="assets/heatmap.svg" class="w-4 h-4" alt="Errors"> Errors
+          <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i> Errors
         </a>
         <a href="#security" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <img src="assets/shield-check.svg" class="w-4 h-4 text-cyber-crimson" alt="Security"> Security
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Security
         </a>
         <a href="#ips" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Top IPs
+          <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Top IPs
         </a>
         <a href="#endpoints" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
           <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> URLs
@@ -193,8 +207,11 @@
         <a href="#explorer" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
           <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Live Logs
         </a>
+        <a href="#architecture" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="git-branch" class="w-4 h-4 text-fuchsia-400"></i> Flow Plan
+        </a>
         <a href="#system" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <img src="assets/server.svg" class="w-4 h-4" alt="System"> System
+          <i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> System
         </a>
       </nav>
 
@@ -247,30 +264,36 @@
   <div id="mobile-menu" class="hidden lg:hidden glass-dark border-b border-slate-800/80 px-4 py-4 space-y-3 sticky top-16 z-40">
     <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-300">
       <a href="#overview" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/chart-bar.svg" class="w-4 h-4" alt="Overview"> Overview
+        <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i> Overview
       </a>
       <a href="#hourly" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/clock.svg" class="w-4 h-4" alt="Peak Times"> Peak Times
+        <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i> Peak Times
       </a>
       <a href="#heatmap" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/heatmap.svg" class="w-4 h-4" alt="Heatmap"> Heatmap
+        <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i> Heatmap
+      </a>
+      <a href="#security" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Security
+      </a>
+      <a href="#ips" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Top IPs
       </a>
       <a href="#endpoints" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
         <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> Endpoints
       </a>
       <a href="#explorer" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Log Explorer
+        <i data-lucide="terminal" class="w-4 h-4 text-sky-400"></i> Log Explorer
       </a>
       <a href="#architecture" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/spark.svg" class="w-4 h-4" alt="Architecture"> Architecture
+        <i data-lucide="git-branch" class="w-4 h-4 text-fuchsia-400"></i> Flow Plan
       </a>
       <a href="#system" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/server.svg" class="w-4 h-4" alt="System UI"> System UI
+        <i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> System UI
       </a>
       <a href="#recommendations" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <img src="assets/shield-check.svg" class="w-4 h-4" alt="Action Plan"> Action Plan
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Action Plan
       </a>
-      <a href="#deliverables" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+      <a href="#deliverables" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2 col-span-2">
         <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Deliverables
       </a>
     </div>
@@ -682,9 +705,12 @@
           </div>
           <div class="mt-3">
             <div class="text-2xl font-black text-cyber-crimson" id="kpi-total-404">43,153</div>
-            <div class="text-[11px] text-rose-300 font-bold mt-1 flex items-center gap-1">
-              <span>Peak:</span>
-              <span class="text-amber-400 font-mono" id="kpi-peak-hour">03:00 - 04:00</span>
+            <div class="text-[11px] text-rose-300 font-bold mt-1 flex items-center justify-between">
+              <span class="flex items-center gap-1">
+                <span>Peak:</span>
+                <span class="text-amber-400 font-mono" id="kpi-peak-hour">03:00 - 04:00</span>
+              </span>
+              <span class="text-rose-200/80 font-mono text-[10px] font-medium" id="kpi-peak-count">4,655 errors in 1 hr</span>
             </div>
           </div>
         </div>
@@ -773,7 +799,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-3">
               <div>
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
-                  <img src="assets/chart-bar.svg" class="w-5 h-5" alt="Chart">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5 text-cyber-rose"></i>
                   <span>404 Errors by Hour of Day (00:00 – 23:00 UTC)</span>
                 </h3>
                 <p class="text-xs text-slate-400 mt-0.5">Failure volume concentrated at 03:00 AM (4,655 errors). Bar color changes dynamically to emphasize threat level.</p>
@@ -866,7 +892,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-3">
           <div>
             <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <img src="assets/heatmap.svg" class="w-5 h-5" alt="Heatmap">
+              <i data-lucide="grid" class="w-5 h-5 text-amber-400"></i>
               <span>Day of Week vs. Hour of Day 404 Failure Intensity Matrix</span>
             </h3>
             <p class="text-xs text-slate-400 mt-0.5">Cross-tabulation matrix. Notice the consistent dark crimson stripe across hours 02:00–03:00 on every day of the week.</p>
@@ -1365,6 +1391,97 @@
             </p>
           </div>
         </div>
+
+        <!-- Interactive 5-Stage Lakehouse Data Flow Plan -->
+        <div class="mt-8 pt-8 border-t border-slate-800 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30">DATA PIPELINE FLOW PLAN</span>
+                <h4 class="text-lg font-bold text-white">5-Stage Lakehouse Lifecycle & Data Flow Plan</h4>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                From raw edge server streams to Bronze isolation, Silver Catalyst regex extraction, Gold security analytics, and real-time dashboard serving. Click any stage to inspect runtime contracts and commands.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono">
+                Throughput: <strong class="text-emerald-400">500k+ eps</strong>
+              </span>
+              <span class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono">
+                Latency: <strong class="text-cyan-400">&lt; 3.2s</strong>
+              </span>
+            </div>
+          </div>
+
+          <!-- Flow Stepper / Navigation Track -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <!-- Stage 1 Button -->
+            <button onclick="selectPipelineStage(0)" id="flow-tab-0" class="flow-stage-btn active p-3 rounded-2xl bg-cyan-500/10 border-2 border-cyan-500 text-left transition duration-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-cyan-400">STAGE 1</span>
+                <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                  <i data-lucide="radio" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+              <div class="text-xs font-bold text-white">Edge Log Ingestion</div>
+              <div class="text-[10px] text-slate-400">Flume / Filebeat / Syslog</div>
+            </button>
+
+            <!-- Stage 2 Button -->
+            <button onclick="selectPipelineStage(1)" id="flow-tab-1" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-amber-400">STAGE 2</span>
+                <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <i data-lucide="hard-drive" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+              <div class="text-xs font-bold text-white">Quarantine & Bronze</div>
+              <div class="text-[10px] text-slate-400">HDFS 3x + Corrupt Routing</div>
+            </button>
+
+            <!-- Stage 3 Button -->
+            <button onclick="selectPipelineStage(2)" id="flow-tab-2" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-purple-400">STAGE 3</span>
+                <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+              <div class="text-xs font-bold text-white">Silver Normalization</div>
+              <div class="text-[10px] text-slate-400">PySpark Catalyst Regex</div>
+            </button>
+
+            <!-- Stage 4 Button -->
+            <button onclick="selectPipelineStage(3)" id="flow-tab-3" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-rose-400">STAGE 4</span>
+                <span class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+              <div class="text-xs font-bold text-white">Gold Security Scoring</div>
+              <div class="text-[10px] text-slate-400">Hourly Rollup + Threat Engine</div>
+            </button>
+
+            <!-- Stage 5 Button -->
+            <button onclick="selectPipelineStage(4)" id="flow-tab-4" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">STAGE 5</span>
+                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+              <div class="text-xs font-bold text-white">FastAPI & UI Serving</div>
+              <div class="text-[10px] text-slate-400">Parquet / DuckDB / Webhook</div>
+            </button>
+          </div>
+
+          <!-- Dynamic Stage Details View Container -->
+          <div id="flow-stage-details-container" class="p-6 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-5 transition-all duration-300">
+            <!-- Dynamically populated by selectPipelineStage(idx) -->
+          </div>
+        </div>
       </section>
 
       <!-- Dedicated System UI & Big Data Cluster Configuration Section -->
@@ -1372,7 +1489,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
             <div class="flex items-center gap-2">
-              <img src="assets/server.svg" class="w-6 h-6" alt="System Server">
+              <i data-lucide="server" class="w-6 h-6 text-cyan-400"></i>
               <h3 class="text-xl font-bold text-white">System UI & Big Data Cluster Configuration</h3>
             </div>
             <p class="text-xs text-slate-400 mt-1">
@@ -1711,7 +1828,7 @@
       <section id="recommendations" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
         <div>
           <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <img src="assets/shield-check.svg" class="w-6 h-6" alt="Shield">
+            <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
             <span>Incident Analysis & Engineering Recommendations</span>
           </h3>
           <p class="text-sm text-slate-400 mt-1">
@@ -3739,6 +3856,177 @@ services:
       });
     }
 
+    // ==========================================
+    // 5-STAGE LAKEHOUSE PIPELINE FLOW PLAN
+    // ==========================================
+    const pipelineStagesData = [
+      {
+        id: 0,
+        badge: 'STAGE 1: EDGE COLLECTION & INGESTION',
+        title: 'High-Volume Edge Log Ingestion & Buffering',
+        color: 'cyan',
+        description: 'Edge daemons (Filebeat, Apache Flume, or Vector) tail distributed web server access logs in Common Log Format (CLF). Logs are buffered across distributed message queues or spool directories before streaming to Hadoop storage.',
+        inputFormat: 'Raw Common Log Format (.log / .txt)',
+        outputPath: 'hdfs:///lakehouse/bronze/incoming/%Y/%m/%d/',
+        faultTolerance: 'Local disk spooling buffers up to 24 hours of traffic during HDFS network partitions or namenode failover.',
+        throughput: '25,000 - 50,000 events/sec per ingestion agent node',
+        codeSnippet: `# Stream raw access logs into HDFS Landing Zone
+hdfs dfs -mkdir -p /lakehouse/bronze/incoming/
+hdfs dfs -put -f /var/log/nginx/access.log /lakehouse/bronze/incoming/access_\$(date +%s).log`
+      },
+      {
+        id: 1,
+        badge: 'STAGE 2: BRONZE LANDING & QUARANTINE',
+        title: 'HDFS Distributed Storage & Malformed Quarantine',
+        color: 'amber',
+        description: 'Incoming files land in HDFS Bronze zone. Schema validators run a pre-flight sanity test. Completely malformed lines or corrupted binary chunks are isolated to a quarantine dead-letter location so they never abort PySpark jobs.',
+        inputFormat: 'Raw CLF Text Streams',
+        outputPath: 'hdfs:///lakehouse/bronze/validated/ & hdfs:///lakehouse/quarantine/',
+        faultTolerance: 'HDFS 3x replication factor across distinct rack topologies prevents data loss if individual DataNode disks crash.',
+        throughput: '128MB HDFS block allocation with zero-copy local DataNode writes',
+        codeSnippet: `# Inspect quarantine dead-letter files
+hdfs dfs -count -q -h /lakehouse/bronze/
+hdfs dfs -tail /lakehouse/quarantine/corrupt_logs.json | jq .`
+      },
+      {
+        id: 2,
+        badge: 'STAGE 3: SILVER ETL & REGEX EXTRACTION',
+        title: 'Apache PySpark Catalyst Parser & Normalization',
+        color: 'purple',
+        description: 'PySpark executors parse raw Apache CLF using optimized native Catalyst regexp_extract expressions. Fields are cast to native types: IP strings, RFC-822 timestamps converted to UTC epoch integers, HTTP status integers, and byte counts.',
+        inputFormat: 'Bronze HDFS Text Blocks',
+        outputPath: 'hdfs:///lakehouse/silver/parsed_logs.parquet (partitioned by year/month/day/hour)',
+        faultTolerance: 'Resilient Distributed Dataset (RDD) lineage graph enables automatic partition recomputation on executor loss.',
+        throughput: 'Over 1.8M log records/second across cluster executors with in-memory .cache()',
+        codeSnippet: `# Run PySpark batch parsing pipeline
+spark-submit \\
+  --master yarn --deploy-mode client \\
+  --driver-memory 4g --executor-memory 8g --executor-cores 4 \\
+  spark_analysis.py --input /lakehouse/bronze/validated/ --output /lakehouse/silver/`
+      },
+      {
+        id: 3,
+        badge: 'STAGE 4: GOLD AGGREGATIONS & SECURITY ENGINE',
+        title: 'Distributed Metric Rollup & Heuristic Risk Scoring',
+        color: 'rose',
+        description: 'PySpark performs multi-dimensional aggregations over the Silver Parquet dataset. Generates 24-hour error distributions, cross-tabulated day-hour heatmaps, top IP anomaly rankings, and rule-based security risk scores (Path Traversal, Admin Probing, Scrapers).',
+        inputFormat: 'Silver Parquet DataFrames',
+        outputPath: 'hdfs:///lakehouse/gold/summary_metrics.parquet & output/analysis_summary.json',
+        faultTolerance: 'Spark adaptive query execution (AQE) coalesces shuffle partitions dynamically to prevent skewed executor bottlenecks.',
+        throughput: 'Sub-minute aggregation runtime over tens of millions of access records',
+        codeSnippet: `# Generate Gold analytics and security risk scores
+python3 -m src.pipeline.run_pipeline \\
+  --data logs/access_log --output output/analysis_summary.json --save-parquet`
+      },
+      {
+        id: 4,
+        badge: 'STAGE 5: FASTAPI REST API & DASHBOARD SERVING',
+        title: 'Asynchronous API Serving & Real-Time Visualization',
+        color: 'emerald',
+        description: 'FastAPI exposes high-performance asynchronous endpoints consuming Gold Parquet files and cached summary JSON. The modern Tailwind & Chart.js dashboard polls telemetry, renders interactive heatmaps, and triggers SOC export bundles.',
+        inputFormat: 'Gold Aggregated Datasets & Parquet tables',
+        outputPath: 'REST Endpoints: /api/kpis, /api/hourly, /api/security, /api/ips, /api/export',
+        faultTolerance: 'Stateless Uvicorn workers behind Nginx reverse proxy with health check /api/health probes.',
+        throughput: '12,000+ API requests/sec with < 5ms average response latency',
+        codeSnippet: `# Launch production FastAPI server
+uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level info`
+      }
+    ];
+
+    function selectPipelineStage(idx) {
+      const stage = pipelineStagesData[idx] || pipelineStagesData[0];
+      
+      // Update Tab Styles
+      pipelineStagesData.forEach((s, i) => {
+        const btn = document.getElementById(`flow-tab-${i}`);
+        if (!btn) return;
+        if (i === idx) {
+          btn.className = `flow-stage-btn active p-3 rounded-2xl bg-${s.color}-500/10 border-2 border-${s.color}-500 text-left transition duration-200 space-y-2`;
+        } else {
+          btn.className = 'flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2';
+        }
+      });
+
+      // Render Stage Details
+      const container = document.getElementById('flow-stage-details-container');
+      if (!container) return;
+
+      const colorMap = {
+        cyan: { badge: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40', text: 'text-cyan-400' },
+        amber: { badge: 'bg-amber-500/20 text-amber-400 border-amber-500/40', text: 'text-amber-400' },
+        purple: { badge: 'bg-purple-500/20 text-purple-400 border-purple-500/40', text: 'text-purple-400' },
+        rose: { badge: 'bg-rose-500/20 text-rose-400 border-rose-500/40', text: 'text-rose-400' },
+        emerald: { badge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', text: 'text-emerald-400' }
+      };
+      const theme = colorMap[stage.color] || colorMap.cyan;
+
+      container.innerHTML = `
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase border ${theme.badge}">
+              ${stage.badge}
+            </span>
+            <h4 class="text-base font-bold text-white mt-2">${stage.title}</h4>
+          </div>
+          <div class="text-left md:text-right">
+            <span class="text-xs text-slate-400 block font-mono">Stage Throughput</span>
+            <span class="text-xs font-bold ${theme.text} font-mono">${stage.throughput}</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed">${stage.description}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Input Format</span>
+            <span class="text-xs font-semibold text-slate-200 font-mono">${stage.inputFormat}</span>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 md:col-span-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Target Storage Path / Sink</span>
+            <span class="text-xs font-semibold ${theme.text} font-mono break-all">${stage.outputPath}</span>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Resilience & Fault Tolerance Strategy</span>
+          <p class="text-xs text-slate-300 leading-relaxed">${stage.faultTolerance}</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Production CLI & Pipeline Snippet</span>
+            <button onclick="navigator.clipboard.writeText(pipelineStagesData[${idx}].codeSnippet); alert('Copied stage code snippet!');" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 flex items-center gap-1 transition">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Command
+            </button>
+          </div>
+          <pre class="p-3.5 rounded-xl bg-slate-900 font-mono text-xs ${theme.text} border border-slate-800 overflow-x-auto custom-scrollbar leading-relaxed"><code>${stage.codeSnippet}</code></pre>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Modal Escape Key & Backdrop Dismissal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSystemSettingsModal();
+        closeLogInspector();
+        closeChartZoom();
+      }
+    });
+
+    ['settings-modal', 'log-inspector-modal', 'chart-zoom-modal'].forEach(id => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            if (id === 'settings-modal') closeSystemSettingsModal();
+            if (id === 'log-inspector-modal') closeLogInspector();
+            if (id === 'chart-zoom-modal') closeChartZoom();
+          }
+        });
+      }
+    });
+
     // Initial Execution
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.theme === 'light') {
@@ -3749,6 +4037,7 @@ services:
       lucide.createIcons();
       updateClusterCalculations();
       switchConfigTab('spark-defaults');
+      selectPipelineStage(0);
       startStreamHeartbeat();
       loadData();
     });
