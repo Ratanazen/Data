@@ -45,6 +45,24 @@ class CrossPlatformHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(BASE_DIR), **kwargs)
 
+    def do_GET(self):
+        if self.path.startswith('/api/'):
+            import urllib.request
+            try:
+                target_url = f"http://127.0.0.1:8000{self.path}"
+                req = urllib.request.Request(target_url, headers={'User-Agent': 'LogShield-Proxy'})
+                with urllib.request.urlopen(req, timeout=1.5) as resp:
+                    content = resp.read()
+                    self.send_response(resp.status)
+                    self.send_header('Content-Type', resp.headers.get('Content-Type', 'application/json'))
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(content)
+                    return
+            except Exception:
+                pass
+        super().do_GET()
+
     def end_headers(self):
         # Enable CORS and disable caching during interactive development
         self.send_header('Access-Control-Allow-Origin', '*')

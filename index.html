@@ -2081,46 +2081,58 @@
 
     async function loadData() {
       let loadedFromApi = false;
-      try {
-        const statsResp = await fetch('/api/stats');
-        if (statsResp.ok) {
-          const statsJson = await statsResp.json();
-          const secResp = await fetch('/api/security/events?limit=100');
-          const secJson = secResp.ok ? await secResp.json() : { events: [] };
-          const ipsResp = await fetch('/api/top-ips?limit=50');
-          const ipsJson = ipsResp.ok ? await ipsResp.json() : { top_ips: [] };
-          const trafficResp = await fetch('/api/traffic/hourly');
-          const trafficJson = trafficResp.ok ? await trafficResp.json() : { hourly: [] };
+      const apiCandidates = ['/api', 'http://localhost:8000/api', 'http://127.0.0.1:8000/api'];
+      
+      for (const apiBase of apiCandidates) {
+        try {
+          const statsResp = await fetch(`${apiBase}/stats`);
+          if (statsResp.ok) {
+            const statsJson = await statsResp.json();
+            const secResp = await fetch(`${apiBase}/security/events?limit=100`).catch(() => null);
+            const secJson = (secResp && secResp.ok) ? await secResp.json() : [];
+            const ipsResp = await fetch(`${apiBase}/top-ips?limit=50`).catch(() => null);
+            const ipsJson = (ipsResp && ipsResp.ok) ? await ipsResp.json() : [];
+            const trafficResp = await fetch(`${apiBase}/traffic/hourly`).catch(() => null);
+            const trafficJson = (trafficResp && trafficResp.ok) ? await trafficResp.json() : [];
 
-          activeData = {
-            metadata: {
-              total_requests: statsJson.total_requests || 200000,
-              total_404: statsJson.status_404 || 43153,
-              error_rate: statsJson.error_rate || 21.58,
-              peak_hour: statsJson.peak_hour !== undefined ? statsJson.peak_hour : 3,
-              peak_hour_formatted: `${String(statsJson.peak_hour || 3).padStart(2, '0')}:00 - ${String((statsJson.peak_hour || 3) + 1).padStart(2, '0')}:00`,
-              peak_count: statsJson.peak_count || 4655,
-              total_403: statsJson.status_403 || 3475,
-              total_500: statsJson.status_500 || 5540,
-              total_200: statsJson.status_200 || 136415,
-              total_301: statsJson.status_301 || 11417,
-              suspicious_ips_count: (ipsJson.top_ips || []).filter(x => (x.risk_score || 0) > 20).length || 50,
-              security_events_count: (secJson.events || []).length || (secJson.total || 100)
-            },
-            status_breakdown: statsJson.status_breakdown || fallbackData.status_breakdown,
-            hourly_distribution: (trafficJson.hourly && trafficJson.hourly.length > 0) ? trafficJson.hourly : fallbackData.hourly_distribution,
-            top_endpoints: fallbackData.top_endpoints,
-            daily_trend: fallbackData.daily_trend,
-            heatmap_matrix: fallbackData.heatmap_matrix,
-            sample_logs: fallbackData.sample_logs,
-            security_events: (secJson.events && secJson.events.length > 0) ? secJson.events : fallbackData.security_events,
-            top_ips: (ipsJson.top_ips && ipsJson.top_ips.length > 0) ? ipsJson.top_ips : fallbackData.top_ips
-          };
-          loadedFromApi = true;
-          console.log("[✓] Connected to FastAPI backend successfully");
+            const secEventsList = Array.isArray(secJson) ? secJson : (secJson.events || []);
+            const topIpsList = Array.isArray(ipsJson) ? ipsJson : (ipsJson.top_ips || []);
+            const hourlyList = Array.isArray(trafficJson) ? trafficJson : (trafficJson.hourly || []);
+
+            const peakHourVal = statsJson.peak_failure_hour !== undefined ? statsJson.peak_failure_hour : (statsJson.peak_hour !== undefined ? statsJson.peak_hour : 3);
+            const peakCountVal = statsJson.peak_failure_count || statsJson.peak_count || 4655;
+
+            activeData = {
+              metadata: {
+                total_requests: statsJson.total_requests || 200000,
+                total_404: statsJson.total_404 || statsJson.status_404 || 43153,
+                error_rate: statsJson.error_rate || 21.58,
+                peak_hour: peakHourVal,
+                peak_hour_formatted: `${String(peakHourVal).padStart(2, '0')}:00 - ${String(peakHourVal + 1).padStart(2, '0')}:00`,
+                peak_count: peakCountVal,
+                total_403: statsJson.total_403 || statsJson.status_403 || 3475,
+                total_500: statsJson.total_500 || statsJson.status_500 || 5540,
+                total_200: statsJson.total_200 || statsJson.status_200 || 136415,
+                total_301: statsJson.total_301 || statsJson.status_301 || 11417,
+                suspicious_ips_count: statsJson.suspicious_ips_count || topIpsList.filter(x => (x.risk_score || 0) >= 50).length || 50,
+                security_events_count: statsJson.security_events_count || secEventsList.length || 494
+              },
+              status_breakdown: statsJson.status_breakdown || fallbackData.status_breakdown,
+              hourly_distribution: (hourlyList.length > 0) ? hourlyList : fallbackData.hourly_distribution,
+              top_endpoints: fallbackData.top_endpoints,
+              daily_trend: fallbackData.daily_trend,
+              heatmap_matrix: fallbackData.heatmap_matrix,
+              sample_logs: fallbackData.sample_logs,
+              security_events: (secEventsList.length > 0) ? secEventsList : fallbackData.security_events,
+              top_ips: (topIpsList.length > 0) ? topIpsList : fallbackData.top_ips
+            };
+            loadedFromApi = true;
+            console.log(`[✓] Connected to LogShield FastAPI backend at ${apiBase}`);
+            break;
+          }
+        } catch (err) {
+          // Try next candidate
         }
-      } catch (err) {
-        // API not available, proceed to static fallback
       }
 
       if (!loadedFromApi) {

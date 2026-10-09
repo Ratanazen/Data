@@ -13,6 +13,7 @@ from ..schemas import SecurityEventItem, TopIpItem, TopUrlItem
 router = APIRouter(tags=["Security"])
 
 @router.get("/security", response_model=List[SecurityEventItem])
+@router.get("/security/events", response_model=List[SecurityEventItem])
 def get_security_events(
     severity: Optional[str] = Query(None, description="Filter by severity: LOW, MEDIUM, HIGH, CRITICAL"),
     ip: Optional[str] = Query(None, description="Filter events for specific client IP"),

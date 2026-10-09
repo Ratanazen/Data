@@ -13,6 +13,7 @@ from ..schemas import HourlyTrafficItem
 router = APIRouter(tags=["Traffic"])
 
 @router.get("/traffic", response_model=List[HourlyTrafficItem])
+@router.get("/traffic/hourly", response_model=List[HourlyTrafficItem])
 def get_traffic() -> List[HourlyTrafficItem]:
     """Returns 24-hour traffic distribution containing request counts and status breakdowns per hour."""
     p_file = settings.GOLD_PATH / "gold_hourly_traffic.parquet"
