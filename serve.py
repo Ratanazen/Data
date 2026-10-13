@@ -104,7 +104,7 @@ def run_server(port=None, auto_open=False):
 
     local_url = f"http://localhost:{port}/"
     print("=" * 70)
-    print("  🚀 LOG FILE ANALYSIS — INTERACTIVE WEB DASHBOARD")
+    print("  LOGSHIELD — DISTRIBUTED LOG ANALYTICS & SECURITY DASHBOARD")
     print("=" * 70)
     print(f"  Local URL    : {local_url}")
     print(f"  Network URL  : http://127.0.0.1:{port}/")

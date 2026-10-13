@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📊 Log File Analysis Dashboard — Hadoop & PySpark 404 Analytics</title>
+  <title>LogShield — Distributed Log Analytics & Security Intelligence Platform</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -446,8 +446,9 @@
         <button onclick="downloadDiagnosticsJSON()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition">
           <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Diagnostics JSON
         </button>
-        <button onclick="resetSystemUIDefaults()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-slate-400 hover:text-white transition">
-          ↺ Reset Defaults
+        <button onclick="resetSystemUIDefaults()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 border border-slate-800">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span>Reset Defaults</span>
         </button>
       </div>
     </div>
@@ -801,12 +802,19 @@
             <i data-lucide="alert-octagon" class="w-4 h-4 animate-pulse"></i>
           </div>
           <div>
-            <strong class="text-rose-100 font-bold block">🚨 CRITICAL FAILURE SURGE ACTIVE: 03:00 – 04:00 AM UTC</strong>
-            <span class="text-rose-300/80">4,655 404 errors concentrated in this single hour (4.2x above hourly average). Automated brute-force scanners targeting <code class="font-mono text-white bg-slate-950/80 px-1 py-0.5 rounded">/admin/login</code>.</span>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1">
+                <i data-lucide="shield-alert" class="w-3 h-3 text-cyber-crimson"></i>
+                CRITICAL SURGE ACTIVE
+              </span>
+              <strong class="text-rose-100 font-bold">03:00 – 04:00 AM UTC</strong>
+            </div>
+            <span class="text-rose-300/80 mt-1 block">4,655 404 errors concentrated in this single hour (4.2x above hourly average). Automated brute-force scanners targeting <code class="font-mono text-white bg-slate-950/80 px-1 py-0.5 rounded border border-rose-500/30">/admin/login</code>.</span>
           </div>
         </div>
-        <button onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 font-semibold text-[11px] border border-rose-500/30 flex-shrink-0 transition">
-          Reset to All
+        <button onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 font-semibold text-[11px] border border-rose-500/30 flex-shrink-0 transition flex items-center gap-1.5">
+          <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+          <span>Reset to All</span>
         </button>
       </div>
 
@@ -1393,22 +1401,52 @@
             <span class="text-slate-500 font-semibold flex items-center gap-1">
               <i data-lucide="filter" class="w-3.5 h-3.5 text-cyan-400"></i> Quick Chips:
             </span>
-            <button onclick="applyChip('404', '')" class="px-2.5 py-1 rounded-xl bg-cyber-crimson/10 hover:bg-cyber-crimson/20 text-rose-300 border border-cyber-crimson/30 transition">🚨 All 404s</button>
-            <button onclick="applyChip('404', '/admin/login')" class="px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition">🤖 /admin/login Only</button>
-            <button onclick="applyChip('404', '/old-promo-page')" class="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition">🔄 /old-promo-page</button>
-            <button onclick="applyChip('404', '/deprecated-api/v1')" class="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition">🔌 /deprecated-api/v1</button>
-            <button onclick="applyChip('200', '')" class="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition">🟢 200 OK Only</button>
-            <button onclick="resetFilters()" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 transition">↺ Reset</button>
+            <button onclick="applyChip('404', '')" class="px-2.5 py-1 rounded-xl bg-cyber-crimson/10 hover:bg-cyber-crimson/20 text-rose-300 border border-cyber-crimson/30 transition flex items-center gap-1.5">
+              <i data-lucide="alert-octagon" class="w-3.5 h-3.5 text-cyber-crimson"></i>
+              <span>All 404s</span>
+            </button>
+            <button onclick="applyChip('404', '/admin/login')" class="px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="bot" class="w-3.5 h-3.5 text-purple-400"></i>
+              <span>/admin/login</span>
+            </button>
+            <button onclick="applyChip('404', '/old-promo-page')" class="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="file-question" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>/old-promo-page</span>
+            </button>
+            <button onclick="applyChip('404', '/deprecated-api/v1')" class="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="code-2" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>/deprecated-api/v1</span>
+            </button>
+            <button onclick="applyChip('200', '')" class="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>200 OK Only</span>
+            </button>
+            <button onclick="resetFilters()" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>Reset</span>
+            </button>
           </div>
 
           <div class="flex flex-wrap items-center gap-1.5 font-medium">
             <span class="text-slate-500 font-semibold flex items-center gap-1">
               <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Window:
             </span>
-            <button onclick="setTimeFilter('ALL')" id="time-filter-all" class="px-2.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs transition">All 24h</button>
-            <button onclick="setTimeFilter('PEAK')" id="time-filter-peak" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition">⚡ Peak (03-04 AM)</button>
-            <button onclick="setTimeFilter('BUSINESS')" id="time-filter-biz" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition">💼 Business (09-17)</button>
-            <button onclick="setTimeFilter('OVERNIGHT')" id="time-filter-night" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition">🌙 Overnight (00-06)</button>
+            <button onclick="setTimeFilter('ALL')" id="time-filter-all" class="px-2.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs transition flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3 h-3 text-indigo-400"></i>
+              <span>All 24h</span>
+            </button>
+            <button onclick="setTimeFilter('PEAK')" id="time-filter-peak" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition flex items-center gap-1.5">
+              <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
+              <span>Peak (03-04 AM)</span>
+            </button>
+            <button onclick="setTimeFilter('BUSINESS')" id="time-filter-biz" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition flex items-center gap-1.5">
+              <i data-lucide="briefcase" class="w-3 h-3 text-sky-400"></i>
+              <span>Business (09-17)</span>
+            </button>
+            <button onclick="setTimeFilter('OVERNIGHT')" id="time-filter-night" class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition flex items-center gap-1.5">
+              <i data-lucide="moon" class="w-3 h-3 text-indigo-400"></i>
+              <span>Overnight (00-06)</span>
+            </button>
           </div>
         </div>
 
@@ -1418,39 +1456,39 @@
             <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 select-none">
               <tr>
                 <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('timestamp_str')">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1.5">
                     <span>Timestamp (UTC)</span>
-                    <span id="sort-timestamp_str" class="text-indigo-400 font-bold">↕</span>
+                    <span id="sort-timestamp_str" class="text-indigo-400 font-bold"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
                 <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('ip')">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1.5">
                     <span>Client IP</span>
-                    <span id="sort-ip" class="text-slate-600">↕</span>
+                    <span id="sort-ip" class="text-slate-600"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
                 <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('method')">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1.5">
                     <span>Method</span>
-                    <span id="sort-method" class="text-slate-600">↕</span>
+                    <span id="sort-method" class="text-slate-600"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
                 <th class="py-3 px-4 cursor-pointer hover:text-white transition" onclick="sortBy('path')">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1.5">
                     <span>Requested Endpoint</span>
-                    <span id="sort-path" class="text-slate-600">↕</span>
+                    <span id="sort-path" class="text-slate-600"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
                 <th class="py-3 px-4 text-center cursor-pointer hover:text-white transition" onclick="sortBy('status')">
-                  <div class="flex items-center justify-center gap-1">
+                  <div class="flex items-center justify-center gap-1.5">
                     <span>Status</span>
-                    <span id="sort-status" class="text-slate-600">↕</span>
+                    <span id="sort-status" class="text-slate-600"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
                 <th class="py-3 px-4 text-right cursor-pointer hover:text-white transition" onclick="sortBy('size')">
-                  <div class="flex items-center justify-end gap-1">
+                  <div class="flex items-center justify-end gap-1.5">
                     <span>Size</span>
-                    <span id="sort-size" class="text-slate-600">↕</span>
+                    <span id="sort-size" class="text-slate-600"><i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline"></i></span>
                   </div>
                 </th>
               </tr>
@@ -2459,7 +2497,7 @@
                 label: function(ctx) {
                   const val = ctx.raw;
                   const isPeak = ctx.dataIndex === peakH;
-                  return ` ${val.toLocaleString()} errors ${isPeak ? '★ PEAK FAILURE WINDOW' : ''}`;
+                  return ` ${val.toLocaleString()} errors ${isPeak ? '[PEAK FAILURE SURGE]' : ''}`;
                 }
               }
             }
@@ -2527,34 +2565,40 @@
 
         row.hours.forEach((val, h) => {
           let bgClass = "bg-slate-900 text-slate-500 border border-slate-800";
-          let threat = "🟢 Normal Baseline";
+          let threat = "Normal Baseline";
+          let icon = "check-circle";
           let badgeColor = "bg-slate-800 text-slate-300";
 
           if (val > 650) {
             bgClass = "bg-cyber-crimson text-white font-black shadow-lg shadow-rose-600/50 ring-1 ring-rose-400";
-            threat = "🚨 Critical Bot Scan Spikes";
+            threat = "Critical Bot Scan Spikes";
+            icon = "shield-alert";
             badgeColor = "bg-cyber-crimson/20 text-rose-300 border border-cyber-crimson/40";
           } else if (val > 550) {
             bgClass = "bg-rose-500 text-white font-bold";
-            threat = "⚠️ Elevated Overnight Scanner";
+            threat = "Elevated Overnight Scanner";
+            icon = "alert-triangle";
             badgeColor = "bg-rose-500/20 text-rose-300 border border-rose-500/30";
           } else if (val > 350) {
             bgClass = "bg-amber-500/80 text-slate-950 font-bold";
-            threat = "⚡ Peak Business Traffic";
+            threat = "Peak Business Traffic";
+            icon = "zap";
             badgeColor = "bg-amber-500/20 text-amber-300 border border-amber-500/30";
           } else if (val > 250) {
             bgClass = "bg-sky-500/40 text-sky-200 font-semibold";
-            threat = "🟡 Normal Business Volume";
+            threat = "Normal Business Volume";
+            icon = "activity";
             badgeColor = "bg-sky-500/20 text-sky-300 border border-sky-500/30";
           } else if (val > 100) {
             bgClass = "bg-slate-800/80 text-slate-300";
-            threat = "🟢 Off-Peak Baseline";
+            threat = "Off-Peak Baseline";
+            icon = "check-circle";
             badgeColor = "bg-slate-800 text-slate-300";
           }
 
           cells += `<td class="p-1">
             <div class="py-1 px-0.5 rounded-lg text-[10px] ${bgClass} transition hover:scale-125 cursor-pointer select-none"
-                 onmouseover="inspectHeatmapCell('${row.day}', ${h}, ${val}, '${threat}', '${badgeColor}')"
+                 onmouseover="inspectHeatmapCell('${row.day}', ${h}, ${val}, '${threat}', '${icon}', '${badgeColor}')"
                  onclick="filterByHeatmapCell('${row.day}', ${h})" title="Click to view ${row.day} ${h.toString().padStart(2, '0')}:00 logs">
               ${val}
             </div>
@@ -3071,15 +3115,16 @@
     let sortDirection = 'asc';
 
     // Heatmap Cell Inspector Hover Callback
-    function inspectHeatmapCell(day, hour, val, threat, badgeColor) {
+    function inspectHeatmapCell(day, hour, val, threat, icon, badgeColor) {
       const descEl = document.getElementById('inspect-desc');
       const badgeEl = document.getElementById('inspect-badge');
       const hourPadded = hour.toString().padStart(2, '0');
       const nextHourPadded = (hour + 1).toString().padStart(2, '0');
       descEl.innerHTML = `<strong>${day}</strong> at <strong>${hourPadded}:00 – ${nextHourPadded}:00 UTC</strong>: <span class="text-rose-400 font-bold">${val.toLocaleString()} 404 errors</span> <span class="text-slate-400 font-normal">(Click cell to view logs)</span>`;
-      badgeEl.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeColor}`;
-      badgeEl.innerText = threat;
+      badgeEl.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 ${badgeColor}`;
+      badgeEl.innerHTML = `<i data-lucide="${icon || 'info'}" class="w-3.5 h-3.5 inline"></i><span>${threat}</span>`;
       badgeEl.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
     }
 
     // Heatmap Cell Click Handler: Jump & Filter by Hour
@@ -3110,14 +3155,16 @@
         const el = document.getElementById(`sort-${c}`);
         if (el) {
           if (c === sortColumn) {
-            el.innerText = sortDirection === 'asc' ? '▲' : '▼';
+            const arrowIcon = sortDirection === 'asc' ? 'arrow-up' : 'arrow-down';
+            el.innerHTML = `<i data-lucide="${arrowIcon}" class="w-3.5 h-3.5 inline text-indigo-400"></i>`;
             el.className = 'text-indigo-400 font-bold';
           } else {
-            el.innerText = '↕';
+            el.innerHTML = `<i data-lucide="arrow-up-down" class="w-3.5 h-3.5 inline opacity-40"></i>`;
             el.className = 'text-slate-600';
           }
         }
       });
+      if (window.lucide) lucide.createIcons();
     }
 
     // Pagination Navigation
@@ -3273,6 +3320,7 @@
       currentPage = 1;
       renderLogsTable(activeData.sample_logs);
       document.getElementById('explorer').scrollIntoView({ behavior: 'smooth' });
+      showToast(`Filter applied: HTTP ${status} ${search ? '• ' + search : ''}`, 'info');
     }
 
     function resetFilters() {
@@ -3283,6 +3331,7 @@
       setTimeFilter('ALL');
       currentPage = 1;
       renderLogsTable(activeData.sample_logs);
+      showToast("Log filters reset to default view", "info");
     }
 
     // Export Dropdown Controls
@@ -3460,6 +3509,7 @@
           textEl.textContent = "Copied!";
           setTimeout(() => { textEl.textContent = "Copy Raw String"; }, 2000);
         }
+        showToast("Copied raw log string to clipboard", "success");
       });
     }
 
@@ -3471,6 +3521,7 @@
           textEl.textContent = "Copied Rule!";
           setTimeout(() => { textEl.textContent = "Copy Rule"; }, 2000);
         }
+        showToast("Copied engineering remediation rule", "success");
       });
     }
 
@@ -3552,14 +3603,17 @@
       a.download = `expanded_chart_${new Date().toISOString().slice(0,10)}.png`;
       a.href = targetCanvas.toDataURL('image/png');
       a.click();
+      showToast("High-definition chart image exported as PNG", "success");
     }
 
     function downloadChart(canvasId, filename) {
       const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
       const link = document.createElement('a');
       link.download = filename;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      showToast(`Chart saved: ${filename}`, "success");
     }
 
     // Chart.js Cross-Theme Styling Adapter
@@ -4549,18 +4603,19 @@ GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
         const badge = document.getElementById(`flow-status-badge-${i}`);
         if (!badge) continue;
         if (i < stageIdx) {
-          badge.innerText = '✓ DONE';
+          badge.innerHTML = '<span class="inline-flex items-center gap-1"><i data-lucide="check" class="w-2.5 h-2.5 inline"></i> DONE</span>';
           badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
         } else if (i === stageIdx) {
-          badge.innerText = '● PROCESSING';
-          badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse';
+          badge.innerHTML = '<span class="inline-flex items-center gap-1"><i data-lucide="activity" class="w-2.5 h-2.5 inline text-cyan-300 animate-pulse"></i> ACTIVE</span>';
+          badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
         } else {
-          badge.innerText = 'IDLE';
+          badge.innerHTML = '<span class="inline-flex items-center gap-1"><i data-lucide="circle-dashed" class="w-2.5 h-2.5 inline opacity-60"></i> IDLE</span>';
           badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
         }
       }
 
       selectPipelineStage(stageIdx);
+      if (window.lucide) lucide.createIcons();
     }
 
     function startPipelineSimulation() {
