@@ -2,7 +2,7 @@
 Bronze Layer Pipeline: Raw log ingestion into partitioned Parquet
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -35,7 +35,7 @@ def run_bronze_ingestion(
 
     logger.info(f"[*] Bronze Ingestion starting: {raw_path} -> {out_path}")
     source_name = raw_path.name
-    now_ts = datetime.utcnow()
+    now_ts = datetime.now(timezone.utc)
     default_date = now_ts.strftime("%Y-%m-%d")
 
     records = []

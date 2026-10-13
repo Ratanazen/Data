@@ -48,10 +48,23 @@ def get_errors(status: Optional[int] = Query(None, description="Filter specific 
             for _, r in df_daily.iterrows()
         ]
 
+    import json
+    kpi_file = settings.GOLD_PATH / "gold_kpis.json"
+    kpis = {}
+    if kpi_file.exists():
+        try:
+            with open(kpi_file, "r", encoding="utf-8") as f:
+                kpis = json.load(f)
+        except Exception:
+            pass
+
+    peak_h = kpis.get("peak_failure_hour", 3)
+    peak_str = f"{peak_h:02d}:00 - {peak_h+1:02d}:00 AM" if peak_h < 12 else f"{peak_h:02d}:00 - {peak_h+1:02d}:00 PM"
+
     return {
         "status_filtered": status,
-        "total_404_errors": 43153,
-        "peak_hour": "03:00 - 04:00 AM",
+        "total_404_errors": kpis.get("total_404", 43153),
+        "peak_hour": peak_str,
         "top_broken_paths": top_paths,
         "daily_trend": daily_stats
     }

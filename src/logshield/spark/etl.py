@@ -3,7 +3,7 @@ Master PySpark / Lakehouse ETL Orchestrator
 Coordinates Bronze -> Silver -> Gold pipeline execution.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -23,7 +23,7 @@ def run_pipeline(
     """
     Executes the complete Bronze -> Silver -> Gold Lakehouse ETL pipeline.
     """
-    start_time = datetime.utcnow()
+    start_time = datetime.now(timezone.utc)
     logger.info("==================================================================")
     logger.info("🚀 LOGSHIELD — DISTRIBUTED LAKEHOUSE ETL PIPELINE")
     logger.info(f"   Mode: {settings.MODE.upper()} | App Env: {settings.APP_ENV}")
@@ -47,7 +47,7 @@ def run_pipeline(
         output_dir=gold_dir or settings.GOLD_PATH
     )
 
-    elapsed_sec = (datetime.utcnow() - start_time).total_seconds()
+    elapsed_sec = (datetime.now(timezone.utc) - start_time).total_seconds()
     logger.info(f"✨ LogShield ETL Pipeline succeeded in {elapsed_sec:.2f} seconds.")
 
     return {

@@ -40,15 +40,17 @@ def get_logs(
         filters.append(("method", "=", method.upper().strip()))
 
     try:
-        table = pq.read_table(
-            str(silver_path),
-            filters=filters if filters else None,
-            columns=["timestamp", "ip", "method", "path", "protocol", "status", "response_bytes", "referer", "user_agent"]
-        )
+        try:
+            table = pq.read_table(
+                str(silver_path),
+                filters=filters if filters else None,
+                columns=["timestamp", "ip", "method", "path", "protocol", "status", "response_bytes", "referer", "user_agent"]
+            )
+        except Exception:
+            table = pq.read_table(str(silver_path))
+        df = table.to_pandas()
     except Exception:
-        table = pq.read_table(str(silver_path))
-
-    df = table.to_pandas()
+        return PaginatedLogsResponse(total_matching=0, limit=limit, offset=offset, items=[])
 
     # In-memory substring filter on path if requested
     if path:

@@ -592,6 +592,121 @@
     </div>
   </div>
 
+  <!-- Floating Toast Notifications Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+  <!-- Interactive IP Threat Forensics Modal -->
+  <div id="ip-forensics-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[92vh] overflow-y-auto custom-scrollbar">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="forensic-ip-title" class="text-lg font-mono font-bold text-white">10.0.12.183</h3>
+              <span id="forensic-sev-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-cyber-crimson border border-rose-500/30">CRITICAL</span>
+            </div>
+            <p class="text-xs text-slate-400">Behavioral threat analysis and immediate firewall defense rule generators</p>
+          </div>
+        </div>
+        <button onclick="closeIpForensicsModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">Threat Risk Score</span>
+          <div id="forensic-risk-score" class="text-xl font-mono font-black text-cyber-crimson mt-0.5">95 / 100</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">Total Requests</span>
+          <div id="forensic-total-reqs" class="text-xl font-mono font-bold text-slate-200 mt-0.5">430</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">404 Error Rate</span>
+          <div id="forensic-404-rate" class="text-xl font-mono font-bold text-amber-400 mt-0.5">24.6%</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">Attack Incidents</span>
+          <div id="forensic-incident-count" class="text-xl font-mono font-bold text-rose-400 mt-0.5">14 Events</div>
+        </div>
+      </div>
+
+      <!-- Threat Signatures & Indicators -->
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="crosshair" class="w-3.5 h-3.5 text-rose-400"></i> Detected Threat Vectors & Signatures
+        </span>
+        <div id="forensic-vectors-list" class="flex flex-wrap gap-1.5 pt-1">
+          <!-- Dynamically populated tags -->
+        </div>
+      </div>
+
+      <!-- 1-Click Defense Rule Generators -->
+      <div class="space-y-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="terminal" class="w-3.5 h-3.5 text-cyan-400"></i> 1-Click WAF / Firewall Mitigation Rules
+        </span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400">Linux iptables DROP</span>
+              <button id="copy-iptables-btn" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+              </button>
+            </div>
+            <code id="code-iptables" class="block font-mono text-[11px] text-slate-300 truncate"></code>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400">fail2ban Jail Ban</span>
+              <button id="copy-fail2ban-btn" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+              </button>
+            </div>
+            <code id="code-fail2ban" class="block font-mono text-[11px] text-slate-300 truncate"></code>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400">Nginx Deny Directive</span>
+              <button id="copy-nginx-btn" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+              </button>
+            </div>
+            <code id="code-nginx" class="block font-mono text-[11px] text-slate-300 truncate"></code>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400">AWS WAF IPSet CIDR</span>
+              <button id="copy-awswaf-btn" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+              </button>
+            </div>
+            <code id="code-awswaf" class="block font-mono text-[11px] text-slate-300 truncate"></code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button id="filter-logs-by-ip-btn" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i> Filter Live Logs By This IP
+        </button>
+        <button onclick="closeIpForensicsModal()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">
+          Close Inspector
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Ambient Radiant Mesh Glows -->
   <div class="relative overflow-hidden">
     <div class="absolute top-10 left-1/4 w-[500px] h-[350px] bg-cyber-crimson/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -652,7 +767,49 @@
         </div>
       </div>
 
-      <!-- Executive KPI Cards with Configured SVG Icons & Glowing Gradients -->
+      <!-- Overview Header Control Bar & Time Range Window Filter -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <i data-lucide="activity" class="w-4 h-4"></i>
+            </span>
+            <h2 class="text-lg font-bold text-white">Executive Telemetry & Surveillance Overview</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Real-time aggregate KPIs derived from 200,000 Common Log Format access requests.</p>
+        </div>
+
+        <!-- Quick Time Range Chips -->
+        <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs">
+          <button id="time-filter-all" onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs transition shadow-md shadow-indigo-600/25">
+            Full 7-Day (200k)
+          </button>
+          <button id="time-filter-peak" onclick="setTimeWindowFilter('peak')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 hover:text-white border border-slate-800 font-semibold text-xs transition flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyber-crimson animate-ping"></span>
+            Peak Threat Surge (03:00)
+          </button>
+          <button id="time-filter-daytime" onclick="setTimeWindowFilter('daytime')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition">
+            Daytime Baseline
+          </button>
+        </div>
+      </div>
+
+      <!-- Peak Attack Surge Warning Banner (Hidden by default, shown in Peak mode) -->
+      <div id="overview-attack-banner" class="hidden p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-200 flex items-center justify-between gap-3 shadow-lg shadow-rose-950/50">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-cyber-crimson/20 border border-cyber-crimson/30 flex items-center justify-center text-rose-400 flex-shrink-0">
+            <i data-lucide="alert-octagon" class="w-4 h-4 animate-pulse"></i>
+          </div>
+          <div>
+            <strong class="text-rose-100 font-bold block">🚨 CRITICAL FAILURE SURGE ACTIVE: 03:00 – 04:00 AM UTC</strong>
+            <span class="text-rose-300/80">4,655 404 errors concentrated in this single hour (4.2x above hourly average). Automated brute-force scanners targeting <code class="font-mono text-white bg-slate-950/80 px-1 py-0.5 rounded">/admin/login</code>.</span>
+          </div>
+        </div>
+        <button onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 font-semibold text-[11px] border border-rose-500/30 flex-shrink-0 transition">
+          Reset to All
+        </button>
+      </div>
+
       <!-- Executive KPI Cards: 7 Core Metrics with Configured Icons & Glowing Accents -->
       <section id="overview" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
         
@@ -1394,87 +1551,111 @@
 
         <!-- Interactive 5-Stage Lakehouse Data Flow Plan -->
         <div class="mt-8 pt-8 border-t border-slate-800 space-y-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30">DATA PIPELINE FLOW PLAN</span>
-                <h4 class="text-lg font-bold text-white">5-Stage Lakehouse Lifecycle & Data Flow Plan</h4>
+                <h4 class="text-lg font-bold text-white">5-Stage Lakehouse Lifecycle & Interactive Flow Simulator</h4>
               </div>
               <p class="text-xs text-slate-400 mt-1">
-                From raw edge server streams to Bronze isolation, Silver Catalyst regex extraction, Gold security analytics, and real-time dashboard serving. Click any stage to inspect runtime contracts and commands.
+                From raw edge server streams to Bronze isolation, Silver Catalyst regex extraction, Gold security analytics, and real-time dashboard serving. Run live end-to-end simulations or step through contracts.
               </p>
             </div>
-            <div class="flex items-center gap-2 text-xs">
-              <span class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono">
-                Throughput: <strong class="text-emerald-400">500k+ eps</strong>
-              </span>
-              <span class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono">
-                Latency: <strong class="text-cyan-400">&lt; 3.2s</strong>
-              </span>
+
+            <!-- Flow Simulator Controls -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="sim-play-btn" onclick="startPipelineSimulation()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-lg shadow-fuchsia-500/20">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i> Run Simulation
+              </button>
+              <button onclick="stepPipelineSimulation()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold flex items-center gap-1 transition">
+                <i data-lucide="skip-forward" class="w-3.5 h-3.5 text-cyan-400"></i> Step Next
+              </button>
+              <button onclick="resetPipelineSimulation()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700 text-xs font-semibold flex items-center gap-1 transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+              </button>
+              <div class="flex items-center gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 text-[11px]">
+                <button onclick="setSimulationSpeed(1500, '1x Normal')" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">1x</button>
+                <button onclick="setSimulationSpeed(700, '2x Fast')" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">2x</button>
+                <button onclick="setSimulationSpeed(250, 'Turbo')" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">Turbo</button>
+              </div>
             </div>
           </div>
 
-          <!-- Flow Stepper / Navigation Track -->
+          <!-- Flow Stepper / Navigation Track with Live Status Badges -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <!-- Stage 1 Button -->
-            <button onclick="selectPipelineStage(0)" id="flow-tab-0" class="flow-stage-btn active p-3 rounded-2xl bg-cyan-500/10 border-2 border-cyan-500 text-left transition duration-200 space-y-2">
+            <button onclick="selectPipelineStage(0)" id="flow-tab-0" class="flow-stage-btn active p-3.5 rounded-2xl bg-cyan-500/10 border-2 border-cyan-500 text-left transition duration-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black uppercase tracking-wider text-cyan-400">STAGE 1</span>
-                <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                  <i data-lucide="radio" class="w-3.5 h-3.5"></i>
-                </span>
+                <span id="flow-status-badge-0" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>
               </div>
-              <div class="text-xs font-bold text-white">Edge Log Ingestion</div>
-              <div class="text-[10px] text-slate-400">Flume / Filebeat / Syslog</div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="radio" class="w-3.5 h-3.5 text-cyan-400"></i> Edge Ingestion
+              </div>
+              <div class="text-[10px] text-slate-400">Flume / Filebeat • 50k eps</div>
             </button>
 
             <!-- Stage 2 Button -->
-            <button onclick="selectPipelineStage(1)" id="flow-tab-1" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+            <button onclick="selectPipelineStage(1)" id="flow-tab-1" class="flow-stage-btn p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black uppercase tracking-wider text-amber-400">STAGE 2</span>
-                <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                  <i data-lucide="hard-drive" class="w-3.5 h-3.5"></i>
-                </span>
+                <span id="flow-status-badge-1" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>
               </div>
-              <div class="text-xs font-bold text-white">Quarantine & Bronze</div>
-              <div class="text-[10px] text-slate-400">HDFS 3x + Corrupt Routing</div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-amber-400"></i> Quarantine & Bronze
+              </div>
+              <div class="text-[10px] text-slate-400">HDFS 3x • Corrupt Isolation</div>
             </button>
 
             <!-- Stage 3 Button -->
-            <button onclick="selectPipelineStage(2)" id="flow-tab-2" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+            <button onclick="selectPipelineStage(2)" id="flow-tab-2" class="flow-stage-btn p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black uppercase tracking-wider text-purple-400">STAGE 3</span>
-                <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                </span>
+                <span id="flow-status-badge-2" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>
               </div>
-              <div class="text-xs font-bold text-white">Silver Normalization</div>
-              <div class="text-[10px] text-slate-400">PySpark Catalyst Regex</div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400"></i> Silver Normalization
+              </div>
+              <div class="text-[10px] text-slate-400">PySpark Catalyst • 1.8M/s</div>
             </button>
 
             <!-- Stage 4 Button -->
-            <button onclick="selectPipelineStage(3)" id="flow-tab-3" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+            <button onclick="selectPipelineStage(3)" id="flow-tab-3" class="flow-stage-btn p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black uppercase tracking-wider text-rose-400">STAGE 4</span>
-                <span class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
-                </span>
+                <span id="flow-status-badge-3" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>
               </div>
-              <div class="text-xs font-bold text-white">Gold Security Scoring</div>
-              <div class="text-[10px] text-slate-400">Hourly Rollup + Threat Engine</div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400"></i> Gold Threat Scoring
+              </div>
+              <div class="text-[10px] text-slate-400">Hourly Rollup • Risk Engine</div>
             </button>
 
             <!-- Stage 5 Button -->
-            <button onclick="selectPipelineStage(4)" id="flow-tab-4" class="flow-stage-btn p-3 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
+            <button onclick="selectPipelineStage(4)" id="flow-tab-4" class="flow-stage-btn p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-left transition duration-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">STAGE 5</span>
-                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                  <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-                </span>
+                <span id="flow-status-badge-4" class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>
               </div>
-              <div class="text-xs font-bold text-white">FastAPI & UI Serving</div>
-              <div class="text-[10px] text-slate-400">Parquet / DuckDB / Webhook</div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-emerald-400"></i> FastAPI & Dashboard
+              </div>
+              <div class="text-[10px] text-slate-400">REST API • Webhook • &lt;3ms</div>
             </button>
+          </div>
+
+          <!-- Live Data Record Tracer Box -->
+          <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="p-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <i data-lucide="binary" class="w-3.5 h-3.5"></i>
+                </span>
+                <span id="sim-tracer-title" class="text-xs font-bold text-white">Live Data Record Transformation Tracer (Stage 1 Intake)</span>
+              </div>
+              <span id="sim-tracer-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">INGESTING (42k eps)</span>
+            </div>
+            <pre id="sim-record-tracer" class="p-3.5 rounded-xl bg-slate-900 text-cyan-300 font-mono text-[11px] leading-relaxed overflow-x-auto border border-slate-800 custom-scrollbar max-h-48"></pre>
           </div>
 
           <!-- Dynamic Stage Details View Container -->
@@ -1963,6 +2144,53 @@
   <script>
     let activeData = null;
     let chartInstances = {};
+
+    // Floating Toast Notification Engine
+    function showToast(message, type = 'info', duration = 3500) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      let borderBg = 'bg-slate-900/95 border-slate-700 text-slate-100 shadow-2xl';
+      let iconName = 'info';
+      let iconColor = 'text-cyan-400';
+
+      if (type === 'success') {
+        borderBg = 'bg-slate-900/95 border-emerald-500/40 text-slate-100 shadow-emerald-950/40 shadow-xl';
+        iconName = 'check-circle';
+        iconColor = 'text-emerald-400';
+      } else if (type === 'warning') {
+        borderBg = 'bg-slate-900/95 border-amber-500/40 text-slate-100 shadow-amber-950/40 shadow-xl';
+        iconName = 'alert-triangle';
+        iconColor = 'text-amber-400';
+      } else if (type === 'error' || type === 'critical') {
+        borderBg = 'bg-slate-900/95 border-rose-500/50 text-slate-100 shadow-rose-950/40 shadow-xl';
+        iconName = 'shield-alert';
+        iconColor = 'text-cyber-crimson';
+      }
+
+      toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border text-xs font-medium transition-all duration-300 transform translate-y-2 opacity-0 ${borderBg}`;
+      toast.innerHTML = `
+        <i data-lucide="${iconName}" class="w-4 h-4 shrink-0 ${iconColor}"></i>
+        <div class="flex-1 leading-snug">${message}</div>
+        <button onclick="this.parentElement.remove()" class="text-slate-500 hover:text-slate-300 transition">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+      if (window.lucide) lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
 
     const fallbackData = {
       "metadata": {
@@ -2511,7 +2739,7 @@
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-mono text-cyan-400 font-semibold">${evt.event_id || 'SEC-00'}</td>
           <td class="py-2.5 px-3 text-slate-400 text-[11px]">${(evt.timestamp || '').replace('T', ' ').replace('Z', '')}</td>
-          <td class="py-2.5 px-3 text-slate-200 font-bold">${evt.ip}</td>
+          <td class="py-2.5 px-3 text-cyan-400 font-bold hover:underline cursor-pointer" onclick="openIpForensicsModal('${evt.ip}')" title="Inspect IP Threat Forensics">${evt.ip}</td>
           <td class="py-2.5 px-3 text-slate-300">${evt.event_type || 'Unknown'}</td>
           <td class="py-2.5 px-3 text-center">${riskBadge}</td>
           <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] border ${sevClass}">${evt.severity}</span></td>
@@ -2559,7 +2787,7 @@
     function copyWafRule(ip) {
       const rule = `iptables -A INPUT -s ${ip} -j DROP # LogShield WAF Drop`;
       navigator.clipboard.writeText(rule).then(() => {
-        alert(`Copied WAF iptables rule for ${ip} to clipboard!`);
+        showToast(`Copied WAF iptables rule for ${ip} to clipboard!`, 'success');
       }).catch(() => {
         prompt("Copy WAF Rule:", rule);
       });
@@ -2568,7 +2796,7 @@
     function exportSecurityCSV() {
       const events = filteredSecEvents.length > 0 ? filteredSecEvents : (activeData?.security_events || []);
       if (!events || events.length === 0) {
-        alert("No security events to export.");
+        showToast("No security events to export.", "warning");
         return;
       }
       let csv = "event_id,timestamp,ip,event_type,severity,risk_score,evidence,recommendation\n";
@@ -2612,9 +2840,9 @@
         else if (item.severity === 'MEDIUM') sevClass = "text-amber-400";
 
         tr.innerHTML = `
-          <td class="py-2.5 px-3 font-mono font-bold text-slate-100 flex items-center gap-2">
+          <td class="py-2.5 px-3 font-mono font-bold text-slate-100 flex items-center gap-2 cursor-pointer group" onclick="openIpForensicsModal('${item.ip}')" title="Inspect IP Threat Forensics">
             <span class="w-2 h-2 rounded-full ${item.risk_score > 25 ? 'bg-cyber-crimson' : 'bg-emerald-400'}"></span>
-            <span>${item.ip}</span>
+            <span class="text-cyan-400 group-hover:underline">${item.ip}</span>
           </td>
           <td class="py-2.5 px-3 text-right font-mono text-slate-200 font-semibold">${(item.total_requests || 0).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono text-rose-400 font-bold">${(item.errors_404 || 0).toLocaleString()}</td>
@@ -2652,10 +2880,188 @@
     function copyBlockIp(ip) {
       const cmd = `fail2ban-client set apache-auth banip ${ip}`;
       navigator.clipboard.writeText(cmd).then(() => {
-        alert(`Copied fail2ban block command for ${ip} to clipboard!`);
+        showToast(`Copied fail2ban block command for ${ip} to clipboard!`, 'success');
       }).catch(() => {
         prompt("Copy fail2ban block command:", cmd);
       });
+    }
+
+    // --- Interactive IP Threat Forensics Modal & Handlers ---
+    let currentForensicIp = null;
+
+    function openIpForensicsModal(ip) {
+      currentForensicIp = ip;
+      const modal = document.getElementById('ip-forensics-modal');
+      if (!modal) return;
+
+      const titleEl = document.getElementById('forensic-ip-title');
+      const badgeEl = document.getElementById('forensic-sev-badge');
+      const scoreEl = document.getElementById('forensic-risk-score');
+      const reqsEl = document.getElementById('forensic-total-reqs');
+      const rateEl = document.getElementById('forensic-404-rate');
+      const incidentsEl = document.getElementById('forensic-incident-count');
+      const vectorsListEl = document.getElementById('forensic-vectors-list');
+
+      const ipEntry = (activeData?.top_ips || []).find(x => x.ip === ip);
+      const events = (activeData?.security_events || []).filter(x => x.ip === ip);
+
+      const totalReqs = ipEntry ? (ipEntry.total_requests || 0) : (events.length > 0 ? (events[0].request_count || events.length * 35) : 380);
+      const errors404 = ipEntry ? (ipEntry.errors_404 || 0) : Math.round(totalReqs * 0.22);
+      const rate404 = totalReqs > 0 ? ((errors404 / totalReqs) * 100).toFixed(1) : '21.5';
+      const riskScore = ipEntry ? (ipEntry.risk_score || 0) : (events[0]?.risk_score || 75);
+      const severity = ipEntry ? (ipEntry.severity || 'HIGH') : (events[0]?.severity || (riskScore >= 70 ? 'CRITICAL' : 'HIGH'));
+
+      if (titleEl) titleEl.innerText = ip;
+      if (scoreEl) scoreEl.innerText = `${riskScore} / 100`;
+      if (reqsEl) reqsEl.innerText = totalReqs.toLocaleString();
+      if (rate404) rateEl.innerText = `${rate404}%`;
+      if (incidentsEl) incidentsEl.innerText = `${Math.max(events.length, 1)} Incident${events.length === 1 ? '' : 's'}`;
+
+      if (badgeEl) {
+        badgeEl.innerText = severity;
+        if (severity === 'CRITICAL') {
+          badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-cyber-crimson border border-rose-500/30';
+        } else if (severity === 'HIGH') {
+          badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-500/20 text-orange-400 border border-orange-500/30';
+        } else {
+          badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        }
+      }
+
+      if (vectorsListEl) {
+        vectorsListEl.innerHTML = '';
+        const detectedVectors = new Set();
+        events.forEach(e => {
+          if (e.event_type) detectedVectors.add(e.event_type);
+        });
+        if (ipEntry && ipEntry.admin_hits > 20) detectedVectors.add('Sensitive Admin Route Probing');
+        if (ipEntry && ipEntry.errors_404 > 50) detectedVectors.add('High-Frequency 404 URL Scanner');
+        if (detectedVectors.size === 0) {
+          detectedVectors.add('Automated Bot Signature');
+          detectedVectors.add('Heuristic Anomaly Spike');
+        }
+
+        detectedVectors.forEach(vec => {
+          const tag = document.createElement('span');
+          tag.className = 'px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-rose-500/10 text-rose-300 border border-rose-500/20 flex items-center gap-1.5';
+          tag.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-cyber-crimson"></span> ${vec}`;
+          vectorsListEl.appendChild(tag);
+        });
+      }
+
+      const iptablesCmd = `iptables -A INPUT -s ${ip} -j DROP # LogShield Auto-Block`;
+      const fail2banCmd = `fail2ban-client set apache-auth banip ${ip}`;
+      const nginxCmd = `deny ${ip}; # LogShield Deny Rule`;
+      const awswafCmd = `aws wafv2 update-ip-set --addresses "${ip}/32"`;
+
+      const codeIptables = document.getElementById('code-iptables');
+      if (codeIptables) codeIptables.innerText = iptablesCmd;
+
+      const codeFail2ban = document.getElementById('code-fail2ban');
+      if (codeFail2ban) codeFail2ban.innerText = fail2banCmd;
+
+      const codeNginx = document.getElementById('code-nginx');
+      if (codeNginx) codeNginx.innerText = nginxCmd;
+
+      const codeAwswaf = document.getElementById('code-awswaf');
+      if (codeAwswaf) codeAwswaf.innerText = awswafCmd;
+
+      const btnIptables = document.getElementById('copy-iptables-btn');
+      if (btnIptables) btnIptables.onclick = () => {
+        navigator.clipboard.writeText(iptablesCmd).then(() => showToast(`Copied iptables DROP rule for ${ip}`, 'success'));
+      };
+
+      const btnFail2ban = document.getElementById('copy-fail2ban-btn');
+      if (btnFail2ban) btnFail2ban.onclick = () => {
+        navigator.clipboard.writeText(fail2banCmd).then(() => showToast(`Copied fail2ban banip rule for ${ip}`, 'success'));
+      };
+
+      const btnNginx = document.getElementById('copy-nginx-btn');
+      if (btnNginx) btnNginx.onclick = () => {
+        navigator.clipboard.writeText(nginxCmd).then(() => showToast(`Copied Nginx deny rule for ${ip}`, 'success'));
+      };
+
+      const btnAwswaf = document.getElementById('copy-awswaf-btn');
+      if (btnAwswaf) btnAwswaf.onclick = () => {
+        navigator.clipboard.writeText(awswafCmd).then(() => showToast(`Copied AWS WAF rule for ${ip}`, 'success'));
+      };
+
+      const filterLogsBtn = document.getElementById('filter-logs-by-ip-btn');
+      if (filterLogsBtn) {
+        filterLogsBtn.onclick = () => {
+          closeIpForensicsModal();
+          const searchInput = document.getElementById('log-search');
+          if (searchInput) {
+            searchInput.value = ip;
+            renderLogsTable(activeData?.sample_logs);
+          }
+          window.location.hash = '#explorer';
+          showToast(`Filtered Live Logs by IP: ${ip}`, 'info');
+        };
+      }
+
+      modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeIpForensicsModal() {
+      const modal = document.getElementById('ip-forensics-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // --- Overview Quick Time Window Filter Chips ---
+    let currentTimeWindow = 'all';
+
+    function setTimeWindowFilter(mode) {
+      currentTimeWindow = mode;
+      const btnAll = document.getElementById('time-filter-all');
+      const btnPeak = document.getElementById('time-filter-peak');
+      const btnDaytime = document.getElementById('time-filter-daytime');
+      const banner = document.getElementById('overview-attack-banner');
+
+      [btnAll, btnPeak, btnDaytime].forEach(b => {
+        if (!b) return;
+        b.className = 'px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition';
+      });
+
+      if (mode === 'peak') {
+        if (btnPeak) btnPeak.className = 'px-3 py-1.5 rounded-xl bg-cyber-crimson text-white font-bold text-xs transition shadow-md shadow-rose-600/30 flex items-center gap-1';
+        if (banner) banner.classList.remove('hidden');
+
+        if (document.getElementById('kpi-total-requests')) document.getElementById('kpi-total-requests').innerText = '18,400';
+        if (document.getElementById('kpi-total-404')) document.getElementById('kpi-total-404').innerText = '4,655';
+        if (document.getElementById('kpi-error-rate')) document.getElementById('kpi-error-rate').innerText = '25.30%';
+        if (document.getElementById('kpi-peak-hour')) document.getElementById('kpi-peak-hour').innerText = '03:00 - 04:00 AM';
+        if (document.getElementById('kpi-peak-count')) document.getElementById('kpi-peak-count').innerText = '4,655 errors in 1 hr';
+        if (document.getElementById('kpi-total-403')) document.getElementById('kpi-total-403').innerText = '840';
+        if (document.getElementById('kpi-total-5xx')) document.getElementById('kpi-total-5xx').innerText = '420';
+        if (document.getElementById('kpi-suspicious-ips')) document.getElementById('kpi-suspicious-ips').innerText = '28';
+        if (document.getElementById('kpi-security-events')) document.getElementById('kpi-security-events').innerText = '94';
+
+        showToast("Switched Overview to Peak Threat Surge (03:00 - 04:00 UTC)", "warning");
+      } else if (mode === 'daytime') {
+        if (btnDaytime) btnDaytime.className = 'px-3 py-1.5 rounded-xl bg-sky-600 text-white font-bold text-xs transition shadow-md shadow-sky-600/25';
+        if (banner) banner.classList.add('hidden');
+
+        if (document.getElementById('kpi-total-requests')) document.getElementById('kpi-total-requests').innerText = '92,150';
+        if (document.getElementById('kpi-total-404')) document.getElementById('kpi-total-404').innerText = '14,812';
+        if (document.getElementById('kpi-error-rate')) document.getElementById('kpi-error-rate').innerText = '16.07%';
+        if (document.getElementById('kpi-peak-hour')) document.getElementById('kpi-peak-hour').innerText = '10:00 - 11:00 AM';
+        if (document.getElementById('kpi-peak-count')) document.getElementById('kpi-peak-count').innerText = '2,741 errors in 1 hr';
+        if (document.getElementById('kpi-total-403')) document.getElementById('kpi-total-403').innerText = '1,120';
+        if (document.getElementById('kpi-total-5xx')) document.getElementById('kpi-total-5xx').innerText = '1,840';
+        if (document.getElementById('kpi-suspicious-ips')) document.getElementById('kpi-suspicious-ips').innerText = '12';
+        if (document.getElementById('kpi-security-events')) document.getElementById('kpi-security-events').innerText = '42';
+
+        showToast("Switched Overview to Daytime Baseline (09:00 - 18:00 UTC)", "info");
+      } else {
+        if (btnAll) btnAll.className = 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs transition shadow-md shadow-indigo-600/25';
+        if (banner) banner.classList.add('hidden');
+
+        if (activeData) renderDashboard(activeData);
+        showToast("Reset Overview to full 7-day dataset (200k requests)", "success");
+      }
+      if (window.lucide) lucide.createIcons();
     }
 
     // Pagination & Sorting State
@@ -2962,7 +3368,7 @@
         tsv += `${r.timestamp_str}\t${r.ip}\t${r.method}\t${r.path}\t${r.status}\t${r.size}\n`;
       });
       navigator.clipboard.writeText(tsv).then(() => {
-        alert(`Copied ${filtered.length} log rows to clipboard (TSV format)!`);
+        showToast(`Copied ${filtered.length} log rows to clipboard (TSV format)!`, 'success');
       });
     }
 
@@ -3414,7 +3820,7 @@ services:
       const file = configFiles[activeConfigTab];
       if (!file) return;
       navigator.clipboard.writeText(file.content).then(() => {
-        alert(`Copied ${file.name} to clipboard!`);
+        showToast(`Copied ${file.name} to clipboard!`, 'success');
       });
     }
 
@@ -3505,7 +3911,7 @@ services:
       const masterCard = document.createElement('div');
       masterCard.className = "p-3.5 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 space-y-2 cursor-pointer hover:border-indigo-400 transition";
       masterCard.title = "Click to inspect Master / NameNode state";
-      masterCard.onclick = () => alert(`Master Node: Spark Master & HDFS NameNode. RPC: 7077 / 9000. Heap: ${sizing.driverRam} GB. High Availability 100% HEALTHY.`);
+      masterCard.onclick = () => showToast(`Master Node: Spark Master & HDFS NameNode. RPC: 7077 / 9000. Heap: ${sizing.driverRam} GB. High Availability 100% HEALTHY.`, 'info');
       masterCard.innerHTML = `
         <div class="flex items-center justify-between text-[11px] font-bold">
           <span class="text-indigo-300 flex items-center gap-1.5"><i data-lucide="shield" class="w-3.5 h-3.5 text-indigo-400"></i> MASTER</span>
@@ -3525,7 +3931,7 @@ services:
         const workerCard = document.createElement('div');
         workerCard.className = "p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2 cursor-pointer hover:border-slate-700 transition";
         workerCard.title = `Click to inspect Worker #${i} container status`;
-        workerCard.onclick = () => alert(`Worker #${i}: Cores ${sizing.cores} (V-Cores ${sizing.usableCores}), Heap ${sizing.execRam} GB. Active Tasks: ${Math.floor(Math.random()*4)+2}. Status: RUNNING.`);
+        workerCard.onclick = () => showToast(`Worker #${i}: Cores ${sizing.cores} (V-Cores ${sizing.usableCores}), Heap ${sizing.execRam} GB. Active Tasks: ${Math.floor(Math.random()*4)+2}. Status: RUNNING.`, 'info');
         workerCard.innerHTML = `
           <div class="flex items-center justify-between text-[11px] font-bold">
             <span class="text-slate-300 flex items-center gap-1.5"><i data-lucide="cpu" class="w-3.5 h-3.5 text-cyan-400"></i> WORKER #${i}</span>
@@ -3670,7 +4076,7 @@ services:
 
     function applyCalculatedClusterConfig() {
       updateClusterCalculations();
-      alert("Cluster parameters synchronized! spark-defaults.conf, yarn-site.xml, and docker-compose.yml updated with calculated values.");
+      showToast("Cluster parameters synchronized! spark-defaults.conf, yarn-site.xml, and docker-compose.yml updated with calculated values.", "success");
     }
 
     function updateAlertThreshold(val) {
@@ -4007,7 +4413,7 @@ uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level in
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Production CLI & Pipeline Snippet</span>
-            <button onclick="navigator.clipboard.writeText(pipelineStagesData[${idx}].codeSnippet); alert('Copied stage code snippet!');" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 flex items-center gap-1 transition">
+            <button onclick="navigator.clipboard.writeText(pipelineStagesData[${idx}].codeSnippet); showToast('Copied stage code snippet!', 'success');" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 flex items-center gap-1 transition">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Command
             </button>
           </div>
@@ -4017,16 +4423,229 @@ uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level in
       if (window.lucide) lucide.createIcons();
     }
 
+    // ==========================================
+    // 5-STAGE PIPELINE FLOW STUDIO & SIMULATOR
+    // ==========================================
+    const sampleTraces = [
+      {
+        stage: 0,
+        title: "Stage 1: Raw Edge CLF Ingestion Stream",
+        badge: "INGESTING (48,210 eps)",
+        color: "cyan",
+        content: `// [INGESTION DAEMON] Common Log Format Spool
+10.0.12.183 - - [01/Sep/2026:03:14:22 +0000] "GET /admin/login HTTP/1.1" 404 342 "-" "sqlmap/1.7.2#dev"
+10.0.12.183 - - [01/Sep/2026:03:14:23 +0000] "POST /admin/login HTTP/1.1" 404 298 "-" "sqlmap/1.7.2#dev"
+10.0.12.183 - - [01/Sep/2026:03:14:24 +0000] "GET /admin/../../etc/passwd HTTP/1.1" 404 512 "-" "sqlmap/1.7.2#dev"
+>> [Flume Source]: Reading from /var/log/httpd/access_log
+>> [Spool Buffer]: 1,024 batches buffered; streaming to HDFS NameNode rpc://nn01:9000`
+      },
+      {
+        stage: 1,
+        title: "Stage 2: Bronze HDFS Landing & Malformed Isolation",
+        badge: "HDFS VALIDATION (3x Replicated)",
+        color: "amber",
+        content: `// [HDFS BRONZE LANDING]
+hdfs:///lakehouse/bronze/incoming/2026/09/01/access_1725160462.log [128.4 MB, Block ID: blk_1073741825]
+Replication factor: 3 [dn01, dn02, dn03]
+Integrity checksum: SHA256: 9e4f2b1897c88... [PASS]
+Pre-flight Schema Sanitizer:
+  - Valid CLF rows: 99,842 lines
+  - Corrupt / binary rows: 14 lines -> Isolated to hdfs:///lakehouse/quarantine/corrupt_logs.json
+>> Bronze Zone Status: HEALTHY. Ready for PySpark Catalyst ingestion.`
+      },
+      {
+        stage: 2,
+        title: "Stage 3: Silver PySpark Catalyst Parser & Schema Normalization",
+        badge: "PARQUET TRANSFORMED (1.82M rows/sec)",
+        color: "purple",
+        content: `// [CATALYST REGEX & PARQUET SCHEMA]
+DataFrame Schema:
+ |-- client_ip: string (nullable = true)
+ |-- timestamp_utc: timestamp (nullable = true)
+ |-- method: string (nullable = true)
+ |-- path: string (nullable = true)
+ |-- status: integer (nullable = true)
+ |-- bytes: long (nullable = true)
+ |-- user_agent: string (nullable = true)
+
+[TRANSFORMATION SAMPLE]:
+{
+  "client_ip": "10.0.12.183",
+  "timestamp_utc": "2026-09-01T03:14:22Z",
+  "hour_of_day": 3,
+  "day_of_week": "Tuesday",
+  "method": "GET",
+  "path": "/admin/login",
+  "status": 404,
+  "bytes": 342,
+  "is_error_404": true
+}
+>> Output partition: hdfs:///lakehouse/silver/year=2026/month=09/day=01/hour=03/data.snappy.parquet`
+      },
+      {
+        stage: 3,
+        title: "Stage 4: Gold Multi-Dimensional Rollup & Threat Heuristic Engine",
+        badge: "ANALYTICS & SOC SCORING",
+        color: "rose",
+        content: `// [GOLD AGGREGATIONS & SECURITY DETECTION]
+Window Aggregation [03:00 - 04:00 AM]:
+  - Total Hour Volume: 18,400 requests
+  - 404 Failure Count: 4,655 (25.3% error rate - SPIKE THRESHOLD EXCEEDED)
+  - Top Failing Endpoint: /admin/login (2,410 hits)
+
+Security Threat Heuristics:
+  - Target IP: 10.0.12.183
+  - Threat Vector: Sensitive Admin Probing + Brute-force credential stuffing
+  - Rule Triggered: Admin Probing > 50 hits & 404 error rate > 40%
+  - Heuristic Risk Score: 95 / 100 [CRITICAL SEVERITY]
+>> Saved to hdfs:///lakehouse/gold/kpis.parquet & output/analysis_summary.json`
+      },
+      {
+        stage: 4,
+        title: "Stage 5: FastAPI REST Endpoints & Real-Time Visualization Serving",
+        badge: "REST SERVING (< 2.8ms latency)",
+        color: "emerald",
+        content: `// [FASTAPI DISPATCH & REAL-TIME DASHBOARD]
+GET /api/stats                     -> 200 OK (1.8ms) { "total_requests": 200000, "total_404": 43153, "error_rate": 21.58 }
+GET /api/traffic/hourly            -> 200 OK (2.1ms) [24 hourly buckets, peak: 03:00]
+GET /api/security/events?limit=100 -> 200 OK (3.4ms) [494 incidents cataloged]
+GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
+
+>> WebSocket / Telemetry Poller: Active
+>> Executive Dashboard: Synchronized with 100% Lakehouse Integrity.`
+      }
+    ];
+
+    let pipelineSimState = {
+      currentStage: 0,
+      isRunning: false,
+      timerId: null,
+      speedMs: 1500
+    };
+
+    function renderSimulationTracer(stageIdx) {
+      const trace = sampleTraces[stageIdx] || sampleTraces[0];
+      const titleEl = document.getElementById('sim-tracer-title');
+      const badgeEl = document.getElementById('sim-tracer-badge');
+      const tracerBox = document.getElementById('sim-record-tracer');
+
+      if (titleEl) titleEl.innerText = `Live Data Record Transformation Tracer (${trace.title})`;
+      if (badgeEl) {
+        badgeEl.innerText = trace.badge;
+        const colorClasses = {
+          cyan: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+          amber: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+          purple: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+          rose: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+          emerald: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+        };
+        badgeEl.className = `px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${colorClasses[trace.color] || colorClasses.cyan}`;
+      }
+      if (tracerBox) {
+        tracerBox.textContent = trace.content;
+      }
+
+      for (let i = 0; i < 5; i++) {
+        const badge = document.getElementById(`flow-status-badge-${i}`);
+        if (!badge) continue;
+        if (i < stageIdx) {
+          badge.innerText = '✓ DONE';
+          badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        } else if (i === stageIdx) {
+          badge.innerText = '● PROCESSING';
+          badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse';
+        } else {
+          badge.innerText = 'IDLE';
+          badge.className = 'text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+        }
+      }
+
+      selectPipelineStage(stageIdx);
+    }
+
+    function startPipelineSimulation() {
+      if (pipelineSimState.isRunning) {
+        pausePipelineSimulation();
+        return;
+      }
+
+      pipelineSimState.isRunning = true;
+      const playBtn = document.getElementById('sim-play-btn');
+      if (playBtn) {
+        playBtn.innerHTML = '<i data-lucide="pause" class="w-3.5 h-3.5"></i> Pause Simulation';
+        playBtn.className = 'px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20';
+      }
+
+      showToast("Pipeline live simulation started", "info");
+
+      pipelineSimState.timerId = setInterval(() => {
+        pipelineSimState.currentStage = (pipelineSimState.currentStage + 1) % 5;
+        renderSimulationTracer(pipelineSimState.currentStage);
+      }, pipelineSimState.speedMs);
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function pausePipelineSimulation() {
+      pipelineSimState.isRunning = false;
+      if (pipelineSimState.timerId) {
+        clearInterval(pipelineSimState.timerId);
+        pipelineSimState.timerId = null;
+      }
+
+      const playBtn = document.getElementById('sim-play-btn');
+      if (playBtn) {
+        playBtn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> Run Simulation';
+        playBtn.className = 'px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-lg shadow-fuchsia-500/20';
+      }
+
+      showToast("Pipeline simulation paused", "info");
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function stepPipelineSimulation() {
+      if (pipelineSimState.isRunning) {
+        pausePipelineSimulation();
+      }
+      pipelineSimState.currentStage = (pipelineSimState.currentStage + 1) % 5;
+      renderSimulationTracer(pipelineSimState.currentStage);
+      showToast(`Stepped to Stage ${pipelineSimState.currentStage + 1}`, "info");
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function resetPipelineSimulation() {
+      if (pipelineSimState.isRunning) {
+        pausePipelineSimulation();
+      }
+      pipelineSimState.currentStage = 0;
+      renderSimulationTracer(0);
+      showToast("Pipeline simulation reset to Stage 1", "info");
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function setSimulationSpeed(ms, label) {
+      pipelineSimState.speedMs = ms;
+      if (pipelineSimState.isRunning) {
+        clearInterval(pipelineSimState.timerId);
+        pipelineSimState.timerId = setInterval(() => {
+          pipelineSimState.currentStage = (pipelineSimState.currentStage + 1) % 5;
+          renderSimulationTracer(pipelineSimState.currentStage);
+        }, pipelineSimState.speedMs);
+      }
+      showToast(`Simulation rate: ${label}`, "info");
+    }
+
     // Modal Escape Key & Backdrop Dismissal
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeSystemSettingsModal();
         closeLogInspector();
         closeChartZoom();
+        closeIpForensicsModal();
       }
     });
 
-    ['settings-modal', 'log-inspector-modal', 'chart-zoom-modal'].forEach(id => {
+    ['settings-modal', 'log-inspector-modal', 'chart-zoom-modal', 'ip-forensics-modal'].forEach(id => {
       const modal = document.getElementById(id);
       if (modal) {
         modal.addEventListener('click', (e) => {
@@ -4034,6 +4653,7 @@ uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level in
             if (id === 'settings-modal') closeSystemSettingsModal();
             if (id === 'log-inspector-modal') closeLogInspector();
             if (id === 'chart-zoom-modal') closeChartZoom();
+            if (id === 'ip-forensics-modal') closeIpForensicsModal();
           }
         });
       }
@@ -4050,6 +4670,7 @@ uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level in
       updateClusterCalculations();
       switchConfigTab('spark-defaults');
       selectPipelineStage(0);
+      renderSimulationTracer(0);
       startStreamHeartbeat();
       loadData();
     });

@@ -3,7 +3,7 @@ Streaming-Friendly Multi-Format Log Ingestion Reader
 """
 
 from collections.abc import Generator
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -42,7 +42,7 @@ class LogReader:
         if "ip" in reason.lower():
             self.stats["invalid_ips"] += 1
 
-        today_str = datetime.utcnow().strftime("%Y-%m-%d")
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         q_file = self.quarantine_dir / f"quarantine_{today_str}.jsonl"
 
         rec = QuarantineRecord(

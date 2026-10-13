@@ -3,7 +3,7 @@ Security Detector Engine: Analyzes log telemetry and outputs Security Events & A
 """
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -140,7 +140,7 @@ def run_security_analysis(
             dev_pct = ((count_404 - mean_hourly_404) / mean_hourly_404) * 100.0
             anomalies.append(AnomalyRecord(
                 metric_name="hourly_404_failure_rate",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 observed_value=float(count_404),
                 baseline_value=float(round(mean_hourly_404, 2)),
                 deviation_pct=float(round(dev_pct, 2)),
