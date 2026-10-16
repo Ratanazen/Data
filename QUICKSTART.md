@@ -1,6 +1,8 @@
 # ⚡ Quick Start: Clone & Run Guide
 
-Get the **Hadoop & PySpark 404 Log File Analytics** running on your local machine in under 60 seconds!
+Get the **Assignment 2 — Project #19: Log File Analysis (Hadoop & PySpark)** running on your local machine in under 60 seconds!
+
+> **Assignment Prompt:** *"19. Log File Analysis: Ingest massive server log files into Hadoop. Use PySpark to count '404 Error' occurrences and visualize the time of day most failures happen."*
 
 ---
 
@@ -47,45 +49,30 @@ pip install -r requirements.txt
 
 ---
 
-### 🍎 macOS Users
+### 🍎 macOS & 🐧 Linux Users
 
-Open Terminal inside the cloned repository folder:
+#### Option 1: 1-Click Launch (Easiest)
+```bash
+./run.sh
+```
+*Automatically sets up dependencies, runs pipeline if deliverables are missing, launches services, and opens the Web Dashboard in your browser!*
 
+#### Option 2: Step-by-Step Build Script
 ```bash
 # 1. Setup virtual environment & dependencies
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Run full check, tests, and build
-./build.sh all
-
-# 3. Launch the Web Dashboard
-./build.sh web
-```
-
-*Or simply use `make`:*
-```bash
-make install
-make all
-make web
-```
-
----
-
-### 🐧 Linux Users
-
-```bash
-# 1. Setup virtual environment & dependencies
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 2. Run full pipeline
+# 2. Run full check, unit tests, and data build
 ./build.sh all
 
 # 3. Launch Web Dashboard
 ./build.sh web
+```
+
+*Or via `make`:*
+```bash
+make install && make all && make web
 ```
 
 ---
