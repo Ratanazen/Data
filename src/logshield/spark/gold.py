@@ -144,7 +144,7 @@ def run_gold_aggregation(
         "total_500": int((df["status"] == 500).sum()),
         "total_301": int((df["status"] == 301).sum()),
         "storage_format": "Parquet (Snappy Compressed)",
-        "generated_at": pd.Timestamp.utcnow().isoformat()
+        "generated_at": pd.Timestamp.now("UTC").isoformat()
     }
     with open(gold_path / "gold_kpis.json", "w", encoding="utf-8") as f:
         json.dump(kpis, f, indent=2)
@@ -156,3 +156,7 @@ def run_gold_aggregation(
         "output_directory": str(gold_path),
         "kpis": kpis
     }
+
+
+# Backwards compatibility alias
+write_gold_layer = run_gold_aggregation

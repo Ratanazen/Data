@@ -74,3 +74,7 @@ def run_silver_transformation(
         "output_directory": str(out_path),
         "data_quality": quality
     }
+
+
+# Backwards compatibility alias
+write_silver_layer = run_silver_transformation

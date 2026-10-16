@@ -178,3 +178,7 @@ def run_security_analysis(
         "high_risk_ips": int((df_profiles["risk_score"] >= 50).sum()),
         "output_directory": str(gold_path)
     }
+
+
+# Backwards compatibility alias
+run_security_detection_pipeline = run_security_analysis

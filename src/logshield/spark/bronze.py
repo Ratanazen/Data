@@ -99,3 +99,7 @@ def run_bronze_ingestion(
         "records_written": total_written,
         "output_directory": str(out_path)
     }
+
+
+# Backwards compatibility alias
+write_bronze_layer = run_bronze_ingestion

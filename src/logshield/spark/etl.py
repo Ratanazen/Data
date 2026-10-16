@@ -57,3 +57,7 @@ def run_pipeline(
         "silver": silver_res,
         "gold": gold_res
     }
+
+
+# Backwards compatibility alias
+run_full_etl_pipeline = run_pipeline

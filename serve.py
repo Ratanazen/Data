@@ -74,6 +74,24 @@ def is_port_available(port):
         s.settimeout(0.5)
         return s.connect_ex(('127.0.0.1', port)) != 0
 
+def ensure_api_running(api_port=8000):
+    """Ensure the FastAPI REST API is active. If port is free, auto-launch API in a background thread."""
+    if not is_port_available(api_port):
+        return  # Port is already bound by an active API instance
+    import threading
+    try:
+        import uvicorn
+        t = threading.Thread(
+            target=lambda: uvicorn.run("src.logshield.api.main:app", host="127.0.0.1", port=api_port, log_level="warning"),
+            daemon=True
+        )
+        t.start()
+        import time
+        time.sleep(0.6)
+        print(f"  API Backend  : http://127.0.0.1:{api_port}/ (auto-launched)")
+    except Exception as e:
+        print(f"  API Backend  : offline ({e}) - operating with static data")
+
 def find_open_port(start_port=DEFAULT_PORT):
     port = start_port
     while port < start_port + 100:
@@ -95,6 +113,9 @@ def run_server(port=None, auto_open=False):
         elif arg.startswith('--port='):
             port = int(arg.split('=')[1])
 
+    # Ensure backend API on port 8000 is active
+    ensure_api_running(8000)
+
     if port is None:
         port = find_open_port(DEFAULT_PORT)
 
@@ -106,8 +127,9 @@ def run_server(port=None, auto_open=False):
     print("=" * 70)
     print("  LOGSHIELD — DISTRIBUTED LOG ANALYTICS & SECURITY DASHBOARD")
     print("=" * 70)
-    print(f"  Local URL    : {local_url}")
+    print(f"  Dashboard URL: {local_url}")
     print(f"  Network URL  : http://127.0.0.1:{port}/")
+    print(f"  API Health   : http://127.0.0.1:8000/api/health")
     print(f"  Serving Dir  : {BASE_DIR}")
     print("  Platform     :", sys.platform.title())
     print("  Press Ctrl+C to stop the server.")

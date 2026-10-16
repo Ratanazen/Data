@@ -105,7 +105,7 @@ cmd_web() {
         fi
     done
     print_header "🌐 Launching Interactive Web Dashboard"
-    $PYTHON serve.py "$PORT"
+    $PYTHON serve.py "$PORT" --open
 }
 
 cmd_report() {
@@ -157,6 +157,7 @@ case "$ACTION" in
         cmd_build
         echo ""
         print_header "🎉 Ready to Explore"
+        echo -e "  ${C_CYAN}• 1-Click Launch (All) :${C_RESET} ./run.sh"
         echo -e "  ${C_CYAN}• Launch Web Dashboard :${C_RESET} ./build.sh web"
         echo -e "  ${C_CYAN}• Direct Browser Link  :${C_RESET} file://$DIR/index.html"
         echo -e "  ${C_CYAN}• Standalone HTML Report:${C_RESET} file://$DIR/Log_File_Analysis_Report.html"

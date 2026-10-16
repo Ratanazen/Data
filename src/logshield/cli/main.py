@@ -15,94 +15,83 @@ logger = get_logger("logshield.cli")
 
 def cmd_ingest(args: argparse.Namespace) -> int:
     """Run Bronze ingestion from raw logs."""
-    from src.logshield.spark.bronze import write_bronze_layer
-    from src.logshield.spark.session import get_spark_session
+    from src.logshield.spark.bronze import run_bronze_ingestion
 
     print("[+] Starting Bronze ingestion...")
-    spark = get_spark_session(app_name="LogShield-CLI-Ingest")
-    df = write_bronze_layer(spark, raw_file_path=args.input)
-    count = df.count()
+    res = run_bronze_ingestion(input_log=args.input)
+    count = res.get("records_written", 0)
     print(f"[OK] Ingested {count:,} records into Bronze layer.")
     return 0
 
 
 def cmd_process(args: argparse.Namespace) -> int:
     """Run Silver layer normalization and cleaning."""
-    from src.logshield.spark.session import get_spark_session
-    from src.logshield.spark.silver import write_silver_layer
+    from src.logshield.spark.silver import run_silver_transformation
 
     print("[+] Starting Silver layer processing...")
-    spark = get_spark_session(app_name="LogShield-CLI-Silver")
-    df = write_silver_layer(spark)
-    count = df.count()
+    res = run_silver_transformation()
+    count = res.get("records_written", 0)
     print(f"[OK] Normalized {count:,} records into Silver layer.")
     return 0
 
 
 def cmd_analyze(args: argparse.Namespace) -> int:
     """Run Gold layer analytics and KPIs."""
-    from src.logshield.spark.gold import write_gold_layer
-    from src.logshield.spark.session import get_spark_session
+    from src.logshield.spark.gold import run_gold_aggregation
 
     print("[+] Computing Gold analytics aggregations...")
-    spark = get_spark_session(app_name="LogShield-CLI-Gold")
-    tables = write_gold_layer(spark)
-    print(f"[OK] Computed {len(tables)} Gold analytics tables.")
+    res = run_gold_aggregation()
+    print(f"[OK] Computed Gold analytics aggregations (Status: {res.get('status', 'success')}).")
     return 0
 
 
 def cmd_security(args: argparse.Namespace) -> int:
     """Run security incident detection and risk scoring engine."""
-    from src.logshield.security.detectors import run_security_detection_pipeline
-    from src.logshield.spark.session import get_spark_session
+    from src.logshield.security.detectors import run_security_analysis
 
     print("[+] Running security threat detection pipeline...")
-    spark = get_spark_session(app_name="LogShield-CLI-Security")
-    results = run_security_detection_pipeline(spark)
-    sec_count = results["security_events"].count()
-    print(f"[OK] Detected {sec_count:,} security incidents.")
+    results = run_security_analysis()
+    sec_count = results.get("security_events_count", 0)
+    anom_count = results.get("anomalies_count", 0)
+    print(f"[OK] Detected {sec_count:,} security incidents and {anom_count} anomalies.")
     return 0
 
 
 def cmd_batch(args: argparse.Namespace) -> int:
     """Run end-to-end lakehouse batch pipeline: Bronze -> Silver -> Gold -> Security."""
-    from src.logshield.security.detectors import run_security_detection_pipeline
-    from src.logshield.spark.etl import run_full_etl_pipeline
-    from src.logshield.spark.session import get_spark_session
+    from src.logshield.security.detectors import run_security_analysis
+    from src.logshield.spark.etl import run_pipeline
 
     print("==================================================")
     print(f"  LogShield v{__version__} — Full Lakehouse Batch Pipeline")
     print("==================================================")
-    spark = get_spark_session(app_name="LogShield-Batch")
-    etl_results = run_full_etl_pipeline(spark, raw_file_path=args.input)
-    sec_results = run_security_detection_pipeline(spark)
-    events_count = len(sec_results.get("events", [])) if isinstance(sec_results, dict) else 0
-    print(f"[OK] Complete batch pipeline finished in {etl_results['duration_seconds']:.2f}s (Security events detected: {events_count}).")
+    etl_results = run_pipeline(input_log=args.input)
+    sec_results = run_security_analysis()
+    events_count = sec_results.get("security_events_count", 0) if isinstance(sec_results, dict) else 0
+    duration = etl_results.get("duration_seconds", 0.0)
+    print(f"[OK] Complete batch pipeline finished in {duration:.2f}s (Security events detected: {events_count}).")
     return 0
 
 
 def cmd_serve(args: argparse.Namespace) -> int:
-    """Run FastAPI REST API or Web Dashboard."""
-    if args.target == "api":
+    """Run FastAPI REST API, Web Dashboard, or both."""
+    target = getattr(args, "target", "all")
+    if target == "api":
         print(f"[+] Launching LogShield FastAPI REST API on http://{args.host}:{args.port}")
         import uvicorn
-
         uvicorn.run("src.logshield.api.main:app", host=args.host, port=args.port, reload=args.reload)
-    elif args.target == "dashboard":
+    elif target == "dashboard":
+        import serve
         print(f"[+] Launching LogShield Dashboard on http://{args.host}:{args.port}")
-        import http.server
-        import socketserver
-
-        os.chdir(Path(__file__).resolve().parents[3])
-
-        class Handler(http.server.SimpleHTTPRequestHandler):
-            pass
-
-        with socketserver.TCPServer((args.host, args.port), Handler) as httpd:
-            print(f"[OK] Serving HTTP on http://{args.host}:{args.port}/ (Press Ctrl+C to quit)")
-            httpd.serve_forever()
+        serve.run_server(port=args.port, auto_open=getattr(args, "open", False))
+    elif target in ("all", "both"):
+        import serve
+        dash_port = args.port if args.port != 8000 else 8080
+        serve.ensure_api_running(api_port=8000)
+        print(f"[+] Launching LogShield Web Dashboard on http://{args.host}:{dash_port}")
+        serve.run_server(port=dash_port, auto_open=getattr(args, "open", True))
     else:
-        print("[!] Invalid target. Choose 'api' or 'dashboard'.")
+        print("[!] Invalid target. Choose 'api', 'dashboard', or 'all'.")
         return 1
     return 0
 
@@ -177,10 +166,11 @@ def main(argv: list[str] | None = None) -> int:
     p_batch.set_defaults(func=cmd_batch)
 
     # Serve
-    p_serve = subparsers.add_parser("serve", help="Launch web dashboard or FastAPI REST API")
-    p_serve.add_argument("target", choices=["api", "dashboard"], default="api", nargs="?", help="Server target")
+    p_serve = subparsers.add_parser("serve", help="Launch web dashboard, FastAPI REST API, or both")
+    p_serve.add_argument("target", choices=["api", "dashboard", "all"], default="all", nargs="?", help="Server target (default: all)")
     p_serve.add_argument("--host", default="0.0.0.0", help="Host binding")
-    p_serve.add_argument("--port", "-p", type=int, default=8000, help="Port binding")
+    p_serve.add_argument("--port", "-p", type=int, default=8080, help="Port binding (default: 8080)")
+    p_serve.add_argument("--open", "-o", action="store_true", default=False, help="Automatically open browser")
     p_serve.add_argument("--reload", action="store_true", help="Enable uvicorn hot reloading")
     p_serve.set_defaults(func=cmd_serve)
 
