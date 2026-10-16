@@ -782,14 +782,14 @@
 
         <!-- Quick Time Range Chips -->
         <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs">
-          <button id="time-filter-all" onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs transition shadow-md shadow-indigo-600/25">
+          <button id="overview-time-all" onclick="setTimeWindowFilter('all')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs transition shadow-md shadow-indigo-600/25">
             Full 7-Day (200k)
           </button>
-          <button id="time-filter-peak" onclick="setTimeWindowFilter('peak')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 hover:text-white border border-slate-800 font-semibold text-xs transition flex items-center gap-1">
+          <button id="overview-time-peak" onclick="setTimeWindowFilter('peak')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-rose-300 hover:text-white border border-slate-800 font-semibold text-xs transition flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-cyber-crimson animate-ping"></span>
-            Peak Threat Surge (03:00)
+            <span>Peak Threat Surge (03:00)</span>
           </button>
-          <button id="time-filter-daytime" onclick="setTimeWindowFilter('daytime')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition">
+          <button id="overview-time-daytime" onclick="setTimeWindowFilter('daytime')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition">
             Daytime Baseline
           </button>
         </div>
@@ -2393,7 +2393,7 @@
               top_ips: (topIpsList.length > 0) ? topIpsList : fallbackData.top_ips
             };
             loadedFromApi = true;
-            console.log(`[✓] Connected to LogShield FastAPI backend at ${apiBase}`);
+            console.log(`[OK] Connected to LogShield FastAPI backend at ${apiBase}`);
             break;
           }
         } catch (err) {
@@ -2407,7 +2407,7 @@
           if (resp.ok) {
             const json = await resp.json();
             activeData = json;
-            console.log("[✓] Loaded dynamic web_dashboard_data.json");
+            console.log("[OK] Loaded dynamic web_dashboard_data.json");
           }
         } catch (e) {
           console.log("[i] Operating with pre-bundled analytics dataset");
@@ -3058,18 +3058,18 @@
 
     function setTimeWindowFilter(mode) {
       currentTimeWindow = mode;
-      const btnAll = document.getElementById('time-filter-all');
-      const btnPeak = document.getElementById('time-filter-peak');
-      const btnDaytime = document.getElementById('time-filter-daytime');
+      const btnAll = document.getElementById('overview-time-all');
+      const btnPeak = document.getElementById('overview-time-peak');
+      const btnDaytime = document.getElementById('overview-time-daytime');
       const banner = document.getElementById('overview-attack-banner');
 
       [btnAll, btnPeak, btnDaytime].forEach(b => {
         if (!b) return;
-        b.className = 'px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition';
+        b.className = 'px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-semibold text-xs transition flex items-center gap-1.5';
       });
 
       if (mode === 'peak') {
-        if (btnPeak) btnPeak.className = 'px-3 py-1.5 rounded-xl bg-cyber-crimson text-white font-bold text-xs transition shadow-md shadow-rose-600/30 flex items-center gap-1';
+        if (btnPeak) btnPeak.className = 'px-3 py-1.5 rounded-xl bg-cyber-crimson text-white font-bold text-xs transition shadow-md shadow-rose-600/30 flex items-center gap-1.5';
         if (banner) banner.classList.remove('hidden');
 
         if (document.getElementById('kpi-total-requests')) document.getElementById('kpi-total-requests').innerText = '18,400';
@@ -3198,13 +3198,13 @@
       ['all', 'peak', 'biz', 'night'].forEach(k => {
         const btn = document.getElementById(`time-filter-${k}`);
         if (btn) {
-          btn.className = 'px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition';
+          btn.className = 'px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 text-xs transition flex items-center gap-1.5';
         }
       });
       const activeMap = { 'ALL': 'all', 'PEAK': 'peak', 'BUSINESS': 'biz', 'OVERNIGHT': 'night' };
       const activeBtn = document.getElementById(`time-filter-${activeMap[filterKey]}`);
       if (activeBtn) {
-        activeBtn.className = 'px-2.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs transition font-semibold';
+        activeBtn.className = 'px-2.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs transition font-semibold flex items-center gap-1.5';
       }
       currentPage = 1;
       renderLogsTable(activeData.sample_logs);

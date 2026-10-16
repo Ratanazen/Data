@@ -24,7 +24,10 @@ def get_security_events(
     if not p_file.exists():
         return []
 
-    df = pq.read_table(str(p_file)).to_pandas()
+    try:
+        df = pq.read_table(str(p_file)).to_pandas()
+    except Exception:
+        return []
 
     if severity:
         df = df[df["severity"].str.upper() == severity.upper()]
@@ -55,8 +58,11 @@ def get_anomalies() -> List[dict]:
     if not p_file.exists():
         return []
 
-    df = pq.read_table(str(p_file)).to_pandas()
-    return df.to_dict(orient="records")
+    try:
+        df = pq.read_table(str(p_file)).to_pandas()
+        return df.to_dict(orient="records")
+    except Exception:
+        return []
 
 @router.get("/top-ips", response_model=List[TopIpItem])
 def get_top_ips(
@@ -67,7 +73,11 @@ def get_top_ips(
     if not p_file.exists():
         return []
 
-    df = pq.read_table(str(p_file)).to_pandas().head(limit)
+    try:
+        df = pq.read_table(str(p_file)).to_pandas().head(limit)
+    except Exception:
+        return []
+
     return [
         TopIpItem(
             ip=str(r["ip"]),
@@ -91,7 +101,11 @@ def get_top_urls(
     if not p_file.exists():
         return []
 
-    df = pq.read_table(str(p_file)).to_pandas().head(limit)
+    try:
+        df = pq.read_table(str(p_file)).to_pandas().head(limit)
+    except Exception:
+        return []
+
     return [
         TopUrlItem(
             path=str(r["path"]),

@@ -2,7 +2,10 @@
 PySpark Session Management with local & cluster support
 """
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from pyspark.sql import SparkSession
 
 from ..config import settings
 from ..utils import logger

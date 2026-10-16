@@ -76,7 +76,8 @@ def cmd_batch(args: argparse.Namespace) -> int:
     spark = get_spark_session(app_name="LogShield-Batch")
     etl_results = run_full_etl_pipeline(spark, raw_file_path=args.input)
     sec_results = run_security_detection_pipeline(spark)
-    print(f"[OK] Complete batch pipeline finished in {etl_results['duration_seconds']:.2f}s.")
+    events_count = len(sec_results.get("events", [])) if isinstance(sec_results, dict) else 0
+    print(f"[OK] Complete batch pipeline finished in {etl_results['duration_seconds']:.2f}s (Security events detected: {events_count}).")
     return 0
 
 

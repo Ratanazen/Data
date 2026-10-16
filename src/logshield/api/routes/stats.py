@@ -18,23 +18,32 @@ def get_stats() -> StatsKPIs:
     kpi_file = settings.GOLD_PATH / "gold_kpis.json"
     kpis = {}
     if kpi_file.exists():
-        with open(kpi_file, "r", encoding="utf-8") as f:
-            kpis = json.load(f)
+        try:
+            with open(kpi_file, "r", encoding="utf-8") as f:
+                kpis = json.load(f)
+        except Exception:
+            kpis = {}
 
     # Count security events
     sec_file = settings.GOLD_PATH / "gold_security_events.parquet"
     sec_count = 0
     if sec_file.exists():
-        sec_count = len(pq.read_table(str(sec_file)))
+        try:
+            sec_count = len(pq.read_table(str(sec_file)))
+        except Exception:
+            sec_count = 0
 
     # Count high-risk IPs
     ip_file = settings.GOLD_PATH / "gold_top_ips.parquet"
     suspicious_count = 0
     if ip_file.exists():
-        t = pq.read_table(str(ip_file))
-        df_ips = t.to_pandas()
-        if "risk_score" in df_ips.columns:
-            suspicious_count = int((df_ips["risk_score"] >= 50).sum())
+        try:
+            t = pq.read_table(str(ip_file))
+            df_ips = t.to_pandas()
+            if "risk_score" in df_ips.columns:
+                suspicious_count = int((df_ips["risk_score"] >= 50).sum())
+        except Exception:
+            suspicious_count = 0
 
     return StatsKPIs(
         total_requests=kpis.get("total_requests", 200000),

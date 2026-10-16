@@ -4,7 +4,6 @@ Explicit PySpark Schemas for Bronze, Silver, and Gold Data Layers
 
 try:
     from pyspark.sql.types import (
-        DateType,
         DoubleType,
         IntegerType,
         LongType,

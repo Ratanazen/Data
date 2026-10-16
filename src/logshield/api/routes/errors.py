@@ -19,16 +19,19 @@ def get_status_distribution() -> List[StatusDistributionItem]:
     if not p_file.exists():
         return []
 
-    table = pq.read_table(str(p_file))
-    df = table.to_pandas()
-    return [
-        StatusDistributionItem(
-            status=int(r["status"]),
-            count=int(r["count"]),
-            percentage=float(r["percentage"])
-        )
-        for _, r in df.iterrows()
-    ]
+    try:
+        table = pq.read_table(str(p_file))
+        df = table.to_pandas()
+        return [
+            StatusDistributionItem(
+                status=int(r["status"]),
+                count=int(r["count"]),
+                percentage=float(r["percentage"])
+            )
+            for _, r in df.iterrows()
+        ]
+    except Exception:
+        return []
 
 @router.get("/errors")
 def get_errors(status: Optional[int] = Query(None, description="Filter specific HTTP error code")) -> Dict[str, Any]:
@@ -36,17 +39,23 @@ def get_errors(status: Optional[int] = Query(None, description="Filter specific 
     paths_file = settings.GOLD_PATH / "gold_404_paths.parquet"
     top_paths = []
     if paths_file.exists():
-        df_paths = pq.read_table(str(paths_file)).to_pandas()
-        top_paths = [{"path": str(r["path"]), "hits": int(r["hits"])} for _, r in df_paths.head(20).iterrows()]
+        try:
+            df_paths = pq.read_table(str(paths_file)).to_pandas()
+            top_paths = [{"path": str(r["path"]), "hits": int(r["hits"])} for _, r in df_paths.head(20).iterrows()]
+        except Exception:
+            top_paths = []
 
     daily_file = settings.GOLD_PATH / "gold_daily_errors.parquet"
     daily_stats = []
     if daily_file.exists():
-        df_daily = pq.read_table(str(daily_file)).to_pandas()
-        daily_stats = [
-            {"date": str(r["date_str"]), "total": int(r["total_requests"]), "errors_404": int(r["errors_404"]), "rate": float(r["error_rate"])}
-            for _, r in df_daily.iterrows()
-        ]
+        try:
+            df_daily = pq.read_table(str(daily_file)).to_pandas()
+            daily_stats = [
+                {"date": str(r["date_str"]), "total": int(r["total_requests"]), "errors_404": int(r["errors_404"]), "rate": float(r["error_rate"])}
+                for _, r in df_daily.iterrows()
+            ]
+        except Exception:
+            daily_stats = []
 
     import json
     kpi_file = settings.GOLD_PATH / "gold_kpis.json"
@@ -56,10 +65,12 @@ def get_errors(status: Optional[int] = Query(None, description="Filter specific 
             with open(kpi_file, "r", encoding="utf-8") as f:
                 kpis = json.load(f)
         except Exception:
-            pass
+            kpis = {}
 
-    peak_h = kpis.get("peak_failure_hour", 3)
-    peak_str = f"{peak_h:02d}:00 - {peak_h+1:02d}:00 AM" if peak_h < 12 else f"{peak_h:02d}:00 - {peak_h+1:02d}:00 PM"
+    peak_h = int(kpis.get("peak_failure_hour", 3))
+    next_h = (peak_h + 1) % 24
+    am_pm = "AM" if peak_h < 12 else "PM"
+    peak_str = f"{peak_h:02d}:00 - {next_h:02d}:00 {am_pm}"
 
     return {
         "status_filtered": status,
@@ -76,12 +87,15 @@ def get_404_heatmap() -> List[HeatmapCell]:
     if not p_file.exists():
         return []
 
-    df = pq.read_table(str(p_file)).to_pandas()
-    return [
-        HeatmapCell(
-            day_of_week=str(r["day_of_week"]),
-            hour=int(r["hour"]),
-            error_count=int(r["error_count"])
-        )
-        for _, r in df.iterrows()
-    ]
+    try:
+        df = pq.read_table(str(p_file)).to_pandas()
+        return [
+            HeatmapCell(
+                day_of_week=str(r["day_of_week"]),
+                hour=int(r["hour"]),
+                error_count=int(r["error_count"])
+            )
+            for _, r in df.iterrows()
+        ]
+    except Exception:
+        return []

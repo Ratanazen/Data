@@ -20,18 +20,21 @@ def get_traffic() -> List[HourlyTrafficItem]:
     if not p_file.exists():
         return []
 
-    table = pq.read_table(str(p_file))
-    df = table.to_pandas()
-    items = []
-    for _, row in df.iterrows():
-        items.append(HourlyTrafficItem(
-            hour=int(row["hour"]),
-            total_requests=int(row["total_requests"]),
-            errors_404=int(row["errors_404"]),
-            errors_403=int(row["errors_403"]),
-            errors_500=int(row["errors_500"]),
-            successes_200=int(row["successes_200"]),
-            redirects_301=int(row["redirects_301"]),
-            error_rate=float(row["error_rate"])
-        ))
-    return items
+    try:
+        table = pq.read_table(str(p_file))
+        df = table.to_pandas()
+        items = []
+        for _, row in df.iterrows():
+            items.append(HourlyTrafficItem(
+                hour=int(row["hour"]),
+                total_requests=int(row["total_requests"]),
+                errors_404=int(row["errors_404"]),
+                errors_403=int(row["errors_403"]),
+                errors_500=int(row["errors_500"]),
+                successes_200=int(row["successes_200"]),
+                redirects_301=int(row["redirects_301"]),
+                error_rate=float(row["error_rate"])
+            ))
+        return items
+    except Exception:
+        return []
