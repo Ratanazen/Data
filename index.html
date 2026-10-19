@@ -18,17 +18,22 @@
         extend: {
           colors: {
             obsidian: {
-              900: '#060a12',
-              950: '#030712'
+              900: '#111827',
+              950: '#0b1020'
             },
             cyber: {
-              crimson: '#ff0055',
+              bg: '#0b1020',
+              panel: '#111827',
+              card: '#182235',
+              border: '#334155',
+              cyan: '#38bdf8',
+              indigo: '#818cf8',
+              crimson: '#f87171',
               rose: '#f43f5e',
-              amber: '#f59e0b',
-              emerald: '#10b981',
-              cyan: '#06b6d4',
-              blue: '#3b82f6',
-              violet: '#8b5cf6'
+              amber: '#fbbf24',
+              emerald: '#34d399',
+              blue: '#38bdf8',
+              violet: '#818cf8'
             }
           },
           animation: {
@@ -37,8 +42,8 @@
           },
           keyframes: {
             glow: {
-              '0%': { filter: 'drop-shadow(0 0 8px rgba(255, 0, 85, 0.4))' },
-              '100%': { filter: 'drop-shadow(0 0 18px rgba(255, 0, 85, 0.8))' }
+              '0%': { filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.4))' },
+              '100%': { filter: 'drop-shadow(0 0 18px rgba(56, 189, 248, 0.8))' }
             }
           }
         }
@@ -46,6 +51,56 @@
     }
   </script>
   <style>
+    :root {
+      --bg-primary: #0b1020;
+      --surface-primary: #111827;
+      --surface-elevated: #182235;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #818cf8;
+      --status-success: #34d399;
+      --status-warning: #fbbf24;
+      --status-error: #f87171;
+      --border-primary: #334155;
+      --border-subtle: #1e293b;
+    }
+    html:not(.dark) {
+      --bg-primary: #f8fafc;
+      --surface-primary: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --accent-cyan: #0284c7;
+      --accent-indigo: #6366f1;
+      --status-success: #059669;
+      --status-warning: #d97706;
+      --status-error: #dc2626;
+      --border-primary: #cbd5e1;
+      --border-subtle: #e2e8f0;
+    }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    :focus-visible {
+      outline: 2px solid #38bdf8 !important;
+      outline-offset: 2px !important;
+    }
+    html:not(.dark) :focus-visible {
+      outline: 2px solid #0284c7 !important;
+      outline-offset: 2px !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
     @media print {
       .no-print { display: none !important; }
       body { background: white !important; color: black !important; }
@@ -64,14 +119,16 @@
       border-radius: 4px;
     }
     .glass-dark {
-      background: rgba(11, 15, 25, 0.85);
+      background: rgba(11, 16, 32, 0.90);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
+      border-color: #334155;
     }
     .glass-card {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.55) 0%, rgba(15, 23, 42, 0.88) 100%);
+      background: linear-gradient(135deg, rgba(24, 34, 53, 0.75) 0%, rgba(17, 24, 39, 0.92) 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      border: 1px solid #334155;
     }
     .neon-border-crimson {
       border: 1px solid rgba(255, 0, 85, 0.4);
@@ -236,6 +293,11 @@
   </style>
 </head>
 <body class="bg-obsidian-950 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300">
+
+  <!-- Accessible Skip-to-Content Link -->
+  <a href="#overview" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-sky-500 focus:text-slate-950 focus:font-bold focus:rounded-xl focus:shadow-xl focus:outline-none">
+    Skip to main content
+  </a>
 
   <!-- Top Navigation Header -->
   <header class="sticky top-0 z-50 glass-dark border-b border-slate-800/80 transition-colors duration-200">
@@ -408,7 +470,7 @@
   </div>
 
   <!-- System UI Configuration Modal -->
-  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
+  <div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-lg bg-slate-900/95 dark:bg-slate-900/95 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
       
       <!-- Modal Header -->
@@ -418,11 +480,11 @@
             <i data-lucide="sliders" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">System UI Configuration</h3>
+            <h3 id="settings-modal-title" class="text-base font-bold text-white">System UI Configuration</h3>
             <p class="text-xs text-slate-400">Personalize dashboard visual telemetry and live polling</p>
           </div>
         </div>
-        <button onclick="closeSystemSettingsModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+        <button onclick="closeSystemSettingsModal()" aria-label="Close configuration settings" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -552,7 +614,7 @@
   </div>
 
   <!-- Log Record Deep-Dive Inspector Modal -->
-  <div id="log-inspector-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
+  <div id="log-inspector-modal" role="dialog" aria-modal="true" aria-labelledby="log-inspector-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
       
       <!-- Modal Header -->
@@ -563,13 +625,13 @@
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-base font-bold text-white">Log Event Deep-Dive Inspector</h3>
+              <h3 id="log-inspector-title" class="text-base font-bold text-white">Log Event Deep-Dive Inspector</h3>
               <span id="inspect-status-badge"></span>
             </div>
             <p class="text-xs text-slate-400">Detailed packet inspection, RFC protocol analysis, and incident mitigation</p>
           </div>
         </div>
-        <button onclick="closeLogInspector()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+        <button onclick="closeLogInspector()" aria-label="Close log event inspector" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -666,7 +728,7 @@
   </div>
 
   <!-- High-Definition Fullscreen Chart Zoom Modal -->
-  <div id="chart-zoom-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+  <div id="chart-zoom-modal" role="dialog" aria-modal="true" aria-labelledby="zoom-chart-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-5xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4 text-slate-100 max-h-[92vh] flex flex-col">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <div class="flex items-center gap-2.5">
@@ -682,7 +744,7 @@
           <button id="zoom-download-btn" onclick="downloadZoomedChart()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition">
             <i data-lucide="download" class="w-3.5 h-3.5"></i> Save PNG
           </button>
-          <button onclick="closeChartZoom()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+          <button onclick="closeChartZoom()" aria-label="Close zoomed chart view" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
@@ -697,7 +759,7 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
   <!-- Interactive Project #19 System Integrity & Health Audit Modal -->
-  <div id="system-audit-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+  <div id="system-audit-modal" role="dialog" aria-modal="true" aria-labelledby="system-audit-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-3xl bg-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[92vh] overflow-y-auto custom-scrollbar neon-border-emerald">
       <!-- Modal Header -->
       <div class="flex items-start justify-between pb-4 border-b border-slate-800">
@@ -707,13 +769,13 @@
           </div>
           <div>
             <div class="flex items-center gap-2.5">
-              <h3 class="text-xl font-mono font-bold text-white tracking-wide">Project #19 System Audit</h3>
+              <h3 id="system-audit-title" class="text-xl font-mono font-bold text-white tracking-wide">Project #19 System Audit</h3>
               <span id="audit-status-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">ALL SYSTEMS NOMINAL</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">Automated deep-pipeline validation across Hadoop, PySpark, Parquet Lakehouse & FastAPI</p>
           </div>
         </div>
-        <button onclick="closeSystemAuditModal()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+        <button onclick="closeSystemAuditModal()" aria-label="Close system audit modal" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -876,7 +938,7 @@
   </div>
 
   <!-- Interactive IP Threat Forensics Modal -->
-  <div id="ip-forensics-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+  <div id="ip-forensics-modal" role="dialog" aria-modal="true" aria-labelledby="forensic-ip-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[92vh] overflow-y-auto custom-scrollbar">
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -892,7 +954,7 @@
             <p class="text-xs text-slate-400">Behavioral threat analysis and immediate firewall defense rule generators</p>
           </div>
         </div>
-        <button onclick="closeIpForensicsModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+        <button onclick="closeIpForensicsModal()" aria-label="Close IP forensics modal" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1443,9 +1505,9 @@
           <div class="flex flex-wrap items-center gap-2.5">
             <div class="relative">
               <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input type="text" id="sec-search" placeholder="Search IP, vector..." oninput="filterSecurityEvents()" class="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500">
+              <input type="text" id="sec-search" aria-label="Search security events by IP or vector" placeholder="Search IP, vector..." oninput="filterSecurityEvents()" class="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500">
             </div>
-            <select id="sec-severity-filter" onchange="filterSecurityEvents()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-rose-500">
+            <select id="sec-severity-filter" aria-label="Filter security events by severity" onchange="filterSecurityEvents()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-rose-500">
               <option value="ALL">All Severities</option>
               <option value="CRITICAL">CRITICAL</option>
               <option value="HIGH">HIGH</option>
@@ -1538,9 +1600,9 @@
           <div class="flex items-center gap-2.5">
             <div class="relative">
               <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input type="text" id="ip-search" placeholder="Search IP..." oninput="filterTopIPs()" class="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+              <input type="text" id="ip-search" aria-label="Search client IPs" placeholder="Search IP..." oninput="filterTopIPs()" class="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
             </div>
-            <select id="ip-risk-filter" onchange="filterTopIPs()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+            <select id="ip-risk-filter" aria-label="Filter client IPs by risk score" onchange="filterTopIPs()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
               <option value="0">All Risk Scores</option>
               <option value="20">Risk &gt; 20</option>
               <option value="50">Risk &gt; 50 (High)</option>
@@ -1662,16 +1724,16 @@
             <div class="flex items-center gap-1.5">
               <div class="relative">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                <input type="text" id="log-search" placeholder="Search route, IP, method..." 
+                <input type="text" id="log-search" aria-label="Search server logs by route, IP, or method" placeholder="Search route, IP, method..." 
                        class="pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-44 sm:w-52">
               </div>
-              <button id="regex-toggle-btn" onclick="toggleRegexMode()" title="Toggle Regular Expression Matching (.*)" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-mono text-xs font-bold transition">
+              <button id="regex-toggle-btn" onclick="toggleRegexMode()" aria-label="Toggle regular expression search" title="Toggle Regular Expression Matching (.*)" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-mono text-xs font-bold transition">
                 .*
               </button>
             </div>
 
             <!-- Status Dropdown -->
-            <select id="status-filter" class="py-1.5 px-3 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="status-filter" aria-label="Filter logs by HTTP status code" class="py-1.5 px-3 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="ALL">All Statuses</option>
               <option value="404" selected>404 Not Found Only</option>
               <option value="200">200 OK Only</option>
@@ -1681,7 +1743,7 @@
             </select>
 
             <!-- Method Dropdown -->
-            <select id="method-filter" class="py-1.5 px-3 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="method-filter" aria-label="Filter logs by HTTP request method" class="py-1.5 px-3 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="ALL">All Methods</option>
               <option value="GET">GET</option>
               <option value="POST">POST</option>
@@ -2501,6 +2563,40 @@
   <script>
     let activeData = null;
     let chartInstances = {};
+    let activeModalTrigger = null;
+
+    // Security: HTML Entity Sanitizer (XSS Prevention)
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Performance: Debounce Utility for High-Frequency Inputs
+    function debounce(func, wait = 150) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Accessibility: Modal Focus Trap Helper
+    function trapModalFocus(modal) {
+      if (!modal) return;
+      const focusable = modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }
 
     // Floating Toast Notification Engine
     function showToast(message, type = 'info', duration = 3500) {
@@ -3097,18 +3193,26 @@
         else if (evt.severity === 'HIGH') sevClass = "bg-orange-500/20 text-orange-400 border-orange-500/30";
         else if (evt.severity === 'MEDIUM') sevClass = "bg-amber-500/10 text-amber-300 border-amber-500/20";
 
+        const cleanId = escapeHtml(evt.event_id || 'SEC-00');
+        const cleanTime = escapeHtml((evt.timestamp || '').replace('T', ' ').replace('Z', ''));
+        const cleanIp = escapeHtml(evt.ip || '');
+        const cleanType = escapeHtml(evt.event_type || 'Unknown');
+        const cleanSev = escapeHtml(evt.severity || 'LOW');
+        const cleanEvidence = escapeHtml(evt.evidence || '-');
+        const cleanRawEvidence = escapeHtml(evt.evidence || '');
+
         let riskBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold ${evt.risk_score >= 70 ? 'bg-rose-500/20 text-rose-300' : evt.risk_score >= 40 ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300'}">${evt.risk_score || 0}</span>`;
 
         tr.innerHTML = `
-          <td class="py-3 px-3.5 sm:px-4 font-mono text-cyan-400 font-semibold">${evt.event_id || 'SEC-00'}</td>
-          <td class="py-3 px-3.5 sm:px-4 text-slate-400 text-[11px]">${(evt.timestamp || '').replace('T', ' ').replace('Z', '')}</td>
-          <td class="py-3 px-3.5 sm:px-4 text-cyan-400 font-bold hover:underline cursor-pointer" onclick="openIpForensicsModal('${evt.ip}')" title="Inspect IP Threat Forensics">${evt.ip}</td>
-          <td class="py-3 px-3.5 sm:px-4 text-slate-300">${evt.event_type || 'Unknown'}</td>
+          <td class="py-3 px-3.5 sm:px-4 font-mono text-cyan-400 font-semibold">${cleanId}</td>
+          <td class="py-3 px-3.5 sm:px-4 text-slate-400 text-[11px]">${cleanTime}</td>
+          <td class="py-3 px-3.5 sm:px-4 text-cyan-400 font-bold hover:underline cursor-pointer" onclick="openIpForensicsModal('${cleanIp}')" title="Inspect IP Threat Forensics">${cleanIp}</td>
+          <td class="py-3 px-3.5 sm:px-4 text-slate-300">${cleanType}</td>
           <td class="py-3 px-3.5 sm:px-4 text-center">${riskBadge}</td>
-          <td class="py-3 px-3.5 sm:px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] border ${sevClass}">${evt.severity}</span></td>
-          <td class="py-3 px-3.5 sm:px-4 text-slate-400 text-[11px] truncate max-w-xs" title="${evt.evidence || ''}">${evt.evidence || '-'}</td>
+          <td class="py-3 px-3.5 sm:px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] border ${sevClass}">${cleanSev}</span></td>
+          <td class="py-3 px-3.5 sm:px-4 text-slate-400 text-[11px] truncate max-w-xs" title="${cleanRawEvidence}">${cleanEvidence}</td>
           <td class="py-3 px-3.5 sm:px-4 text-right">
-            <button onclick="copyWafRule('${evt.ip}')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-rose-300 border border-slate-700 hover:border-rose-500/50 inline-flex items-center gap-1 transition">
+            <button onclick="copyWafRule('${cleanIp}')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-rose-300 border border-slate-700 hover:border-rose-500/50 inline-flex items-center gap-1 transition">
               <i data-lucide="shield-check" class="w-3 h-3 text-rose-400"></i>
               <span>WAF Rule</span>
             </button>
@@ -3119,7 +3223,17 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    function filterSecurityEvents() {
+    let secDebounceTimer = null;
+    function filterSecurityEvents(immediate = false) {
+      if (immediate) {
+        executeSecurityFilter();
+        return;
+      }
+      clearTimeout(secDebounceTimer);
+      secDebounceTimer = setTimeout(executeSecurityFilter, 150);
+    }
+
+    function executeSecurityFilter() {
       const q = (document.getElementById('sec-search')?.value || '').toLowerCase().trim();
       const sev = document.getElementById('sec-severity-filter')?.value || 'ALL';
       const allEvents = activeData?.security_events || [];
@@ -3199,15 +3313,18 @@
         else if (item.risk_score >= 40) riskClass = "bg-orange-500/20 text-orange-300";
         else if (item.risk_score >= 20) riskClass = "bg-amber-500/20 text-amber-300";
 
+        const cleanIp = escapeHtml(item.ip || '');
+        const cleanSev = escapeHtml(item.severity || 'LOW');
+
         let sevClass = "text-sky-400";
         if (item.severity === 'CRITICAL') sevClass = "text-cyber-crimson font-bold";
         else if (item.severity === 'HIGH') sevClass = "text-orange-400";
         else if (item.severity === 'MEDIUM') sevClass = "text-amber-400";
 
         tr.innerHTML = `
-          <td class="py-3 px-3.5 sm:px-4 font-mono font-bold text-slate-100 flex items-center gap-2 cursor-pointer group" onclick="openIpForensicsModal('${item.ip}')" title="Inspect IP Threat Forensics">
+          <td class="py-3 px-3.5 sm:px-4 font-mono font-bold text-slate-100 flex items-center gap-2 cursor-pointer group" onclick="openIpForensicsModal('${cleanIp}')" title="Inspect IP Threat Forensics">
             <span class="w-2 h-2 rounded-full ${item.risk_score > 25 ? 'bg-cyber-crimson' : 'bg-emerald-400'}"></span>
-            <span class="text-cyan-400 group-hover:underline">${item.ip}</span>
+            <span class="text-cyan-400 group-hover:underline">${cleanIp}</span>
           </td>
           <td class="py-3 px-3.5 sm:px-4 text-right font-mono text-slate-200 font-semibold">${(item.total_requests || 0).toLocaleString()}</td>
           <td class="py-3 px-3.5 sm:px-4 text-right font-mono text-rose-400 font-bold">${(item.errors_404 || 0).toLocaleString()}</td>
@@ -3217,9 +3334,9 @@
           <td class="py-3 px-3.5 sm:px-4 text-center">
             <span class="px-2 py-0.5 rounded text-[11px] ${riskClass}">${item.risk_score || 0}</span>
           </td>
-          <td class="py-3 px-3.5 sm:px-4 text-center font-bold text-[11px] ${sevClass}">${item.severity || 'LOW'}</td>
+          <td class="py-3 px-3.5 sm:px-4 text-center font-bold text-[11px] ${sevClass}">${cleanSev}</td>
           <td class="py-3 px-3.5 sm:px-4 text-right">
-            <button onclick="copyBlockIp('${item.ip}')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-500/50 inline-flex items-center gap-1 transition">
+            <button onclick="copyBlockIp('${cleanIp}')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-500/50 inline-flex items-center gap-1 transition">
               <i data-lucide="shield-ban" class="w-3 h-3 text-amber-400"></i>
               <span>Block IP</span>
             </button>
@@ -3230,7 +3347,17 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    function filterTopIPs() {
+    let ipDebounceTimer = null;
+    function filterTopIPs(immediate = false) {
+      if (immediate) {
+        executeTopIpsFilter();
+        return;
+      }
+      clearTimeout(ipDebounceTimer);
+      ipDebounceTimer = setTimeout(executeTopIpsFilter, 150);
+    }
+
+    function executeTopIpsFilter() {
       const q = (document.getElementById('ip-search')?.value || '').toLowerCase().trim();
       const minRisk = parseInt(document.getElementById('ip-risk-filter')?.value || '0', 10);
       const allIps = activeData?.top_ips || [];
@@ -3260,6 +3387,7 @@
       currentForensicIp = ip;
       const modal = document.getElementById('ip-forensics-modal');
       if (!modal) return;
+      activeModalTrigger = document.activeElement;
 
       const titleEl = document.getElementById('forensic-ip-title');
       const badgeEl = document.getElementById('forensic-sev-badge');
@@ -3368,12 +3496,19 @@
       }
 
       modal.classList.remove('hidden');
+      trapModalFocus(modal);
       if (window.lucide) lucide.createIcons();
     }
 
     function closeIpForensicsModal() {
       const modal = document.getElementById('ip-forensics-modal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        if (activeModalTrigger && typeof activeModalTrigger.focus === 'function') {
+          activeModalTrigger.focus();
+          activeModalTrigger = null;
+        }
+      }
     }
 
     // --- Overview Quick Time Window Filter Chips ---
@@ -3606,6 +3741,12 @@
           tr.title = "Click to inspect log event details & mitigation rule";
           tr.onclick = () => openLogInspector(log);
 
+          const cleanTime = escapeHtml(log.timestamp_str || '');
+          const cleanIp = escapeHtml(log.ip || '');
+          const cleanMethod = escapeHtml(log.method || '');
+          const cleanPath = escapeHtml(log.path || '');
+          const cleanSize = typeof log.size === 'number' ? log.size.toLocaleString() : escapeHtml(String(log.size));
+
           let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-800 text-slate-200">${log.status}</span>`;
           if (log.status === 200) statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">200 OK</span>`;
           else if (log.status === 404) statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-cyber-crimson/20 text-rose-300 border border-cyber-crimson/40">404 NOT FOUND</span>`;
@@ -3614,12 +3755,12 @@
           else if (log.status === 403) statusBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">403 FORBIDDEN</span>`;
 
           tr.innerHTML = `
-            <td class="py-3 px-4 sm:px-4.5 text-slate-400 font-mono group-hover:text-slate-200 transition">${log.timestamp_str}</td>
-            <td class="py-3 px-4 sm:px-4.5 text-indigo-400 font-mono font-semibold">${log.ip}</td>
-            <td class="py-3 px-4 sm:px-4.5"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold text-[10px] uppercase">${log.method}</span></td>
-            <td class="py-3 px-4 sm:px-4.5 font-semibold text-slate-200 font-mono truncate max-w-xs group-hover:text-cyan-300 transition" title="${log.path}">${log.path}</td>
+            <td class="py-3 px-4 sm:px-4.5 text-slate-400 font-mono group-hover:text-slate-200 transition">${cleanTime}</td>
+            <td class="py-3 px-4 sm:px-4.5 text-indigo-400 font-mono font-semibold">${cleanIp}</td>
+            <td class="py-3 px-4 sm:px-4.5"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold text-[10px] uppercase">${cleanMethod}</span></td>
+            <td class="py-3 px-4 sm:px-4.5 font-semibold text-slate-200 font-mono truncate max-w-xs group-hover:text-cyan-300 transition" title="${cleanPath}">${cleanPath}</td>
             <td class="py-3 px-4 sm:px-4.5 text-center">${statusBadge}</td>
-            <td class="py-3 px-4 sm:px-4.5 text-right text-slate-400 font-mono">${log.size.toLocaleString()} B</td>
+            <td class="py-3 px-4 sm:px-4.5 text-right text-slate-400 font-mono">${cleanSize} B</td>
           `;
           tbody.appendChild(tr);
         });
@@ -3761,6 +3902,7 @@
       inspectedLog = log;
       const modal = document.getElementById('log-inspector-modal');
       if (!modal) return;
+      activeModalTrigger = document.activeElement;
 
       const rawLine = `${log.ip} - - [${log.timestamp_str} +0000] "${log.method} ${log.path} HTTP/1.1" ${log.status} ${log.size}`;
       document.getElementById('inspect-raw-line').textContent = rawLine;
@@ -3816,12 +3958,19 @@
       }
 
       modal.classList.remove('hidden');
+      trapModalFocus(modal);
       if (window.lucide) lucide.createIcons();
     }
 
     function closeLogInspector() {
       const modal = document.getElementById('log-inspector-modal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        if (activeModalTrigger && typeof activeModalTrigger.focus === 'function') {
+          activeModalTrigger.focus();
+          activeModalTrigger = null;
+        }
+      }
     }
 
     function copyRawLogLine() {
@@ -3874,6 +4023,7 @@
       const targetCanvas = document.getElementById('zoomedChartCanvas');
       const modal = document.getElementById('chart-zoom-modal');
       if (!sourceCanvas || !targetCanvas || !modal) return;
+      activeModalTrigger = document.activeElement;
 
       document.getElementById('zoom-chart-title').textContent = title;
 
@@ -3907,6 +4057,7 @@
 
       zoomedChartInstance = new Chart(targetCanvas, zoomConfig);
       modal.classList.remove('hidden');
+      trapModalFocus(modal);
       if (window.lucide) lucide.createIcons();
     }
 
@@ -3916,6 +4067,10 @@
       if (zoomedChartInstance) {
         zoomedChartInstance.destroy();
         zoomedChartInstance = null;
+      }
+      if (activeModalTrigger && typeof activeModalTrigger.focus === 'function') {
+        activeModalTrigger.focus();
+        activeModalTrigger = null;
       }
     }
 
@@ -3943,10 +4098,10 @@
     function updateChartsTheme(theme) {
       const isDark = theme === 'dark';
       const textColor = isDark ? '#94a3b8' : '#475569';
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
-      const tooltipBg = isDark ? '#030712' : '#ffffff';
-      const tooltipTitle = isDark ? '#f8fafc' : '#0f172a';
-      const tooltipBody = isDark ? '#e2e8f0' : '#334155';
+      const gridColor = isDark ? 'rgba(51, 65, 85, 0.35)' : 'rgba(0, 0, 0, 0.06)';
+      const tooltipBg = isDark ? '#111827' : '#ffffff';
+      const tooltipTitle = isDark ? '#f1f5f9' : '#0f172a';
+      const tooltipBody = isDark ? '#cbd5e1' : '#334155';
       const tooltipBorder = isDark ? '#334155' : '#cbd5e1';
 
       Object.values(chartInstances).forEach(chart => {
@@ -3968,7 +4123,7 @@
           chart.options.plugins.tooltip.borderColor = tooltipBorder;
         }
         if (chart.config.type === 'doughnut') {
-          chart.data.datasets[0].borderColor = isDark ? '#030712' : '#ffffff';
+          chart.data.datasets[0].borderColor = isDark ? '#0b1020' : '#ffffff';
           if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
             chart.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#334155';
           }
@@ -4472,19 +4627,31 @@ services:
     // System UI Settings Modal
     function openSystemSettingsModal() {
       const modal = document.getElementById('settings-modal');
-      if (modal) modal.classList.remove('hidden');
+      if (modal) {
+        activeModalTrigger = document.activeElement;
+        modal.classList.remove('hidden');
+        trapModalFocus(modal);
+      }
     }
 
     function closeSystemSettingsModal() {
       const modal = document.getElementById('settings-modal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        if (activeModalTrigger && typeof activeModalTrigger.focus === 'function') {
+          activeModalTrigger.focus();
+          activeModalTrigger = null;
+        }
+      }
     }
 
     // Project #19 System Audit & Diagnostic Check Handlers
     function openSystemAuditModal() {
       const modal = document.getElementById('system-audit-modal');
       if (modal) {
+        activeModalTrigger = document.activeElement;
         modal.classList.remove('hidden');
+        trapModalFocus(modal);
         if (typeof lucide !== 'undefined') lucide.createIcons();
         runLiveSystemDiagnostic();
       }
@@ -4492,7 +4659,13 @@ services:
 
     function closeSystemAuditModal() {
       const modal = document.getElementById('system-audit-modal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        if (activeModalTrigger && typeof activeModalTrigger.focus === 'function') {
+          activeModalTrigger.focus();
+          activeModalTrigger = null;
+        }
+      }
     }
 
     async function runLiveSystemDiagnostic() {
@@ -4734,10 +4907,10 @@ services:
     }
 
     // Event Listeners
-    document.getElementById('log-search').addEventListener('input', () => {
+    document.getElementById('log-search').addEventListener('input', debounce(() => {
       currentPage = 1;
       renderLogsTable(activeData.sample_logs);
-    });
+    }, 150));
     document.getElementById('status-filter').addEventListener('change', () => {
       currentPage = 1;
       renderLogsTable(activeData.sample_logs);
@@ -5153,7 +5326,7 @@ GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
       showToast(`Simulation rate: ${label}`, "info");
     }
 
-    // Modal Escape Key & Backdrop Dismissal
+    // Modal Escape Key & Focus Trap Dismissal
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeSystemSettingsModal();
@@ -5161,6 +5334,22 @@ GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
         closeChartZoom();
         closeIpForensicsModal();
         closeSystemAuditModal();
+      } else if (e.key === 'Tab') {
+        const openModal = document.querySelector('[role="dialog"]:not(.hidden)');
+        if (openModal) {
+          const focusables = Array.from(openModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
+          if (focusables.length > 0) {
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+              last.focus();
+              e.preventDefault();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              first.focus();
+              e.preventDefault();
+            }
+          }
+        }
       }
     });
 
