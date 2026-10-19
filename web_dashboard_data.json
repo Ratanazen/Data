@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-10-16T10:48:20.904111",
+    "generated_at": "2026-10-19T14:44:27.298236",
     "dataset_name": "Server Access Logs (Apache/NGINX Common Log Format)",
     "storage_engine": "Hadoop Distributed File System (HDFS)",
     "processing_engine": "Apache PySpark DataFrame API",
@@ -1618,7 +1618,7 @@
   ],
   "security_events": [
     {
-      "event_id": "SEC-31588",
+      "event_id": "SEC-78791",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.10.247",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1629,7 +1629,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.10.247"
     },
     {
-      "event_id": "SEC-38015",
+      "event_id": "SEC-32324",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.238",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1640,7 +1640,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.238"
     },
     {
-      "event_id": "SEC-72264",
+      "event_id": "SEC-07751",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.224",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1651,7 +1651,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.224"
     },
     {
-      "event_id": "SEC-82849",
+      "event_id": "SEC-88392",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.121",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1662,7 +1662,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.121"
     },
     {
-      "event_id": "SEC-80267",
+      "event_id": "SEC-40588",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.48.218",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1673,7 +1673,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.48.218"
     },
     {
-      "event_id": "SEC-97873",
+      "event_id": "SEC-13082",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.46.241",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1684,7 +1684,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.46.241"
     },
     {
-      "event_id": "SEC-55510",
+      "event_id": "SEC-95518",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.47.144",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1695,7 +1695,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.47.144"
     },
     {
-      "event_id": "SEC-50778",
+      "event_id": "SEC-91000",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.47.189",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1706,7 +1706,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.47.189"
     },
     {
-      "event_id": "SEC-00480",
+      "event_id": "SEC-89644",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.45.112",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1717,7 +1717,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.45.112"
     },
     {
-      "event_id": "SEC-14205",
+      "event_id": "SEC-34112",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.45.125",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1728,7 +1728,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.45.125"
     },
     {
-      "event_id": "SEC-39460",
+      "event_id": "SEC-30956",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.45.88",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1739,7 +1739,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.45.88"
     },
     {
-      "event_id": "SEC-19783",
+      "event_id": "SEC-64265",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.43.64",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1750,7 +1750,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.43.64"
     },
     {
-      "event_id": "SEC-85786",
+      "event_id": "SEC-85810",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.41.88",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1761,7 +1761,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.41.88"
     },
     {
-      "event_id": "SEC-15371",
+      "event_id": "SEC-27967",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.42.167",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1772,7 +1772,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.42.167"
     },
     {
-      "event_id": "SEC-92383",
+      "event_id": "SEC-02703",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.42.27",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1783,7 +1783,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.42.27"
     },
     {
-      "event_id": "SEC-69039",
+      "event_id": "SEC-35880",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.42.30",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1794,7 +1794,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.42.30"
     },
     {
-      "event_id": "SEC-82382",
+      "event_id": "SEC-53188",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.40.159",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1805,7 +1805,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.40.159"
     },
     {
-      "event_id": "SEC-52474",
+      "event_id": "SEC-19940",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.37.156",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1816,7 +1816,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.37.156"
     },
     {
-      "event_id": "SEC-52970",
+      "event_id": "SEC-79298",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.11.72",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1827,7 +1827,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.11.72"
     },
     {
-      "event_id": "SEC-53555",
+      "event_id": "SEC-22104",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.12.183",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1838,7 +1838,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.12.183"
     },
     {
-      "event_id": "SEC-00320",
+      "event_id": "SEC-08789",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.36.225",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1849,7 +1849,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.36.225"
     },
     {
-      "event_id": "SEC-95238",
+      "event_id": "SEC-40597",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.36.243",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1860,7 +1860,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.36.243"
     },
     {
-      "event_id": "SEC-35387",
+      "event_id": "SEC-22381",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.35.170",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1871,7 +1871,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.35.170"
     },
     {
-      "event_id": "SEC-38356",
+      "event_id": "SEC-75363",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.35.181",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1882,7 +1882,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.35.181"
     },
     {
-      "event_id": "SEC-27545",
+      "event_id": "SEC-09333",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.35.57",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1893,7 +1893,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.35.57"
     },
     {
-      "event_id": "SEC-95155",
+      "event_id": "SEC-85243",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.35.64",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1904,7 +1904,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.35.64"
     },
     {
-      "event_id": "SEC-29315",
+      "event_id": "SEC-64984",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.32.21",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1915,7 +1915,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.32.21"
     },
     {
-      "event_id": "SEC-28864",
+      "event_id": "SEC-87394",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.32.30",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1926,7 +1926,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.32.30"
     },
     {
-      "event_id": "SEC-75715",
+      "event_id": "SEC-79716",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.3.43",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1937,7 +1937,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.3.43"
     },
     {
-      "event_id": "SEC-17508",
+      "event_id": "SEC-34625",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.30.204",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1948,7 +1948,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.30.204"
     },
     {
-      "event_id": "SEC-50848",
+      "event_id": "SEC-95421",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.29.160",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1959,7 +1959,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.29.160"
     },
     {
-      "event_id": "SEC-72482",
+      "event_id": "SEC-47450",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.27.179",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1970,7 +1970,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.27.179"
     },
     {
-      "event_id": "SEC-81987",
+      "event_id": "SEC-04032",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.27.202",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1981,7 +1981,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.27.202"
     },
     {
-      "event_id": "SEC-31068",
+      "event_id": "SEC-46841",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.24.1",
       "event_type": "Potential Brute-Force Login Probing",
@@ -1992,7 +1992,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.24.1"
     },
     {
-      "event_id": "SEC-76490",
+      "event_id": "SEC-88739",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.24.231",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2003,7 +2003,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.24.231"
     },
     {
-      "event_id": "SEC-99542",
+      "event_id": "SEC-35735",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.20.229",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2014,7 +2014,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.20.229"
     },
     {
-      "event_id": "SEC-60843",
+      "event_id": "SEC-95400",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.20.62",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2025,7 +2025,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.20.62"
     },
     {
-      "event_id": "SEC-29901",
+      "event_id": "SEC-72003",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.19.130",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2036,7 +2036,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.19.130"
     },
     {
-      "event_id": "SEC-85830",
+      "event_id": "SEC-64995",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.131",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2047,7 +2047,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.131"
     },
     {
-      "event_id": "SEC-09186",
+      "event_id": "SEC-08857",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.64",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2058,7 +2058,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.64"
     },
     {
-      "event_id": "SEC-64377",
+      "event_id": "SEC-81130",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.154",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2069,7 +2069,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.154"
     },
     {
-      "event_id": "SEC-26474",
+      "event_id": "SEC-93988",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.1.169",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2080,7 +2080,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.1.169"
     },
     {
-      "event_id": "SEC-67006",
+      "event_id": "SEC-08321",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.134",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2091,7 +2091,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.134"
     },
     {
-      "event_id": "SEC-84390",
+      "event_id": "SEC-59050",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.171",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2102,7 +2102,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.171"
     },
     {
-      "event_id": "SEC-89246",
+      "event_id": "SEC-34117",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.175",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2113,7 +2113,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.175"
     },
     {
-      "event_id": "SEC-41042",
+      "event_id": "SEC-59591",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.195",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2124,7 +2124,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.195"
     },
     {
-      "event_id": "SEC-58545",
+      "event_id": "SEC-15937",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.0.218",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2135,7 +2135,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.0.218"
     },
     {
-      "event_id": "SEC-11289",
+      "event_id": "SEC-68228",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.219",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2146,7 +2146,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.219"
     },
     {
-      "event_id": "SEC-79624",
+      "event_id": "SEC-98916",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.22",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2157,7 +2157,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.22"
     },
     {
-      "event_id": "SEC-47544",
+      "event_id": "SEC-68870",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.56",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2168,7 +2168,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.56"
     },
     {
-      "event_id": "SEC-02380",
+      "event_id": "SEC-92884",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.5.73",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2179,7 +2179,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.5.73"
     },
     {
-      "event_id": "SEC-73495",
+      "event_id": "SEC-47031",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.122",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2190,7 +2190,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.122"
     },
     {
-      "event_id": "SEC-15671",
+      "event_id": "SEC-75338",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.175",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2201,7 +2201,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.175"
     },
     {
-      "event_id": "SEC-79818",
+      "event_id": "SEC-99109",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.189",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2212,7 +2212,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.189"
     },
     {
-      "event_id": "SEC-65046",
+      "event_id": "SEC-71276",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.201",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2223,7 +2223,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.201"
     },
     {
-      "event_id": "SEC-86078",
+      "event_id": "SEC-90307",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.50.249",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2234,7 +2234,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.50.249"
     },
     {
-      "event_id": "SEC-38409",
+      "event_id": "SEC-90365",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.6.153",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2245,7 +2245,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.6.153"
     },
     {
-      "event_id": "SEC-53035",
+      "event_id": "SEC-35750",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.6.179",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2256,7 +2256,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.6.179"
     },
     {
-      "event_id": "SEC-47484",
+      "event_id": "SEC-08750",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.6.191",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2267,7 +2267,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.6.191"
     },
     {
-      "event_id": "SEC-03981",
+      "event_id": "SEC-52571",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.13.120",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2278,7 +2278,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.13.120"
     },
     {
-      "event_id": "SEC-67239",
+      "event_id": "SEC-26905",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.13.130",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2289,7 +2289,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.13.130"
     },
     {
-      "event_id": "SEC-61616",
+      "event_id": "SEC-06085",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.6.24",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2300,7 +2300,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.6.24"
     },
     {
-      "event_id": "SEC-94280",
+      "event_id": "SEC-87370",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.6.25",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2311,7 +2311,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.6.25"
     },
     {
-      "event_id": "SEC-37492",
+      "event_id": "SEC-17257",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.216",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2322,7 +2322,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.216"
     },
     {
-      "event_id": "SEC-66860",
+      "event_id": "SEC-59042",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.222",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2333,7 +2333,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.222"
     },
     {
-      "event_id": "SEC-81731",
+      "event_id": "SEC-18578",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.252",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2344,7 +2344,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.252"
     },
     {
-      "event_id": "SEC-40243",
+      "event_id": "SEC-44887",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.38",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2355,7 +2355,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.38"
     },
     {
-      "event_id": "SEC-38056",
+      "event_id": "SEC-67183",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.42",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2366,7 +2366,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.42"
     },
     {
-      "event_id": "SEC-47751",
+      "event_id": "SEC-31775",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.43",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2377,7 +2377,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.43"
     },
     {
-      "event_id": "SEC-83082",
+      "event_id": "SEC-01138",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.52",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2388,7 +2388,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.52"
     },
     {
-      "event_id": "SEC-31272",
+      "event_id": "SEC-09870",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.69",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2399,7 +2399,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.69"
     },
     {
-      "event_id": "SEC-18691",
+      "event_id": "SEC-90851",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.95",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2410,7 +2410,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.95"
     },
     {
-      "event_id": "SEC-46259",
+      "event_id": "SEC-42122",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.10.250",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2421,7 +2421,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.10.250"
     },
     {
-      "event_id": "SEC-57189",
+      "event_id": "SEC-01133",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.11.130",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2432,7 +2432,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.11.130"
     },
     {
-      "event_id": "SEC-12196",
+      "event_id": "SEC-53447",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.169",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2443,7 +2443,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.169"
     },
     {
-      "event_id": "SEC-43498",
+      "event_id": "SEC-91788",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.172",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2454,7 +2454,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.172"
     },
     {
-      "event_id": "SEC-24499",
+      "event_id": "SEC-17042",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.206",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2465,7 +2465,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.206"
     },
     {
-      "event_id": "SEC-67210",
+      "event_id": "SEC-12545",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.222",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2476,7 +2476,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.222"
     },
     {
-      "event_id": "SEC-03287",
+      "event_id": "SEC-97095",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.8.252",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2487,7 +2487,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.8.252"
     },
     {
-      "event_id": "SEC-73767",
+      "event_id": "SEC-17311",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.16.249",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2498,7 +2498,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.16.249"
     },
     {
-      "event_id": "SEC-85715",
+      "event_id": "SEC-61330",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.16.34",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2509,7 +2509,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.16.34"
     },
     {
-      "event_id": "SEC-07737",
+      "event_id": "SEC-68534",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.16.42",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2520,7 +2520,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.16.42"
     },
     {
-      "event_id": "SEC-87165",
+      "event_id": "SEC-06912",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.16.46",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2531,7 +2531,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.16.46"
     },
     {
-      "event_id": "SEC-47508",
+      "event_id": "SEC-44700",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.16.53",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2542,7 +2542,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.16.53"
     },
     {
-      "event_id": "SEC-03007",
+      "event_id": "SEC-80441",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.113",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2553,7 +2553,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.113"
     },
     {
-      "event_id": "SEC-85070",
+      "event_id": "SEC-49960",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.117",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2564,7 +2564,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.117"
     },
     {
-      "event_id": "SEC-38382",
+      "event_id": "SEC-73161",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.12",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2575,7 +2575,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.12"
     },
     {
-      "event_id": "SEC-24887",
+      "event_id": "SEC-94595",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.17",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2586,7 +2586,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.17"
     },
     {
-      "event_id": "SEC-59915",
+      "event_id": "SEC-86478",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.172",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2597,7 +2597,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.172"
     },
     {
-      "event_id": "SEC-63226",
+      "event_id": "SEC-82567",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.180",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2608,7 +2608,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.180"
     },
     {
-      "event_id": "SEC-80986",
+      "event_id": "SEC-49036",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.14.36",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2619,7 +2619,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.14.36"
     },
     {
-      "event_id": "SEC-31747",
+      "event_id": "SEC-18429",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.14.58",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2630,7 +2630,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.14.58"
     },
     {
-      "event_id": "SEC-73577",
+      "event_id": "SEC-95939",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.14.70",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2641,7 +2641,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.14.70"
     },
     {
-      "event_id": "SEC-44697",
+      "event_id": "SEC-77407",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.14.99",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2652,7 +2652,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.14.99"
     },
     {
-      "event_id": "SEC-08343",
+      "event_id": "SEC-80149",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.15.104",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2663,7 +2663,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.15.104"
     },
     {
-      "event_id": "SEC-05869",
+      "event_id": "SEC-83337",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.63",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2674,7 +2674,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.63"
     },
     {
-      "event_id": "SEC-42068",
+      "event_id": "SEC-16577",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.73",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2685,7 +2685,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.73"
     },
     {
-      "event_id": "SEC-58390",
+      "event_id": "SEC-18818",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.17.86",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2696,7 +2696,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.17.86"
     },
     {
-      "event_id": "SEC-54805",
+      "event_id": "SEC-36248",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.18.142",
       "event_type": "Potential Brute-Force Login Probing",
@@ -2707,7 +2707,7 @@
       "recommendation": "Enforce WAF drop / fail2ban rate-limit on IP 10.0.18.142"
     },
     {
-      "event_id": "SEC-12636",
+      "event_id": "SEC-31541",
       "timestamp": "2026-09-07T03:45:00Z",
       "ip": "10.0.18.41",
       "event_type": "Potential Brute-Force Login Probing",

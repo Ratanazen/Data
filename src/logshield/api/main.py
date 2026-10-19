@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from ..config import settings
-from .routes import errors, health, logs, security, stats, traffic
+from .routes import analytics, errors, health, logs, security, stats, traffic
 
 app = FastAPI(
     title="LogShield API",
@@ -33,6 +33,8 @@ app.include_router(traffic.router, prefix="/api")
 app.include_router(errors.router, prefix="/api")
 app.include_router(security.router, prefix="/api")
 app.include_router(logs.router, prefix="/api")
+app.include_router(analytics.router, prefix="/api")
+
 
 @app.get("/")
 def root_redirect():

@@ -13,7 +13,8 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-REST%20API-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Kafka](https://img.shields.io/badge/Apache%20Kafka-Real--Time%20Streaming-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose%20Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-41%2F41%20Passing%20(100%25)-22C55E?style=for-the-badge&logo=pytest&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-67%2F67%20Passing%20(100%25)-22C55E?style=for-the-badge&logo=pytest&logoColor=white)
+
 
 <br/>
 

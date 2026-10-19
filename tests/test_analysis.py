@@ -158,6 +158,35 @@ class TestLogFileAnalysis(unittest.TestCase):
         self.assertIn('exportFilteredLogsJSON', html)
         self.assertIn('exportFilteredLogsMarkdown', html)
         self.assertIn('yarn-site', html)
+        self.assertIn('id="defensive-suite"', html)
+        self.assertIn('id="rules-tbody"', html)
+        self.assertIn('id="auth-tbody"', html)
+        self.assertIn('id="integrity-tbody"', html)
+
+
+    def test_15_empty_dataframe_safety(self):
+        import tempfile
+        import pandas as pd
+        from run_analysis import analyze_and_export
+        empty_df = pd.DataFrame(columns=['ip', 'timestamp_str', 'method', 'path', 'status', 'size', 'timestamp', 'hour', 'date', 'day_of_week'])
+        with tempfile.TemporaryDirectory() as tmpdir:
+            analyze_and_export(empty_df, out_dir=Path(tmpdir))
+            stats_file = Path(tmpdir) / "summary_stats.txt"
+            self.assertTrue(stats_file.exists())
+            content = stats_file.read_text(encoding='utf-8')
+            self.assertIn("total_requests=0", content)
+            self.assertIn("error_rate=0.00", content)
+
+    def test_16_integrity_manifest(self):
+
+        manifest_path = DIR / 'integrity_manifest.json'
+        self.assertTrue(manifest_path.exists(), "integrity_manifest.json must exist")
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        self.assertIn('summary_stats.txt', data)
+        self.assertIn('sha256', data['summary_stats.txt'])
+        self.assertEqual(len(data['summary_stats.txt']['sha256']), 64)
+        self.assertIn('web_dashboard_data.json', data)
 
 if __name__ == '__main__':
     unittest.main()

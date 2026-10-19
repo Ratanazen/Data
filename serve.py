@@ -63,6 +63,40 @@ class CrossPlatformHandler(SimpleHTTPRequestHandler):
                 pass
         super().do_GET()
 
+    def do_POST(self):
+        if self.path.startswith('/api/'):
+            import urllib.request
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                post_body = self.rfile.read(content_length) if content_length > 0 else b""
+                target_url = f"http://127.0.0.1:8000{self.path}"
+                req = urllib.request.Request(
+                    target_url,
+                    data=post_body,
+                    headers={
+                        'User-Agent': 'LogShield-Proxy',
+                        'Content-Type': self.headers.get('Content-Type', 'application/json')
+                    },
+                    method='POST'
+                )
+                with urllib.request.urlopen(req, timeout=3.0) as resp:
+                    content = resp.read()
+                    self.send_response(resp.status)
+                    self.send_header('Content-Type', resp.headers.get('Content-Type', 'application/json'))
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(content)
+                    return
+            except Exception as e:
+                self.send_response(502)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(f'{{"error": "Proxy Error", "details": "{str(e)}"}}\n'.encode('utf-8'))
+                return
+        self.send_response(404)
+        self.end_headers()
+
+
     def end_headers(self):
         # Enable CORS and disable caching during interactive development
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -125,8 +159,9 @@ def run_server(port=None, auto_open=False):
 
     local_url = f"http://localhost:{port}/"
     print("=" * 70)
-    print("  LOGSHIELD — DISTRIBUTED LOG ANALYTICS & SECURITY DASHBOARD")
+    print("  DAC — DISTRIBUTED ANALYTICS & CYBERSECURITY DASHBOARD")
     print("=" * 70)
+
     print(f"  Dashboard URL: {local_url}")
     print(f"  Network URL  : http://127.0.0.1:{port}/")
     print(f"  API Health   : http://127.0.0.1:8000/api/health")

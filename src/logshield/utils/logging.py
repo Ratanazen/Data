@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
+from typing import Optional
 
 
 class JSONFormatter(logging.Formatter):
@@ -24,7 +25,7 @@ class JSONFormatter(logging.Formatter):
             payload["exception"] = self.formatException(record.exc_info)
         return json.dumps(payload)
 
-def setup_logger(name: str = "logshield", level: str = None) -> logging.Logger:
+def setup_logger(name: str = "logshield", level: Optional[str] = None) -> logging.Logger:
     """Configures and returns a structured logger."""
     log_level_str = (level or os.getenv("LOG_LEVEL", "INFO")).upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
@@ -47,7 +48,7 @@ def setup_logger(name: str = "logshield", level: str = None) -> logging.Logger:
 
     return logger
 
-def get_logger(name: str = "logshield", level: str = None) -> logging.Logger:
+def get_logger(name: str = "logshield", level: Optional[str] = None) -> logging.Logger:
     """Configures and returns a named structured logger."""
     return setup_logger(name, level)
 

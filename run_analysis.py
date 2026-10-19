@@ -302,7 +302,7 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
     total_requests = len(df)
     error_404_df = df[df['status'] == 404]
     total_404 = len(error_404_df)
-    error_rate = (total_404 / total_requests) * 100
+    error_rate = (total_404 / total_requests * 100.0) if total_requests > 0 else 0.0
 
     print(f"    - Total Requests : {total_requests:,}")
     print(f"    - Total 404 Errors: {total_404:,}")
@@ -336,22 +336,31 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
 
     # 4. Day of Week x Hour Heatmap
     day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    heatmap_df = error_404_df.groupby(['day_of_week', 'hour']).size().unstack(fill_value=0)
-    heatmap_df = heatmap_df.reindex(day_order)
+    if error_404_df.empty:
+        heatmap_df = pd.DataFrame(0, index=day_order, columns=list(range(24)))
+    else:
+        heatmap_df = error_404_df.groupby(['day_of_week', 'hour']).size().unstack(fill_value=0)
+        heatmap_df = heatmap_df.reindex(index=day_order, columns=range(24), fill_value=0)
     heatmap_file = out_dir / "heatmap_day_hour_404.csv"
     heatmap_df.to_csv(heatmap_file, encoding='utf-8')
     print(f"[+] Saved: {heatmap_file.name}")
 
     # 5. Top 10 Endpoints causing 404
-    top_paths = error_404_df['path'].value_counts().head(10).reset_index()
-    top_paths.columns = ['path', 'hits']
+    if error_404_df.empty:
+        top_paths = pd.DataFrame(columns=['path', 'hits'])
+    else:
+        top_paths = error_404_df['path'].value_counts().head(10).reset_index()
+        top_paths.columns = ['path', 'hits']
     top_paths_file = out_dir / "top_404_paths.csv"
     top_paths.to_csv(top_paths_file, index=False, encoding='utf-8')
     print(f"[+] Saved: {top_paths_file.name}")
 
     # 6. Daily Trend
-    daily_trend = error_404_df['date'].value_counts().sort_index().reset_index()
-    daily_trend.columns = ['date', 'error_count']
+    if error_404_df.empty:
+        daily_trend = pd.DataFrame(columns=['date', 'error_count'])
+    else:
+        daily_trend = error_404_df['date'].value_counts().sort_index().reset_index()
+        daily_trend.columns = ['date', 'error_count']
     daily_file = out_dir / "daily_404_trend.csv"
     daily_trend.to_csv(daily_file, index=False, encoding='utf-8')
     print(f"[+] Saved: {daily_file.name}")
@@ -388,7 +397,7 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
     ax.grid(True, linestyle='--', alpha=0.5)
 
     for bar, count in zip(bars, hourly_counts['error_count']):
-        if count == peak_count:
+        if count == peak_count and peak_count > 0:
             ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 50,
                     f"PEAK\n{count:,}", ha='center', va='bottom', fontsize=9, fontweight='bold', color='#ff0055')
     plt.tight_layout()
@@ -399,7 +408,8 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
     # Chart 2: Heatmap Day of Week vs Hour
     fig, ax = plt.subplots(figsize=(15, 6))
     cmap = sns.color_palette("rocket_r", as_cmap=True)
-    sns.heatmap(heatmap_df, cmap=cmap, linewidths=0.7, linecolor='#0a0f1d',
+    vmax_val = max(1, int(heatmap_df.values.max())) if heatmap_df.size > 0 else 1
+    sns.heatmap(heatmap_df, cmap=cmap, vmin=0, vmax=vmax_val, linewidths=0.7, linecolor='#0a0f1d',
                 cbar_kws={'label': '404 Error Volume'}, ax=ax)
     ax.set_title("404 Error Heatmap: Day of Week vs Hour of Day (Temporal Bot Analysis)",
                  fontsize=14, fontweight='bold', pad=15, color='#ffffff')
@@ -413,17 +423,21 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
     # Chart 3: Top 10 Paths Bar Chart
     fig, ax = plt.subplots(figsize=(11, 6))
     palette = ['#ff0055', '#f43f5e', '#e11d48', '#8b5cf6', '#7c3aed', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6']
-    barplot = sns.barplot(data=top_paths, y='path', x='hits', hue='path', palette=palette, legend=False, ax=ax)
+    if not top_paths.empty:
+        barplot = sns.barplot(data=top_paths, y='path', x='hits', hue='path', palette=palette, legend=False, ax=ax)
+        for p in barplot.patches:
+            val = int(p.get_width())
+            barplot.annotate(f"{val:,}", (p.get_width() + 100, p.get_y() + p.get_height() / 2),
+                             va='center', fontsize=9, fontweight='bold', color='#f1f5f9')
+        ax.set_xlim(0, max(top_paths['hits']) * 1.15)
+    else:
+        ax.text(0.5, 0.5, "No 404 Error Endpoints Detected", ha='center', va='center', color='#94a3b8', fontsize=12)
+        ax.set_xlim(0, 10)
     ax.set_title("Top 10 Endpoints Causing 404 Errors (Targeted Reconnaissance)",
                  fontsize=14, fontweight='bold', pad=15, color='#ffffff')
     ax.set_xlabel("404 Hit Count", fontsize=11, fontweight='bold')
     ax.set_ylabel("Endpoint Path", fontsize=11, fontweight='bold')
     ax.grid(True, linestyle='--', alpha=0.4, axis='x')
-    for p in barplot.patches:
-        val = int(p.get_width())
-        barplot.annotate(f"{val:,}", (p.get_width() + 100, p.get_y() + p.get_height() / 2),
-                         va='center', fontsize=9, fontweight='bold', color='#f1f5f9')
-    ax.set_xlim(0, max(top_paths['hits']) * 1.15)
     plt.tight_layout()
     plt.savefig(out_dir / "top_404_paths.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
@@ -431,19 +445,25 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
 
     # Chart 4: Daily Trend Line Chart
     fig, ax = plt.subplots(figsize=(12, 5))
-    ax.plot(daily_trend['date'], daily_trend['error_count'], marker='o', color='#8b5cf6',
-            linewidth=3, markersize=8, markerfacecolor='#ff0055', markeredgecolor='#ffffff', markeredgewidth=1.5)
-    ax.fill_between(daily_trend['date'], daily_trend['error_count'], min(daily_trend['error_count']) * 0.9,
-                    color='#8b5cf6', alpha=0.15)
+    if not daily_trend.empty:
+        min_daily = min(daily_trend['error_count'])
+        max_daily = max(daily_trend['error_count'])
+        ax.plot(daily_trend['date'], daily_trend['error_count'], marker='o', color='#8b5cf6',
+                linewidth=3, markersize=8, markerfacecolor='#ff0055', markeredgecolor='#ffffff', markeredgewidth=1.5)
+        ax.fill_between(daily_trend['date'], daily_trend['error_count'], min_daily * 0.9,
+                        color='#8b5cf6', alpha=0.15)
+        ax.set_ylim(min_daily * 0.9, max_daily * 1.1 if max_daily > 0 else 10)
+        for _, row in daily_trend.iterrows():
+            ax.annotate(f"{row['error_count']:,}", (row['date'], row['error_count'] + 40),
+                        ha='center', fontsize=9, fontweight='bold', color='#ffffff')
+        plt.xticks(rotation=30)
+    else:
+        ax.text(0.5, 0.5, "No Daily Trend Data Available", ha='center', va='center', color='#94a3b8', fontsize=12)
+        ax.set_ylim(0, 10)
     ax.set_title("Daily 404 Error Volume (7-Day Telemetry Timeline)", fontsize=14, fontweight='bold', pad=15, color='#ffffff')
     ax.set_xlabel("Date", fontsize=11, fontweight='bold')
     ax.set_ylabel("404 Error Count", fontsize=11, fontweight='bold')
     ax.grid(True, linestyle='--', alpha=0.4)
-    ax.set_ylim(min(daily_trend['error_count']) * 0.9, max(daily_trend['error_count']) * 1.1)
-    for _, row in daily_trend.iterrows():
-        ax.annotate(f"{row['error_count']:,}", (row['date'], row['error_count'] + 40),
-                    ha='center', fontsize=9, fontweight='bold', color='#ffffff')
-    plt.xticks(rotation=30)
     plt.tight_layout()
     plt.savefig(out_dir / "404_daily_trend.png", dpi=200, facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close()
@@ -582,7 +602,35 @@ def analyze_and_export(df, out_dir=BASE_DIR, cluster_sizing=None):
         json.dump(dashboard_data, f, indent=2)
     print(f"[+] Saved: {json_file.name}")
 
+    # Generate Cryptographic Integrity Manifest (SHA-256 / MD5)
+    manifest_files = [
+        "summary_stats.txt",
+        "status_code_breakdown.csv",
+        "hourly_404_errors.csv",
+        "heatmap_day_hour_404.csv",
+        "top_404_paths.csv",
+        "daily_404_trend.csv",
+        "web_dashboard_data.json"
+    ]
+    manifest = {}
+    import hashlib
+    for fname in manifest_files:
+        fpath = out_dir / fname
+        if fpath.exists():
+            sha = hashlib.sha256(fpath.read_bytes()).hexdigest()
+            md5 = hashlib.md5(fpath.read_bytes()).hexdigest()
+            manifest[fname] = {
+                "sha256": sha,
+                "md5": md5,
+                "size_bytes": fpath.stat().st_size
+            }
+    manifest_file = out_dir / "integrity_manifest.json"
+    with open(manifest_file, "w", encoding='utf-8') as f:
+        json.dump(manifest, f, indent=2)
+    print(f"[+] Saved: {manifest_file.name}")
+
     print("\n[+] All pipeline deliverables generated successfully!")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Log File Analysis Pipeline & Big Data Cluster Config Generator")

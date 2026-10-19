@@ -94,3 +94,45 @@ class PaginatedLogsResponse(BaseModel):
     limit: int
     offset: int
     items: List[LogItem]
+
+class DetectionRuleItem(BaseModel):
+    rule_id: str
+    name: str
+    description: str
+    category: str
+    severity: str
+    threshold: int
+    window_seconds: int
+    enabled: bool
+    trigger_count: int
+
+class UpdateRuleRequest(BaseModel):
+    threshold: Optional[int] = None
+    window_seconds: Optional[int] = None
+    enabled: Optional[bool] = None
+    severity: Optional[str] = None
+
+class AuthEventItem(BaseModel):
+    event_id: str
+    timestamp: str
+    source_ip: Optional[str] = None
+    user: Optional[str] = None
+    event_type: str
+    severity: str
+    details: str
+    raw_message: str
+
+class FileIntegrityItem(BaseModel):
+    file_path: str
+    sha256: str
+    md5: str
+    size_bytes: int
+    modified_time: str
+    status: str
+
+class SanitizeRequest(BaseModel):
+    content: str
+
+class SanitizeResponse(BaseModel):
+    sanitized_content: str
+    records_processed: int

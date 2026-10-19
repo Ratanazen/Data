@@ -58,3 +58,53 @@ def test_api_top_ips(client):
     data = response.json()
     assert isinstance(data, list)
     assert len(data) <= 5
+
+
+def test_api_detection_rules(client):
+    # GET rules
+    response = client.get("/api/security/rules")
+    assert response.status_code == 200
+    rules = response.json()
+    assert isinstance(rules, list)
+    assert len(rules) >= 5
+
+    # POST update rule threshold
+    update_res = client.post(
+        "/api/security/rules/RULE-AUTH-001",
+        json={"threshold": 7, "window_seconds": 150}
+    )
+    assert update_res.status_code == 200
+    updated_rule = update_res.json()
+    assert updated_rule["threshold"] == 7
+    assert updated_rule["window_seconds"] == 150
+
+
+def test_api_auth_events(client):
+    response = client.get("/api/security/auth-events?limit=5")
+    assert response.status_code == 200
+    events = response.json()
+    assert isinstance(events, list)
+    if events:
+        assert "event_type" in events[0]
+        assert "severity" in events[0]
+
+
+def test_api_system_integrity(client):
+    response = client.get("/api/security/integrity")
+    assert response.status_code == 200
+    items = response.json()
+    assert isinstance(items, list)
+    assert len(items) >= 1
+    assert "sha256" in items[0]
+    assert "status" in items[0]
+
+
+def test_api_sanitize(client):
+    response = client.post(
+        "/api/security/sanitize",
+        json={"content": "POST /login?password=mysecretpassword123 HTTP/1.1"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "mysecretpassword123" not in data["sanitized_content"]
+    assert "password=[REDACTED]" in data["sanitized_content"]

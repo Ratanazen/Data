@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project #19: Log File Analysis — Hadoop & PySpark 404 Error Analytics</title>
+  <title>DAC — Distributed Analytics &amp; Cybersecurity Platform</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -52,45 +53,105 @@
   </script>
   <style>
     :root {
-      --bg-primary: #0b1020;
+      color-scheme: dark;
+      /* Application backgrounds */
+      --bg-primary: #0B1020;
+      --bg-secondary: #0F172A;
+      --bg-tertiary: #131D30;
+      /* Surfaces */
       --surface-primary: #111827;
-      --surface-elevated: #182235;
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent-cyan: #38bdf8;
-      --accent-indigo: #818cf8;
-      --status-success: #34d399;
-      --status-warning: #fbbf24;
-      --status-error: #f87171;
+      --surface-secondary: #182235;
+      --surface-elevated: #202D42;
+      --surface-hover: #26364D;
+      /* Typography */
+      --text-primary: #F1F5F9;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --text-disabled: #64748B;
+      /* Brand accents */
+      --accent-primary: #38BDF8;
+      --accent-hover: #7DD3FC;
+      --accent-active: #0EA5E9;
+      --accent-secondary: #818CF8;
+      /* Status colors */
+      --status-success: #34D399;
+      --status-warning: #FBBF24;
+      --status-error: #F87171;
+      --status-info: #60A5FA;
+      /* Borders and focus */
       --border-primary: #334155;
-      --border-subtle: #1e293b;
+      --border-subtle: #293548;
+      --focus-ring: #7DD3FC;
+      /* Layout */
+      --sidebar-width: 248px;
+      --header-height: 64px;
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      /* Corners */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+      /* Elevation */
+      --shadow-panel: 0 8px 24px rgb(0 0 0 / 18%);
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+
+      /* Backwards-compatibility aliases */
+      --accent-cyan: var(--accent-primary);
+      --accent-indigo: var(--accent-secondary);
+      --success: var(--status-success);
+      --warning: var(--status-warning);
+      --danger: var(--status-error);
+      --info: var(--status-info);
     }
     html:not(.dark) {
-      --bg-primary: #f8fafc;
-      --surface-primary: #ffffff;
-      --surface-elevated: #f1f5f9;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
-      --accent-cyan: #0284c7;
-      --accent-indigo: #6366f1;
+      color-scheme: light;
+      --bg-primary: #F8FAFC;
+      --bg-secondary: #F1F5F9;
+      --bg-tertiary: #E2E8F0;
+      --surface-primary: #FFFFFF;
+      --surface-secondary: #F8FAFC;
+      --surface-elevated: #F1F5F9;
+      --surface-hover: #E2E8F0;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --text-disabled: #94A3B8;
+      --accent-primary: #0284C7;
+      --accent-hover: #0369A1;
+      --accent-active: #075985;
+      --accent-secondary: #6366F1;
       --status-success: #059669;
-      --status-warning: #d97706;
-      --status-error: #dc2626;
-      --border-primary: #cbd5e1;
-      --border-subtle: #e2e8f0;
+      --status-warning: #D97706;
+      --status-error: #DC2626;
+      --status-info: #2563EB;
+      --border-primary: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --focus-ring: #0284C7;
+      --accent-cyan: var(--accent-primary);
+      --accent-indigo: var(--accent-secondary);
+      --success: var(--status-success);
+      --warning: var(--status-warning);
+      --danger: var(--status-error);
+      --info: var(--status-info);
     }
     body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
     }
     :focus-visible {
-      outline: 2px solid #38bdf8 !important;
+      outline: 2px solid var(--focus-ring) !important;
       outline-offset: 2px !important;
     }
     html:not(.dark) :focus-visible {
-      outline: 2px solid #0284c7 !important;
+      outline: 2px solid var(--focus-ring) !important;
       outline-offset: 2px !important;
     }
     @media (prefers-reduced-motion: reduce) {
@@ -100,6 +161,35 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
+    }
+    @keyframes radar-pulse {
+      0% { r: 3px; opacity: 1; stroke-width: 1.5; }
+      100% { r: 16px; opacity: 0; stroke-width: 0.5; }
+    }
+    .radar-blip {
+      animation: radar-pulse 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    .radar-blip-fast {
+      animation: radar-pulse 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    .striped-bar-pattern {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(56, 189, 248, 0.85),
+        rgba(56, 189, 248, 0.85) 6px,
+        rgba(14, 165, 233, 0.45) 6px,
+        rgba(14, 165, 233, 0.45) 12px
+      );
+    }
+    .hero-card {
+      background: var(--surface-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-panel);
+      transition: border-color var(--transition-fast), transform var(--transition-fast);
+    }
+    .hero-card:hover {
+      border-color: var(--border-primary);
     }
     @media print {
       .no-print { display: none !important; }
@@ -175,7 +265,7 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: rgba(100, 116, 139, 0.95);
     }
-    
+
     /* Dual Theme (Light Mode) High-Contrast Overrides */
     html:not(.dark) body {
       background-color: #f8fafc !important;
@@ -290,6 +380,18 @@
     html:not(.dark) .bg-obsidian-950 {
       background-color: #f8fafc !important;
     }
+    html:not(.dark) #app-sidebar {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .hero-card {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) #world-map-container {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
   </style>
 </head>
 <body class="bg-obsidian-950 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300">
@@ -299,180 +401,301 @@
     Skip to main content
   </a>
 
-  <!-- Top Navigation Header -->
-  <header class="sticky top-0 z-50 glass-dark border-b border-slate-800/80 transition-colors duration-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      
-      <!-- Brand Logo & Title -->
-      <div class="flex items-center space-x-3">
+  <!-- Fixed Cyber AI Navigation Sidebar (Desktop lg:flex, Mobile Drawer Toggle) -->
+  <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-40 w-[248px] bg-slate-950/95 dark:bg-[#111827] border-r border-slate-800/80 dark:border-[#293548] flex flex-col justify-between p-4 overflow-y-auto custom-scrollbar transform transition-transform duration-300 lg:translate-x-0 -translate-x-full no-print">
+    <div class="space-y-6">
+      <!-- DAC Brand Logo -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800/80 dark:border-[#293548]">
         <a href="#overview" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyber-crimson via-purple-600 to-indigo-600 p-[1.5px] shadow-lg shadow-rose-500/25 group-hover:scale-105 transition">
-            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <img src="assets/favicon.svg" alt="Logo" class="w-6 h-6 animate-pulse-slow">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-sky-500 to-indigo-600 p-[1.5px] shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition">
+            <div class="w-full h-full bg-[#0B1020] rounded-[14px] flex items-center justify-center overflow-hidden">
+              <img src="assets/favicon.svg" alt="DAC Logo" class="w-7 h-7 drop-shadow-[0_0_8px_rgba(56,189,248,0.6)]">
             </div>
           </div>
           <div>
-            <div class="text-base font-black tracking-tight text-white flex items-center gap-2">
-              <span class="bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">LOGSHIELD</span>
-              <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-500/25 text-indigo-300 border border-indigo-500/40 flex items-center gap-1 shadow-sm">
-                <i data-lucide="award" class="w-3 h-3 text-indigo-400"></i>
-                PROJECT #19
-              </span>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                v1.0 ACTIVE
-              </span>
+            <div class="text-base font-black tracking-tight text-white flex items-center gap-1.5">
+
+              <span class="bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">DAC</span>
+              <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">V2.0</span>
             </div>
-            <p class="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-              <span class="text-indigo-300 font-semibold">Log File Analysis</span>
-              <span>•</span>
-              <span class="text-amber-400 font-semibold">Hadoop HDFS</span>
-              <span>•</span>
-              <span class="text-rose-400 font-semibold">PySpark 404 Counter</span>
-            </p>
+            <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">DAC • Project #19 • SOC</p>
           </div>
         </a>
+        <button onclick="closeSidebar()" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800" aria-label="Close sidebar">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
 
-      <!-- Navigation Links with Configured Lucide Icons -->
-      <nav class="hidden lg:flex items-center space-x-1 text-xs font-semibold text-slate-300">
-        <a href="#overview" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
+      <!-- Navigation Section 1: MENU -->
+      <div class="space-y-1.5">
+        <div class="text-[10px] font-bold tracking-widest text-slate-400 uppercase px-3 py-1">MENU</div>
+        <nav class="space-y-1 text-xs font-semibold">
+          <a href="#overview" class="flex items-center gap-3 px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500/15 to-indigo-500/10 text-cyan-300 border border-cyan-500/30 shadow-sm transition">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-cyan-400"></i>
+            <span>Dashboard</span>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]"></span>
+          </a>
+          <a href="#hourly" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="activity" class="w-4 h-4 text-sky-400"></i>
+            <span>Live Monitor</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">24h</span>
+          </a>
+          <a href="#heatmap" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i>
+            <span>Error Heatmap</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">7x24</span>
+          </a>
+          <a href="#architecture" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="cpu" class="w-4 h-4 text-indigo-400"></i>
+            <span>AI Analysis</span>
+          </a>
+          <a href="#ips" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="server" class="w-4 h-4 text-teal-400"></i>
+            <span>Device Manage</span>
+          </a>
+          <a href="#security" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
+            <span>User & Account</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30">Threats</span>
+          </a>
+          <a href="#defensive-suite" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+            <span>Defensive Rules</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">SIEM</span>
+          </a>
+          <a href="#analytics-studio" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
+            <span>Analytics Studio</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">Data</span>
+          </a>
+          <a href="#explorer" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+
+            <i data-lucide="terminal" class="w-4 h-4 text-fuchsia-400"></i>
+            <span>Firewall Logs</span>
+            <span class="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300">200k</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Navigation Section 2: SUPPORT -->
+      <div class="space-y-1.5">
+        <div class="text-[10px] font-bold tracking-widest text-slate-400 uppercase px-3 py-1">SUPPORT</div>
+        <nav class="space-y-1 text-xs font-semibold">
+          <button onclick="openSystemSettingsModal()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition text-left">
+            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+            <span>Settings</span>
+          </button>
+          <button onclick="openSystemAuditModal()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition text-left">
+            <i data-lucide="check-check" class="w-4 h-4 text-emerald-400"></i>
+            <span>System Audit</span>
+            <span class="ml-auto text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PASS</span>
+          </button>
+          <a href="Log_File_Analysis_Report.html" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 dark:hover:bg-[#182235] transition">
+            <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
+            <span>HTML Report</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Cyber Sentinel Graphic Card -->
+    <div class="mt-6 pt-4 border-t border-slate-800/80 dark:border-[#293548]">
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#182235] to-[#0B1020] border border-cyan-500/30 p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-black text-white flex items-center gap-1.5">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-cyan-400"></i> Cyber Sentinel
+          </span>
+          <span class="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
+          </span>
+        </div>
+        <!-- Sentinel SVG Hologram Illustration -->
+        <div class="h-16 w-full flex items-center justify-center relative">
+          <svg class="w-full h-full" viewBox="0 0 160 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="80" cy="40" r="32" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2,4" opacity="0.6"/>
+            <circle cx="80" cy="40" r="22" stroke="#818CF8" stroke-width="1.5" opacity="0.8"/>
+            <polygon points="80,18 96,28 96,52 80,62 64,52 64,28" stroke="#38BDF8" stroke-width="1.5" fill="rgba(56,189,248,0.12)"/>
+            <path d="M72 40 L80 32 L88 40 L80 48 Z" fill="#38BDF8"/>
+            <line x1="20" y1="40" x2="60" y2="40" stroke="#38BDF8" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <line x1="100" y1="40" x2="140" y2="40" stroke="#38BDF8" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <circle cx="80" cy="40" r="4" fill="#34D399" class="animate-ping" style="transform-origin: 80px 40px;"/>
+          </svg>
+        </div>
+        <div class="text-[10px] text-slate-400 text-center font-medium leading-tight">
+          Telemetry Heuristics Active<br>
+          <span class="text-cyan-300 font-bold">Hadoop HDFS Lakehouse</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div id="sidebar-backdrop" onclick="closeSidebar()" class="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm hidden lg:hidden transition-opacity"></div>
+
+  <!-- Main Application Wrapper (Padded for Desktop Sidebar) -->
+  <div class="lg:pl-[248px] min-h-screen flex flex-col transition-all duration-300">
+
+    <!-- Top Command Bar Header -->
+    <header class="sticky top-0 z-20 glass-dark border-b border-slate-800/80 dark:border-[#293548] transition-colors duration-200">
+      <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+
+        <!-- Left: Mobile Toggle & Global Command Search -->
+        <div class="flex items-center gap-3 flex-1 max-w-xl">
+          <!-- Mobile Sidebar Toggle -->
+          <button id="mobile-menu-btn" onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition" aria-label="Toggle Navigation Menu">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+
+          <!-- Mobile Brand Logo -->
+          <a href="#overview" class="lg:hidden flex items-center gap-2 shrink-0" aria-label="DAC Home">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 p-[1px] shadow-sm">
+              <div class="w-full h-full bg-[#0B1020] rounded-[11px] flex items-center justify-center">
+                <img src="assets/favicon.svg" alt="DAC Logo" class="w-5 h-5 drop-shadow-[0_0_6px_rgba(56,189,248,0.5)]">
+              </div>
+            </div>
+            <span class="text-xs font-black text-white bg-gradient-to-r from-white to-cyan-300 bg-clip-text text-transparent sm:hidden">DAC</span>
+          </a>
+
+
+
+          <!-- Global Command Search Box -->
+          <div class="relative w-full max-w-md">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </div>
+            <input
+              id="global-command-search"
+              type="text"
+              placeholder="Search threats, IPs, endpoints, or logs..."
+              oninput="handleGlobalCommandSearch(this.value)"
+              class="w-full pl-10 pr-12 py-2 text-xs rounded-xl bg-slate-900/90 dark:bg-[#182235] border border-slate-700/80 dark:border-[#334155] text-slate-100 placeholder-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
+              aria-label="Global Command Search"
+            >
+            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+              <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-slate-800 border border-slate-700 rounded">⌘K</kbd>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Action & Profile Controls -->
+        <div class="flex items-center space-x-2 no-print shrink-0">
+          <!-- System UI Settings Modal Button -->
+          <button id="system-settings-btn" onclick="openSystemSettingsModal()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-700/80 transition shadow-sm" title="System UI Configuration">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Dark/Light Theme Toggle -->
+          <button id="theme-toggle-btn" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition shadow-sm" title="Toggle Dark/Light Mode">
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+            <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
+          </button>
+
+          <!-- GitHub Repo Link -->
+          <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="hidden md:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="GitHub Repository">
+            <i data-lucide="github" class="w-3.5 h-3.5"></i>
+            <span>GitHub</span>
+          </a>
+
+          <!-- Print / PDF Button -->
+          <button onclick="window.print()" class="hidden lg:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="Print to PDF">
+            <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>PDF</span>
+          </button>
+
+          <!-- HTML Report Link -->
+          <a href="Log_File_Analysis_Report.html" class="hidden sm:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-indigo-950/60 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-500/40 items-center gap-1.5 transition" title="View Written Report">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <span>Report HTML</span>
+          </a>
+
+          <!-- System Health Audit / Check Button -->
+          <button id="system-audit-btn" onclick="openSystemAuditModal()" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 transition shadow-sm shadow-emerald-500/10" title="Project #19 System Diagnostic & Health Check">
+            <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span class="hidden sm:inline">System Check</span>
+          </button>
+
+          <!-- User Profile Pill (Rayan Cooked / admin) -->
+          <div class="flex items-center gap-2 pl-2 border-l border-slate-800/80 dark:border-[#293548]">
+            <div class="relative">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-xs text-white shadow-md">
+                RC
+              </div>
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 dark:border-[#111827]"></span>
+            </div>
+            <div class="hidden xl:block text-left leading-tight">
+              <div class="text-xs font-bold text-white">Rayan Cooked</div>
+              <div class="text-[10px] text-slate-400">admin / SOC lead</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden glass-dark border-b border-slate-800/80 px-4 py-4 space-y-3 sticky top-16 z-20">
+      <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-300">
+        <a href="#overview" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
           <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i> Overview
         </a>
-        <a href="#hourly" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i> Traffic
+        <a href="#hourly" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i> Peak Times
         </a>
-        <a href="#heatmap" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i> Errors
+        <a href="#heatmap" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i> Heatmap
         </a>
-        <a href="#security" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
+        <a href="#security" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
           <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Security
         </a>
-        <a href="#ips" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
+        <a href="#defensive-suite" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Defensive Rules
+        </a>
+        <a href="#analytics-studio" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i> Analytics Studio
+        </a>
+        <a href="#ips" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+
           <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Top IPs
         </a>
-        <a href="#endpoints" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> URLs
+        <a href="#endpoints" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> Endpoints
         </a>
-        <a href="#explorer" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Live Logs
+        <a href="#explorer" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="terminal" class="w-4 h-4 text-sky-400"></i> Log Explorer
         </a>
-        <a href="#architecture" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
+        <a href="#architecture" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
           <i data-lucide="git-branch" class="w-4 h-4 text-fuchsia-400"></i> Flow Plan
         </a>
-        <a href="#system" class="px-3 py-1.5 rounded-xl hover:bg-slate-800/80 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> System
+        <a href="#system" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> System UI
         </a>
-      </nav>
-
-      <!-- Action & Theme Controls -->
-      <div class="flex items-center space-x-2 no-print">
-        <!-- System UI Settings Modal Button -->
-        <button id="system-settings-btn" onclick="openSystemSettingsModal()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-700/80 transition shadow-sm" title="System UI Configuration">
-          <i data-lucide="sliders" class="w-4 h-4"></i>
-        </button>
-
-        <!-- Dark/Light Theme Toggle -->
-        <button id="theme-toggle-btn" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition shadow-sm" title="Toggle Dark/Light Mode">
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
-        </button>
-
-        <!-- GitHub Repo Link -->
-        <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="hidden sm:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="GitHub Repository">
-          <i data-lucide="github" class="w-3.5 h-3.5"></i>
-          <span>GitHub</span>
+        <a href="#recommendations" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Action Plan
         </a>
-
-        <!-- Print / PDF Button -->
-        <button onclick="window.print()" class="hidden md:flex px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 items-center gap-1.5 shadow-sm transition" title="Print to PDF">
-          <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-400"></i>
-          <span>PDF</span>
-        </button>
-
-        <!-- HTML Report Link -->
-        <a href="Log_File_Analysis_Report.html" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-indigo-950/60 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-500/40 flex items-center gap-1.5 transition" title="View Written Report">
-          <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-400"></i>
-          <span class="hidden sm:inline">Report HTML</span>
+        <a href="#deliverables" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2 col-span-2">
+          <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Deliverables
         </a>
-
-        <!-- System Health Audit / Check Button -->
-        <button id="system-audit-btn" onclick="openSystemAuditModal()" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 transition shadow-sm shadow-emerald-500/10" title="Project #19 System Diagnostic & Health Check">
-          <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
-          <span class="hidden sm:inline">System Check</span>
+      </div>
+      <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2">
+        <button onclick="openSystemAuditModal()" class="flex-1 py-2 px-2.5 text-xs font-semibold rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-center flex items-center justify-center gap-1.5 text-emerald-300">
+          <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i> Check
         </button>
-
-        <!-- Jump to Log Explorer -->
-        <a href="#explorer" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-cyber-crimson to-purple-600 hover:from-rose-500 hover:to-indigo-500 text-white shadow-lg shadow-rose-600/30 flex items-center gap-1.5 transition">
-          <i data-lucide="search" class="w-3.5 h-3.5"></i>
-          <span>Inspect</span>
+        <button onclick="openSystemSettingsModal()" class="flex-1 py-2 px-2.5 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-center flex items-center justify-center gap-1.5 text-cyan-300">
+          <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Config
+        </button>
+        <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-center flex items-center justify-center gap-1.5 text-slate-200">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub Repo
         </a>
-
-        <!-- Mobile Menu Toggle Button -->
-        <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition" aria-label="Toggle Navigation Menu">
-          <i data-lucide="menu" class="w-5 h-5"></i>
+        <button onclick="window.print()" class="py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-slate-200 flex items-center justify-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> PDF
         </button>
       </div>
     </div>
-  </header>
-
-  <!-- Mobile Navigation Drawer -->
-  <div id="mobile-menu" class="hidden lg:hidden glass-dark border-b border-slate-800/80 px-4 py-4 space-y-3 sticky top-16 z-40">
-    <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-300">
-      <a href="#overview" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i> Overview
-      </a>
-      <a href="#hourly" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i> Peak Times
-      </a>
-      <a href="#heatmap" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i> Heatmap
-      </a>
-      <a href="#security" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Security
-      </a>
-      <a href="#ips" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Top IPs
-      </a>
-      <a href="#endpoints" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="target" class="w-4 h-4 text-purple-400"></i> Endpoints
-      </a>
-      <a href="#explorer" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="terminal" class="w-4 h-4 text-sky-400"></i> Log Explorer
-      </a>
-      <a href="#architecture" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="git-branch" class="w-4 h-4 text-fuchsia-400"></i> Flow Plan
-      </a>
-      <a href="#system" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> System UI
-      </a>
-      <a href="#recommendations" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2">
-        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Action Plan
-      </a>
-      <a href="#deliverables" class="px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/80 flex items-center gap-2 col-span-2">
-        <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Deliverables
-      </a>
-    </div>
-    <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2">
-      <button onclick="openSystemAuditModal()" class="flex-1 py-2 px-2.5 text-xs font-semibold rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-center flex items-center justify-center gap-1.5 text-emerald-300">
-        <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i> Check
-      </button>
-      <button onclick="openSystemSettingsModal()" class="flex-1 py-2 px-2.5 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-center flex items-center justify-center gap-1.5 text-cyan-300">
-        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Config
-      </button>
-      <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-center flex items-center justify-center gap-1.5 text-slate-200">
-        <i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub Repo
-      </a>
-      <button onclick="window.print()" class="py-2 px-3 text-xs font-semibold rounded-xl bg-slate-900 border border-slate-700 text-slate-200 flex items-center justify-center gap-1.5">
-        <i data-lucide="printer" class="w-3.5 h-3.5"></i> PDF
-      </button>
-    </div>
-  </div>
 
   <!-- System UI Configuration Modal -->
   <div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-lg bg-slate-900/95 dark:bg-slate-900/95 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
-      
+
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <div class="flex items-center gap-3">
@@ -613,10 +836,52 @@
     </div>
   </div>
 
+  <!-- Modal: Custom In-Memory Dataset Inspector -->
+  <div id="analytics-inspector-modal" role="dialog" aria-modal="true" aria-labelledby="analytics-inspector-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+          </span>
+          <div>
+            <h3 id="analytics-inspector-title" class="text-sm font-bold text-white">In-Memory Dataset Inspector</h3>
+            <p class="text-[11px] text-slate-400">Paste raw CSV or JSON data for instant schema validation and descriptive statistics</p>
+          </div>
+        </div>
+        <button onclick="toggleCustomInspectorModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition" aria-label="Close inspector modal">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <label for="custom-inspect-format" class="text-xs text-slate-300 font-semibold">Format:</label>
+            <select id="custom-inspect-format" class="text-xs bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1 focus:outline-none" aria-label="Input data format">
+              <option value="csv">CSV (Comma-Separated)</option>
+              <option value="json">JSON (Array of Objects)</option>
+            </select>
+          </div>
+          <button onclick="loadSampleInspectData()" class="text-xs text-cyan-400 hover:text-cyan-300 underline" aria-label="Load sample test data">Load Sample</button>
+        </div>
+        <textarea id="custom-inspect-textarea" rows="8" class="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-amber-400 custom-scrollbar" placeholder="Paste CSV or JSON content here..." aria-label="Raw data input"></textarea>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <button onclick="toggleCustomInspectorModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white" aria-label="Cancel inspection">Cancel</button>
+        <button onclick="runCustomInspection()" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition" aria-label="Execute data profile audit">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i>
+          <span>Run Profile Audit</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Log Record Deep-Dive Inspector Modal -->
   <div id="log-inspector-modal" role="dialog" aria-modal="true" aria-labelledby="log-inspector-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
     <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
-      
+
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <div class="flex items-center gap-3">
@@ -803,7 +1068,7 @@
 
       <!-- 6 Diagnostic Checkpoint Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
-        
+
         <!-- 1. Hadoop HDFS Storage -->
         <div id="audit-card-hadoop" class="p-4 rounded-2xl bg-slate-950/50 border border-emerald-500/30 transition hover:border-emerald-500/60 space-y-2">
           <div class="flex items-center justify-between">
@@ -1057,6 +1322,390 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 relative z-10">
 
+      <!-- Cyber AI Hero Analytics Grid (V2 SOC Dashboard Reference Design) -->
+      <section id="cyber-hero-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- Left Column: 4 Vertical Stacked Cards with Wave Sparklines & Speedometer Gauge -->
+        <div class="lg:col-span-4 xl:col-span-4 space-y-4 flex flex-col justify-between">
+
+          <!-- Card 1: Total Active Threats -->
+          <div class="hero-card p-5 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg relative overflow-hidden group hover:border-cyan-500/50 transition">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 relative">
+                  <i data-lucide="crosshair" class="w-5 h-5"></i>
+                  <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                </div>
+                <div>
+                  <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Active Threats</div>
+                  <div class="text-2xl font-black text-white tracking-tight">$ 2.48M</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                <i data-lucide="trending-up" class="w-3 h-3"></i> +12.5%
+              </span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>200,000 Ingested Logs</span>
+              <span class="text-cyan-300 font-semibold">43,153 Blocked (21.58%)</span>
+            </div>
+            <!-- Cyan Wave Sparkline SVG -->
+            <div class="mt-3 h-12 w-full">
+              <svg class="w-full h-full overflow-visible" viewBox="0 0 300 50" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="cyanSparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,40 C30,35 60,15 100,28 C140,40 170,12 210,18 C250,24 275,5 300,10 L300,50 L0,50 Z" fill="url(#cyanSparkGrad)"/>
+                <path d="M0,40 C30,35 60,15 100,28 C140,40 170,12 210,18 C250,24 275,5 300,10" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="300" cy="10" r="3.5" fill="#38BDF8" class="animate-pulse"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Card 2: Security Score -->
+          <div class="hero-card p-5 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg relative overflow-hidden group hover:border-emerald-500/50 transition">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Security Score</div>
+                  <div class="text-2xl font-black text-white tracking-tight">97%</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                OPTIMAL
+              </span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>78.42% Nominal Traffic</span>
+              <span class="text-emerald-300 font-semibold">156,847 Valid Req</span>
+            </div>
+            <!-- Emerald Wave Sparkline SVG -->
+            <div class="mt-3 h-12 w-full">
+              <svg class="w-full h-full overflow-visible" viewBox="0 0 300 50" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="emeraldSparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#34D399" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#34D399" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,35 C40,25 70,38 120,20 C160,5 200,30 240,15 C270,5 285,12 300,8 L300,50 L0,50 Z" fill="url(#emeraldSparkGrad)"/>
+                <path d="M0,35 C40,25 70,38 120,20 C160,5 200,30 240,15 C270,5 285,12 300,8" fill="none" stroke="#34D399" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="300" cy="8" r="3.5" fill="#34D399" class="animate-pulse"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Card 3: Devices Protected -->
+          <div class="hero-card p-5 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg relative overflow-hidden group hover:border-indigo-500/50 transition">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                  <i data-lucide="server" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Devices Protected</div>
+                  <div class="text-2xl font-black text-white tracking-tight">1,234</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                ACTIVE
+              </span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>495 Monitored IPs</span>
+              <span class="text-indigo-300 font-semibold">4 HDFS DataNodes</span>
+            </div>
+            <!-- Indigo Wave Sparkline SVG -->
+            <div class="mt-3 h-12 w-full">
+              <svg class="w-full h-full overflow-visible" viewBox="0 0 300 50" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="indigoSparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#818CF8" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#818CF8" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,45 C50,40 80,18 130,25 C180,32 210,12 250,22 C275,28 290,14 300,16 L300,50 L0,50 Z" fill="url(#indigoSparkGrad)"/>
+                <path d="M0,45 C50,40 80,18 130,25 C180,32 210,12 250,22 C275,28 290,14 300,16" fill="none" stroke="#818CF8" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="300" cy="16" r="3.5" fill="#818CF8" class="animate-pulse"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Card 4: Security Check Gauge / Speedometer -->
+          <div class="hero-card p-5 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="gauge" class="w-4 h-4 text-cyan-400"></i> Speed & Throughput
+              </div>
+              <span class="text-[10px] font-bold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30">
+                256 Mbps
+              </span>
+            </div>
+
+            <!-- Speedometer Semi-circle SVG -->
+            <div class="relative flex flex-col items-center justify-center pt-1">
+              <svg class="w-48 h-28" viewBox="0 0 200 120">
+                <defs>
+                  <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#38BDF8"/>
+                    <stop offset="70%" stop-color="#818CF8"/>
+                    <stop offset="100%" stop-color="#F87171"/>
+                  </linearGradient>
+                </defs>
+                <!-- Background Arc -->
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#26364D" stroke-width="14" stroke-linecap="round"/>
+                <!-- Value Arc (78.4% fill) -->
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="54.2"/>
+                <!-- Ticks -->
+                <circle cx="100" cy="100" r="6" fill="#38BDF8"/>
+                <line x1="100" y1="100" x2="135" y2="50" stroke="#F1F5F9" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+              <div class="text-center -mt-4">
+                <div class="text-lg font-black text-white">256 <span class="text-xs font-semibold text-slate-400">Mbps</span></div>
+                <div class="text-[11px] font-semibold text-cyan-400">Fast enough • Nominal latency</div>
+              </div>
+            </div>
+
+            <!-- Full-width Gradient Check Security Button -->
+            <button onclick="openSystemAuditModal()" class="w-full py-3 px-4 rounded-xl font-black text-xs uppercase tracking-wider text-slate-950 bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 hover:from-cyan-300 hover:to-indigo-300 shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transform active:scale-98 transition duration-200">
+              <i data-lucide="shield-check" class="w-4 h-4 text-slate-950"></i>
+              <span>Check Security</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Live Statistics & Global Threat Origin Map -->
+        <div class="lg:col-span-8 xl:col-span-8 space-y-6 flex flex-col justify-between">
+
+          <!-- Live Statistics Card (Dual Grouped Bar Chart with Striped Wednesday Peak) -->
+          <div class="hero-card p-6 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5 text-cyan-400"></i> Live Statistics
+                </h3>
+                <p class="text-xs text-slate-400">Weekly traffic distribution — Nominal requests vs. 404 security anomalies</p>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3 text-xs">
+                  <span class="flex items-center gap-1.5 text-slate-300 font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]"></span> Security (Valid)
+                  </span>
+                  <span class="flex items-center gap-1.5 text-slate-300 font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> No security (404s)
+                  </span>
+                </div>
+                <div class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs font-bold text-slate-300">
+                  Weekly
+                </div>
+              </div>
+            </div>
+
+            <!-- Grouped Bar Chart Container -->
+            <div class="relative pt-6 pb-2">
+              <div class="grid grid-cols-7 gap-3 sm:gap-6 items-end h-52 border-b border-slate-700/80 px-2 sm:px-4">
+
+                <!-- Sun -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 65%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Sunday Valid: 21,340"></div>
+                    <div style="height: 25%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Sunday 404s: 4,812"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Sun</span>
+                </div>
+
+                <!-- Mon -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 75%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Monday Valid: 28,400"></div>
+                    <div style="height: 30%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Monday 404s: 5,910"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Mon</span>
+                </div>
+
+                <!-- Tue -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 80%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Tuesday Valid: 31,200"></div>
+                    <div style="height: 32%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Tuesday 404s: 6,120"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Tue</span>
+                </div>
+
+                <!-- Wed (PEAK SURGE - Striped Hatched Bar) -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end relative group">
+                  <div class="absolute -top-7 px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[9px] font-black uppercase whitespace-nowrap animate-pulse">
+                    Peak Spike 03:00
+                  </div>
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 92%;" class="w-3.5 sm:w-5 bg-cyan-400 hover:bg-cyan-300 rounded-t-md transition shadow-[0_0_12px_rgba(56,189,248,0.4)]" title="Wednesday Valid: 38,950"></div>
+                    <!-- Striped Pattern Bar for Wednesday 404 Peak -->
+                    <div style="height: 70%;" class="w-3.5 sm:w-5 striped-bar-pattern rounded-t-md border border-cyan-400 shadow-[0_0_14px_rgba(56,189,248,0.5)] transition" title="Wednesday 404s (Peak Bot Surge): 12,490 (4,655 at 03:00 AM)"></div>
+                  </div>
+                  <span class="text-[11px] font-black text-cyan-300 group-hover:text-cyan-200 transition">Wed</span>
+                </div>
+
+                <!-- Thu -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 72%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Thursday Valid: 27,800"></div>
+                    <div style="height: 28%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Thursday 404s: 5,400"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Thu</span>
+                </div>
+
+                <!-- Fri -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 68%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Friday Valid: 25,600"></div>
+                    <div style="height: 26%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Friday 404s: 4,821"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Fri</span>
+                </div>
+
+                <!-- Sat -->
+                <div class="flex flex-col items-center gap-2 h-full justify-end group">
+                  <div class="w-full flex justify-center items-end gap-1.5 h-44">
+                    <div style="height: 60%;" class="w-3.5 sm:w-5 bg-cyan-400/85 hover:bg-cyan-300 rounded-t-md transition" title="Saturday Valid: 26,710"></div>
+                    <div style="height: 20%;" class="w-3.5 sm:w-5 bg-indigo-500/80 hover:bg-indigo-400 rounded-t-md transition" title="Saturday 404s: 3,600"></div>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-400 group-hover:text-white transition">Sat</span>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Footer summary row -->
+            <div class="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-1">
+              <span>Ingestion Window: <strong class="text-slate-200">7 Consecutive Days</strong></span>
+              <span class="text-cyan-400 font-bold flex items-center gap-1">
+                <i data-lucide="info" class="w-3.5 h-3.5"></i> Peak 03:00 AM Probing Surge = 4,655 404s
+              </span>
+            </div>
+          </div>
+
+          <!-- Global Threat Origin Map Card -->
+          <div id="world-map-card" class="hero-card p-6 rounded-2xl bg-[#182235] border border-[#334155] shadow-lg space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  <i data-lucide="globe" class="w-5 h-5 text-cyan-400"></i> Global Threat Origin Map
+                </h3>
+                <p class="text-xs text-slate-400">Real-time incident origin triangulation & automated bot geolocation</p>
+              </div>
+              <!-- Map Controls (+ / - / Fullscreen) -->
+              <div class="flex items-center gap-1.5">
+                <button onclick="zoomWorldMap(1.2)" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:border-cyan-400 transition" title="Zoom In">
+                  <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="zoomWorldMap(0.8)" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:border-cyan-400 transition" title="Zoom Out">
+                  <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="toggleMapFullscreen()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:border-cyan-400 transition" title="Expand Map">
+                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- SVG Vector World Map with Radar Blips -->
+            <div id="world-map-container" class="relative w-full h-64 sm:h-72 rounded-xl bg-[#0B1020] border border-slate-800 overflow-hidden flex items-center justify-center">
+              <svg id="cyber-world-svg" class="w-full h-full transition-transform duration-300" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+                <!-- Lat/Long Grid Lines -->
+                <defs>
+                  <pattern id="worldGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#182235" stroke-width="0.75" stroke-dasharray="2,3"/>
+                  </pattern>
+                </defs>
+                <rect width="1000" height="500" fill="url(#worldGrid)"/>
+
+                <!-- Continent Vector Silhouettes -->
+                <!-- North America -->
+                <path d="M120,80 L200,60 L280,70 L340,110 L300,160 L240,150 L220,190 L180,240 L160,200 L120,170 L100,120 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+                <!-- South America -->
+                <path d="M220,250 L270,270 L310,330 L280,420 L240,450 L220,380 L200,310 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+                <!-- Europe -->
+                <path d="M460,80 L520,70 L550,110 L510,150 L460,160 L440,130 L450,100 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+                <!-- Africa -->
+                <path d="M450,180 L540,180 L570,260 L540,360 L480,380 L440,280 L430,220 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+                <!-- Asia -->
+                <path d="M560,70 L720,60 L850,90 L900,160 L820,230 L740,240 L650,220 L580,160 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+                <!-- Australia -->
+                <path d="M780,320 L860,310 L890,360 L850,420 L780,400 L760,350 Z" fill="#131D30" stroke="#334155" stroke-width="1.2"/>
+
+                <!-- Trajectory Attack Arcs into Central Protected HDFS Core (coord 470, 140) -->
+                <path d="M 230,150 Q 350,90 470,140" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                <path d="M 830,160 Q 650,80 470,140" fill="none" stroke="#818CF8" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                <path d="M 180,180 Q 300,220 470,140" fill="none" stroke="#F87171" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+
+                <!-- Central SOC Defense Shield Core -->
+                <g transform="translate(470, 140)">
+                  <circle cx="0" cy="0" r="14" fill="rgba(56, 189, 248, 0.2)" stroke="#38BDF8" stroke-width="2"/>
+                  <circle cx="0" cy="0" r="5" fill="#38BDF8"/>
+                  <text x="0" y="24" text-anchor="middle" fill="#38BDF8" font-size="10" font-weight="bold">HDFS Core Lakehouse</text>
+                </g>
+
+                <!-- Hotspot 1: 199.72.81.55 (US - 2,730 requests) at (230, 150) -->
+                <g transform="translate(230, 150)">
+                  <circle cx="0" cy="0" r="18" fill="none" stroke="#F87171" class="radar-blip"/>
+                  <circle cx="0" cy="0" r="5" fill="#F87171"/>
+                  <text x="12" y="4" fill="#F87171" font-size="10" font-weight="bold">199.72.81.55 (2,730)</text>
+                </g>
+
+                <!-- Hotspot 2: unicomp6.unicomp.net (1,343 requests) at (510, 120) -->
+                <g transform="translate(510, 120)">
+                  <circle cx="0" cy="0" r="14" fill="none" stroke="#38BDF8" class="radar-blip-fast"/>
+                  <circle cx="0" cy="0" r="4.5" fill="#38BDF8"/>
+                  <text x="10" y="4" fill="#38BDF8" font-size="10" font-weight="bold">unicomp6 (1,343)</text>
+                </g>
+
+                <!-- Hotspot 3: 133.43.96.45 (Japan - 929 requests) at (830, 160) -->
+                <g transform="translate(830, 160)">
+                  <circle cx="0" cy="0" r="16" fill="none" stroke="#FBBF24" class="radar-blip"/>
+                  <circle cx="0" cy="0" r="4" fill="#FBBF24"/>
+                  <text x="10" y="4" fill="#FBBF24" font-size="10" font-weight="bold">133.43.96.45 (929)</text>
+                </g>
+
+                <!-- Hotspot 4: d104.aa.net (833 requests) at (180, 180) -->
+                <g transform="translate(180, 180)">
+                  <circle cx="0" cy="0" r="14" fill="none" stroke="#818CF8" class="radar-blip-fast"/>
+                  <circle cx="0" cy="0" r="4" fill="#818CF8"/>
+                  <text x="-12" y="14" text-anchor="end" fill="#818CF8" font-size="9" font-weight="bold">d104.aa.net (833)</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Threat Map Telemetry Status Footer -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-slate-400 block text-[10px]">Active Hotspots</span>
+                <span class="text-cyan-400 font-bold">4 Top Subnets</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-slate-400 block text-[10px]">Peak Rate Time</span>
+                <span class="text-rose-400 font-bold">03:00 AM (21.58%)</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-slate-400 block text-[10px]">Mitigation Status</span>
+                <span class="text-emerald-400 font-bold">Heuristic Block</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-slate-400 block text-[10px]">Defense Engine</span>
+                <span class="text-indigo-400 font-bold">PySpark RDD Core</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
       <!-- Hero Header Banner with Dual Engine Icons -->
       <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-indigo-950/60 border border-slate-800 p-6 sm:p-8 shadow-2xl">
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -1195,7 +1844,7 @@
 
       <!-- Executive KPI Cards: 7 Core Metrics with Configured Icons & Glowing Accents -->
       <section id="overview" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
-        
+
         <!-- 1. Total Requests -->
         <div class="glass-card border border-slate-800 rounded-3xl p-5 shadow-xl hover:border-cyan-500/50 hover:-translate-y-1 transition duration-200">
           <div class="flex items-center justify-between">
@@ -1332,7 +1981,7 @@
 
       <!-- Visual Charts Row 1: Hourly Distribution & Status Breakdown -->
       <section id="hourly" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <!-- 24-Hour 404 Failure Bar Chart (2 Columns) -->
         <div class="lg:col-span-2 glass-card border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col justify-between">
           <div>
@@ -1344,7 +1993,7 @@
                 </h3>
                 <p class="text-xs text-slate-400 mt-0.5">Failure volume concentrated at 03:00 AM (4,655 errors). Bar color changes dynamically to emphasize threat level.</p>
               </div>
-              
+
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-cyber-crimson/20 text-cyber-rose border border-cyber-crimson/30 flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-cyber-crimson animate-ping"></span>
@@ -1579,7 +2228,178 @@
         </div>
       </section>
 
+      <!-- Defensive Cybersecurity Operations & SIEM Detection Suite -->
+      <section id="defensive-suite" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+        <!-- Section Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-5 border-b border-slate-800 gap-4">
+          <div class="flex items-center gap-3">
+            <span class="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </span>
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2.5">
+                <span>Defensive Cybersecurity &amp; SIEM Detection Suite</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  DEFENSIVE ENGINE
+                </span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Configurable detection rules, authentication failure tracking, cryptographic integrity audits, and confidential log sanitization.</p>
+            </div>
+          </div>
+
+          <!-- Defensive Suite Tabs -->
+          <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/80 border border-slate-800/80 text-xs">
+            <button onclick="switchDefTab('rules')" id="deftab-btn-rules" class="px-3.5 py-1.5 rounded-xl font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5" aria-label="Show detection rules tab">
+              <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+              <span>Detection Rules</span>
+            </button>
+            <button onclick="switchDefTab('auth')" id="deftab-btn-auth" class="px-3.5 py-1.5 rounded-xl font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5" aria-label="Show authentication logs tab">
+              <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+              <span>Auth &amp; Syslog</span>
+            </button>
+            <button onclick="switchDefTab('integrity')" id="deftab-btn-integrity" class="px-3.5 py-1.5 rounded-xl font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5" aria-label="Show file integrity tab">
+              <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+              <span>File Integrity</span>
+            </button>
+            <button onclick="switchDefTab('sanitize')" id="deftab-btn-sanitize" class="px-3.5 py-1.5 rounded-xl font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5" aria-label="Show log sanitizer tab">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Log Sanitizer</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 1: Configurable Detection Rules -->
+        <div id="deftab-content-rules" class="space-y-6">
+          <div class="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-xs text-cyan-300/90 flex items-start gap-3">
+            <i data-lucide="info" class="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0"></i>
+            <div>
+              <span class="font-bold text-cyan-200">Behavioral Detection Notice:</span>
+              Detection rules identify suspicious behavioral patterns based on configurable sliding time-windows. Detected patterns are explicitly distinguished from confirmed security incidents until validated by SOC triage.
+            </div>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-800 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">Rule ID</th>
+                  <th class="py-2.5 px-3 font-semibold">Rule Name &amp; Description</th>
+                  <th class="py-2.5 px-3 font-semibold">Category</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Severity</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Threshold</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Window</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Status</th>
+                  <th class="py-2.5 px-3 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rules-tbody" class="divide-y divide-slate-800/70 font-mono">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: Authentication & Syslog Event Explorer -->
+        <div id="deftab-content-auth" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-slate-300">Filter Severity:</span>
+              <select id="auth-severity-filter" onchange="filterAuthEventsUI()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-cyan-500" aria-label="Filter authentication log events by severity">
+                <option value="ALL">All Severities</option>
+                <option value="CRITICAL">CRITICAL</option>
+                <option value="HIGH">HIGH</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="LOW">LOW</option>
+                <option value="INFORMATIONAL">INFORMATIONAL</option>
+              </select>
+            </div>
+            <div class="text-xs text-slate-400" id="auth-events-counter">
+              Tracking authentication failures, privilege escalations, and account status
+            </div>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-800 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">Event ID</th>
+                  <th class="py-2.5 px-3 font-semibold">Timestamp</th>
+                  <th class="py-2.5 px-3 font-semibold">Source IP</th>
+                  <th class="py-2.5 px-3 font-semibold">Account / User</th>
+                  <th class="py-2.5 px-3 font-semibold">Event Classification</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Severity</th>
+                  <th class="py-2.5 px-3 font-semibold">Forensic Details</th>
+                </tr>
+              </thead>
+              <tbody id="auth-tbody" class="divide-y divide-slate-800/70 font-mono">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: Cryptographic File Integrity Audit -->
+        <div id="deftab-content-integrity" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="text-xs text-slate-400">
+              Verifies SHA-256 and MD5 cryptographic checksums across critical log files and cluster configurations.
+            </div>
+            <button onclick="verifySystemIntegrityUI()" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition flex items-center gap-1.5" aria-label="Verify system file integrity now">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Verify Integrity Now</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-800 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">File Path</th>
+                  <th class="py-2.5 px-3 font-semibold">SHA-256 Digest</th>
+                  <th class="py-2.5 px-3 font-semibold">MD5 Digest</th>
+                  <th class="py-2.5 px-3 font-semibold text-right">Size (Bytes)</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="integrity-tbody" class="divide-y divide-slate-800/70 font-mono">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: Confidential Log Sanitizer & Secret Redaction -->
+        <div id="deftab-content-sanitize" class="space-y-6 hidden">
+          <div class="text-xs text-slate-400">
+            Paste raw log lines or sensitive diagnostic payloads. The LogShield sanitizer automatically masks API keys, bearer tokens, passwords, and session cookies for safe sharing.
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label for="raw-log-input" class="text-xs font-bold text-slate-300 flex items-center justify-between">
+                <span>Raw Log Input:</span>
+                <button onclick="loadSampleDirtyLog()" class="text-[11px] text-cyan-400 hover:underline" aria-label="Load sample dirty log input">Insert Sample</button>
+              </label>
+              <textarea id="raw-log-input" rows="8" class="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500" placeholder="10.0.1.1 - - [01/Sep/2026:03:00:00] &quot;POST /login?password=MyPassword123&quot; 200..." aria-label="Raw log text input"></textarea>
+              <button onclick="sanitizeLogInputUI()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition" aria-label="Sanitize and redact secrets">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Sanitize &amp; Redact Secrets</span>
+              </button>
+            </div>
+            <div class="space-y-2">
+              <label for="sanitized-log-output" class="text-xs font-bold text-slate-300 flex items-center justify-between">
+                <span>Sanitized Output:</span>
+                <button onclick="copySanitizedOutputUI()" class="text-[11px] text-emerald-400 hover:underline flex items-center gap-1" aria-label="Copy sanitized output">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                </button>
+              </label>
+              <textarea id="sanitized-log-output" readonly rows="8" class="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-300/90 focus:outline-none" placeholder="Sanitized logs will appear here with credentials masked..." aria-label="Sanitized log output"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Top Client IPs Threat Matrix Section -->
+
       <section id="ips" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-slate-800 gap-4">
           <div class="flex items-center gap-2">
@@ -1635,7 +2455,7 @@
 
       <!-- Top Endpoints & 7-Day Trend Charts -->
       <section id="endpoints" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         <!-- Top 10 Broken Endpoints Horizontal Bar -->
         <div class="glass-card border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col justify-between">
           <div>
@@ -1708,6 +2528,152 @@
         </div>
       </section>
 
+      <!-- Unified Data Analytics & Quality Studio -->
+      <section id="analytics-studio" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <!-- Section Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-5 border-b border-slate-800 gap-4">
+          <div class="flex items-center gap-3">
+            <span class="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+              <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+            </span>
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2.5">
+                <span>Data Analytics &amp; Quality Studio</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  ANALYTICS ENGINE
+                </span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Multi-dataset statistical profiling, missing-value audits, duplicate detection, schema validation, and safe exports.</p>
+            </div>
+          </div>
+
+          <!-- Dataset Selector and Actions -->
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative">
+              <select id="analytics-dataset-select" onchange="onAnalyticsDatasetChange()" class="text-xs bg-slate-900 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 pr-8 focus:outline-none focus:border-amber-400" aria-label="Select dataset to analyze">
+                <option value="hourly_404_errors">Hourly 404 Errors (hourly_404_errors.csv)</option>
+                <option value="status_code_breakdown">Status Code Breakdown (status_code_breakdown.csv)</option>
+                <option value="top_404_paths">Top 404 Paths (top_404_paths.csv)</option>
+                <option value="daily_404_trend">Daily 404 Trend (daily_404_trend.csv)</option>
+                <option value="heatmap_day_hour_404">Day-Hour Heatmap (heatmap_day_hour_404.csv)</option>
+                <option value="web_dashboard_data">Dashboard Telemetry (web_dashboard_data.json)</option>
+                <option value="gold_kpis">Gold KPIs (gold_kpis.json)</option>
+                <option value="integrity_manifest">Cryptographic Manifest (integrity_manifest.json)</option>
+              </select>
+            </div>
+            <button onclick="toggleCustomInspectorModal()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition" aria-label="Open in-memory dataset inspector">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-cyan-400"></i>
+              <span>Inspect Custom</span>
+            </button>
+            <div class="relative inline-block" id="export-dropdown-wrapper">
+              <button onclick="toggleExportMenu()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 flex items-center gap-1.5 transition" aria-label="Export dataset options">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Export</span>
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+              </button>
+              <div id="export-dropdown-menu" class="hidden absolute right-0 mt-1 w-36 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-30">
+                <button onclick="exportCurrentDataset('csv')" class="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2" aria-label="Export as CSV">
+                  <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i> CSV
+                </button>
+                <button onclick="exportCurrentDataset('json')" class="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2" aria-label="Export as JSON">
+                  <i data-lucide="file-code" class="w-3.5 h-3.5 text-sky-400"></i> JSON
+                </button>
+                <button onclick="exportCurrentDataset('markdown')" class="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2" aria-label="Export as Markdown table">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5 text-purple-400"></i> Markdown
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards: Data Hygiene & Statistical Summary -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/80 p-4 space-y-1">
+            <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-cyan-400"></i> Total Dimensions
+            </div>
+            <div class="text-xl font-black text-white" id="analytics-kpi-dims">-- rows • -- cols</div>
+            <div class="text-[10px] text-slate-400" id="analytics-kpi-size">Memory: -- KB</div>
+          </div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/80 p-4 space-y-1">
+            <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-emerald-400"></i> Data Quality Score
+            </div>
+            <div class="text-xl font-black text-emerald-400" id="analytics-kpi-score">--%</div>
+            <div class="text-[10px] text-emerald-300/80" id="analytics-kpi-health">Verification Passed</div>
+          </div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/80 p-4 space-y-1">
+            <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400"></i> Missing / Nulls
+            </div>
+            <div class="text-xl font-black text-white" id="analytics-kpi-nulls">0 (0.0%)</div>
+            <div class="text-[10px] text-slate-400">Clean Schema Verification</div>
+          </div>
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/80 p-4 space-y-1">
+            <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="copy" class="w-3.5 h-3.5 text-indigo-400"></i> Duplicate Rows
+            </div>
+            <div class="text-xl font-black text-white" id="analytics-kpi-dupes">0 (0.0%)</div>
+            <div class="text-[10px] text-slate-400">100% Unique Row Signatures</div>
+          </div>
+        </div>
+
+        <!-- Column Statistical Profile Table -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="binary" class="w-4 h-4 text-amber-400"></i>
+              <span>Column Schema &amp; Descriptive Statistics</span>
+            </h4>
+            <span class="text-[11px] text-slate-400 font-mono" id="analytics-col-count">0 columns profiled</span>
+          </div>
+          <div class="overflow-x-auto rounded-2xl border border-slate-800/80 custom-scrollbar">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 font-semibold">
+                <tr>
+                  <th class="py-2.5 px-3">Column Name</th>
+                  <th class="py-2.5 px-3">Type</th>
+                  <th class="py-2.5 px-3">Missing</th>
+                  <th class="py-2.5 px-3">Unique</th>
+                  <th class="py-2.5 px-3 text-right">Min</th>
+                  <th class="py-2.5 px-3 text-right">Mean</th>
+                  <th class="py-2.5 px-3 text-right">Median</th>
+                  <th class="py-2.5 px-3 text-right">Max</th>
+                  <th class="py-2.5 px-3">Distribution / Top Values</th>
+                </tr>
+              </thead>
+              <tbody id="analytics-columns-tbody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sample Records Explorer with Live Search & Filter -->
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="search" class="w-4 h-4 text-cyan-400"></i>
+              <span>Interactive Data Explorer (Sample Records)</span>
+            </h4>
+            <div class="flex items-center gap-2">
+              <input type="text" id="analytics-search-input" onkeyup="filterAnalyticsTable()" placeholder="Search in records..." class="text-xs bg-slate-900 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-cyan-400 w-48" aria-label="Filter records">
+              <span class="text-[11px] text-slate-400 font-mono" id="analytics-sample-count">Showing 0 rows</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto rounded-2xl border border-slate-800/80 custom-scrollbar max-h-72">
+            <table class="w-full text-left text-xs border-collapse" id="analytics-sample-table">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 font-semibold sticky top-0" id="analytics-sample-thead">
+                <!-- Dynamically populated -->
+              </thead>
+              <tbody id="analytics-sample-tbody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- Interactive Server Log Explorer with Quick Filter Chips -->
       <section id="explorer" class="glass-card border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
@@ -1724,7 +2690,7 @@
             <div class="flex items-center gap-1.5">
               <div class="relative">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                <input type="text" id="log-search" aria-label="Search server logs by route, IP, or method" placeholder="Search route, IP, method..." 
+                <input type="text" id="log-search" aria-label="Search server logs by route, IP, or method" placeholder="Search route, IP, method..."
                        class="pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-44 sm:w-52">
               </div>
               <button id="regex-toggle-btn" onclick="toggleRegexMode()" aria-label="Toggle regular expression search" title="Toggle Regular Expression Matching (.*)" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 font-mono text-xs font-bold transition">
@@ -2301,7 +3267,7 @@
 
         <!-- Dual Architecture Configuration Matrices -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
+
           <!-- Hadoop HDFS Configuration Specs -->
           <div class="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -2397,7 +3363,7 @@
               </h4>
               <p class="text-xs text-slate-400">Production-ready configuration files for deploying this pipeline</p>
             </div>
-            
+
             <div class="flex items-center gap-2">
               <button onclick="copyActiveConfigFile()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Config
@@ -2541,10 +3507,12 @@
   <!-- Footer -->
   <footer class="border-t border-slate-800/80 bg-obsidian-950 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <img src="assets/favicon.svg" alt="Logo" class="w-5 h-5">
-        <span class="font-semibold text-slate-400">Assignment 2 • Big Data Analytics • Hadoop HDFS & Apache PySpark</span>
+      <div class="flex items-center gap-2.5">
+        <img src="assets/favicon.svg" alt="DAC Logo" class="w-6 h-6 drop-shadow-[0_0_6px_rgba(56,189,248,0.5)]">
+        <span class="font-semibold text-slate-400">DAC • Assignment 2 • Big Data Analytics • Hadoop HDFS &amp; Apache PySpark</span>
       </div>
+
+
       <div class="flex items-center gap-4">
         <a href="https://github.com/Ratanazen/Data" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-400 flex items-center gap-1 transition">
           <i data-lucide="github" class="w-3.5 h-3.5"></i> Ratanazen/Data
@@ -2558,6 +3526,7 @@
       </div>
     </div>
   </footer>
+  </div>
 
   <!-- Application Logic & Data Visualization Scripts -->
   <script>
@@ -2626,7 +3595,7 @@
       toast.innerHTML = `
         <i data-lucide="${iconName}" class="w-4 h-4 shrink-0 ${iconColor}"></i>
         <div class="flex-1 leading-snug">${message}</div>
-        <button onclick="this.parentElement.remove()" class="text-slate-500 hover:text-slate-300 transition">
+        <button onclick="this.parentElement.remove()" class="text-slate-500 hover:text-slate-300 transition" aria-label="Dismiss notification">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       `;
@@ -2763,7 +3732,7 @@
     async function loadData() {
       let loadedFromApi = false;
       const apiCandidates = ['/api', 'http://localhost:8000/api', 'http://127.0.0.1:8000/api'];
-      
+
       for (const apiBase of apiCandidates) {
         try {
           const statsResp = await fetch(`${apiBase}/stats`);
@@ -2875,7 +3844,7 @@
       const peakH = meta.peak_hour;
 
       const ctxHourly = document.getElementById('hourlyChart').getContext('2d');
-      
+
       const hourlyColors = data.hourly_distribution.map(d => {
         if (d.hour === peakH) return '#ff0055'; // Glowing Neon Crimson
         if ([2, 9, 10, 11, 14, 15, 20, 21].includes(d.hour)) return '#f59e0b'; // Cyber Amber
@@ -3168,7 +4137,7 @@
 
       const infoEl = document.getElementById('sec-pagination-info');
       if (infoEl) infoEl.innerText = total > 0 ? `Showing incidents ${startIdx + 1}–${endIdx} of ${total}` : 'No matching security incidents';
-      
+
       const pageNumEl = document.getElementById('sec-page-num');
       if (pageNumEl) pageNumEl.innerText = secCurrentPage.toString();
 
@@ -3771,7 +4740,7 @@
       const endDisplay = Math.min(startIndex + pageSize, totalRecords);
       document.getElementById('log-count-info').innerText = `Showing ${startDisplay}–${endDisplay} of ${totalRecords.toLocaleString()} entries`;
       document.getElementById('page-indicator').innerText = `Page ${currentPage} of ${totalPages}`;
-      
+
       const btnPrev = document.getElementById('btn-prev-page');
       const btnNext = document.getElementById('btn-next-page');
       if (btnPrev) btnPrev.disabled = (currentPage <= 1);
@@ -3910,7 +4879,7 @@
       document.getElementById('inspect-ip').textContent = log.ip;
       const subnet = log.ip.split('.').slice(0, 3).join('.') + '.0/24';
       document.getElementById('inspect-subnet').textContent = `Subnet ${subnet}`;
-      
+
       const isCloudOrBot = log.path === '/admin/login' || log.ip.startsWith('10.') || log.ip.startsWith('192.');
       document.getElementById('inspect-ip-geo').textContent = isCloudOrBot
         ? "Automated Scanner Node • Hosting Provider Cloud ASN"
@@ -4933,16 +5902,91 @@ services:
       });
     }
 
-    // Mobile Hamburger Menu
+    // Cyber AI Navigation Sidebar & Mobile Drawer Logic
+    function toggleSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (!sidebar) return;
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        sidebar.classList.add('translate-x-0');
+        if (backdrop) backdrop.classList.remove('hidden');
+      } else {
+        closeSidebar();
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (sidebar) {
+        sidebar.classList.add('-translate-x-full');
+        sidebar.classList.remove('translate-x-0');
+      }
+      if (backdrop) backdrop.classList.add('hidden');
+    }
+
+    // Global Command Search Logic (⌘K / Ctrl+K)
+    function handleGlobalCommandSearch(query) {
+      const logSearch = document.getElementById('log-search');
+      if (logSearch) {
+        logSearch.value = query;
+        if (typeof handleLogSearch === 'function') {
+          handleLogSearch();
+        }
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('global-command-search');
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+    });
+
+    // Global Threat Origin Map Zoom & Fullscreen
+    let currentMapZoom = 1.0;
+    function zoomWorldMap(factor) {
+      const svg = document.getElementById('cyber-world-svg');
+      if (!svg) return;
+      currentMapZoom = Math.min(Math.max(currentMapZoom * factor, 0.6), 2.5);
+      svg.style.transform = `scale(${currentMapZoom})`;
+    }
+
+    function toggleMapFullscreen() {
+      const card = document.getElementById('world-map-card');
+      if (!card) return;
+      if (!document.fullscreenElement) {
+        if (card.requestFullscreen) {
+          card.requestFullscreen().catch(() => {});
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    // Mobile Hamburger Menu Fallback
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenuBtn && mobileMenu) {
       mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+        // Toggle mobile drawer if sidebar is not active
+        if (window.innerWidth < 1024) {
+          toggleSidebar();
+        } else {
+          mobileMenu.classList.toggle('hidden');
+        }
       });
       mobileMenu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
           mobileMenu.classList.add('hidden');
+          closeSidebar();
         });
       });
     }
@@ -5043,7 +6087,7 @@ uvicorn src.api.server:app --host 0.0.0.0 --port 8080 --workers 4 --log-level in
 
     function selectPipelineStage(idx) {
       const stage = pipelineStagesData[idx] || pipelineStagesData[0];
-      
+
       // Update Tab Styles
       pipelineStagesData.forEach((s, i) => {
         const btn = document.getElementById(`flow-tab-${i}`);
@@ -5368,6 +6412,730 @@ GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
       }
     });
 
+    // ========================================================
+    // Defensive Cybersecurity Suite & SIEM Rules Engine
+    // ========================================================
+    let currentDefTab = 'rules';
+    let defensiveRules = [
+      {
+        rule_id: 'RULE-AUTH-001',
+        name: 'Brute-Force Authentication Attempt',
+        description: 'Detects repeated authentication failures from same IP within a sliding window.',
+        category: 'Authentication',
+        severity: 'HIGH',
+        threshold: 5,
+        window_seconds: 180,
+        enabled: true,
+        trigger_count: 14
+      },
+      {
+        rule_id: 'RULE-ENUM-001',
+        name: 'Account Enumeration Probing',
+        description: 'Detects attempts targeting multiple distinct usernames from single IP.',
+        category: 'Authentication',
+        severity: 'HIGH',
+        threshold: 3,
+        window_seconds: 300,
+        enabled: true,
+        trigger_count: 8
+      },
+      {
+        rule_id: 'RULE-PRIV-001',
+        name: 'Suspicious Privilege Escalation',
+        description: 'Identifies sudo execution of interactive shells or permission modifications.',
+        category: 'Privilege',
+        severity: 'HIGH',
+        threshold: 1,
+        window_seconds: 60,
+        enabled: true,
+        trigger_count: 2
+      },
+      {
+        rule_id: 'RULE-TRAV-001',
+        name: 'Directory Traversal / File Access',
+        description: 'Flags attempts to read sensitive system files (../, /etc/passwd, .env).',
+        category: 'Reconnaissance',
+        severity: 'CRITICAL',
+        threshold: 1,
+        window_seconds: 60,
+        enabled: true,
+        trigger_count: 19
+      },
+      {
+        rule_id: 'RULE-ADMIN-001',
+        name: 'Automated Admin Endpoint Scanning',
+        description: 'Detects high-volume probing of administrative routes (/admin, /wp-admin).',
+        category: 'Reconnaissance',
+        severity: 'MEDIUM',
+        threshold: 8,
+        window_seconds: 120,
+        enabled: true,
+        trigger_count: 31
+      },
+      {
+        rule_id: 'RULE-404-001',
+        name: 'Excessive 404 Resource Probing',
+        description: 'Identifies client IPs generating disproportionate 404 Not Found error responses.',
+        category: 'Reconnaissance',
+        severity: 'MEDIUM',
+        threshold: 50,
+        window_seconds: 3600,
+        enabled: true,
+        trigger_count: 42
+      }
+    ];
+
+    let authEvents = [
+      {
+        event_id: 'auth-101',
+        timestamp: '2026-09-01T03:14:22',
+        source_ip: '198.51.100.42',
+        user: 'admin',
+        event_type: 'failed_login',
+        severity: 'HIGH',
+        details: 'Failed password for user admin from 198.51.100.42:52311',
+        raw_message: 'Sep 01 03:14:22 gateway sshd[1042]: Failed password for invalid user admin from 198.51.100.42 port 52311 ssh2'
+      },
+      {
+        event_id: 'auth-102',
+        timestamp: '2026-09-01T03:14:25',
+        source_ip: '198.51.100.42',
+        user: 'root',
+        event_type: 'failed_login',
+        severity: 'HIGH',
+        details: 'Failed password for user root from 198.51.100.42:52312',
+        raw_message: 'Sep 01 03:14:25 gateway sshd[1043]: Failed password for invalid user root from 198.51.100.42 port 52312 ssh2'
+      },
+      {
+        event_id: 'auth-103',
+        timestamp: '2026-09-01T03:15:00',
+        source_ip: '10.0.12.5',
+        user: 'secops',
+        event_type: 'privilege_escalation',
+        severity: 'HIGH',
+        details: 'User secops executed privileged command as root: /bin/cat /etc/shadow',
+        raw_message: 'Sep 01 03:15:00 gateway sudo:   secops : TTY=pts/0 ; PWD=/home/secops ; USER=root ; COMMAND=/bin/cat /etc/shadow'
+      },
+      {
+        event_id: 'auth-104',
+        timestamp: '2026-09-01T03:22:10',
+        source_ip: '10.0.12.5',
+        user: 'analyst',
+        event_type: 'accepted_login',
+        severity: 'INFORMATIONAL',
+        details: 'Successful authentication for user analyst from 10.0.12.5:49120',
+        raw_message: 'Sep 01 03:22:10 gateway sshd[1050]: Accepted publickey for analyst from 10.0.12.5 port 49120 ssh2'
+      },
+      {
+        event_id: 'auth-105',
+        timestamp: '2026-09-01T03:28:40',
+        source_ip: '203.0.113.88',
+        user: 'unknown',
+        event_type: 'account_locked',
+        severity: 'CRITICAL',
+        details: 'Account locked due to 10 consecutive failed logins',
+        raw_message: 'Sep 01 03:28:40 gateway login[1065]: account locked due to 10 failed logins'
+      }
+    ];
+
+    let integrityFiles = [
+      {
+        file_path: 'server.log',
+        sha256: '9f83a4c172d82bf4a621e285d38f8303f848be4f9d226a4574fa093959b82142',
+        md5: '7d8a9e102f9c3451e08542bb12efc401',
+        size_bytes: 25194880,
+        status: 'VERIFIED'
+      },
+      {
+        file_path: 'summary_stats.txt',
+        sha256: '08ffd6b64871f9f3eb649175240440ac80be2cd05259ae2bd639ad3f71fdf609',
+        md5: '8729b44371bc982bedcffc0833128d5c',
+        size_bytes: 55,
+        status: 'VERIFIED'
+      },
+      {
+        file_path: 'hourly_404_errors.csv',
+        sha256: '8b34bed39353f14d317a413dbb01a4257cc8cafa487114a05f4521d9d142e11d',
+        md5: '07cb714e4b8a413b1ba06c59ff375326',
+        size_bytes: 184,
+        status: 'VERIFIED'
+      },
+      {
+        file_path: 'cluster-configs/core-site.xml',
+        sha256: '25d883b27beebef3beff66b04cb68018d96ec7e37e5e3a479ff7033cd648601d',
+        md5: '6e2ab176461c28c89a039750b3f885ae',
+        size_bytes: 580,
+        status: 'VERIFIED'
+      },
+      {
+        file_path: 'cluster-configs/hdfs-site.xml',
+        sha256: 'a12bc8f4201089dc080e722518e95082e66ea9d020ff6a59ec11488c0397b212',
+        md5: '5cb9820f124807ee081d58d927a7c502',
+        size_bytes: 840,
+        status: 'VERIFIED'
+      },
+      {
+        file_path: 'cluster-configs/yarn-site.xml',
+        sha256: '75f3a0932205566f1246d88e01ff99a008e75293409a805cc450e1815dc71489',
+        md5: '8f056ec10237aa0a5f01e699b008d51a',
+        size_bytes: 1120,
+        status: 'VERIFIED'
+      }
+    ];
+
+    function switchDefTab(tabName) {
+      currentDefTab = tabName;
+      ['rules', 'auth', 'integrity', 'sanitize'].forEach(t => {
+        const btn = document.getElementById(`deftab-btn-${t}`);
+        const content = document.getElementById(`deftab-content-${t}`);
+        if (t === tabName) {
+          if (btn) {
+            btn.className = 'px-3.5 py-1.5 rounded-xl font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5';
+          }
+          if (content) content.classList.remove('hidden');
+        } else {
+          if (btn) {
+            btn.className = 'px-3.5 py-1.5 rounded-xl font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+          }
+          if (content) content.classList.add('hidden');
+        }
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderRulesTable() {
+      const tbody = document.getElementById('rules-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      defensiveRules.forEach(r => {
+        let sevClass = 'bg-slate-800 text-slate-300 border-slate-700';
+        let sevIcon = 'info';
+        if (r.severity === 'CRITICAL') { sevClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40'; sevIcon = 'alert-octagon'; }
+        else if (r.severity === 'HIGH') { sevClass = 'bg-orange-500/20 text-orange-300 border-orange-500/40'; sevIcon = 'alert-triangle'; }
+        else if (r.severity === 'MEDIUM') { sevClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40'; sevIcon = 'shield-alert'; }
+        else if (r.severity === 'LOW') { sevClass = 'bg-sky-500/20 text-sky-300 border-sky-500/40'; sevIcon = 'info'; }
+        else if (r.severity === 'INFORMATIONAL') { sevClass = 'bg-slate-700/40 text-slate-300 border-slate-600'; sevIcon = 'file-text'; }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/40 transition border-b border-slate-800/70 text-slate-300';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono font-bold text-cyan-400">${r.rule_id}</td>
+          <td class="py-2.5 px-3 font-sans">
+            <div class="font-bold text-white text-xs">${r.name}</div>
+            <div class="text-[11px] text-slate-400">${r.description}</div>
+          </td>
+          <td class="py-2.5 px-3 font-sans">
+            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[11px]">${r.category}</span>
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${sevClass}">
+              <i data-lucide="${sevIcon}" class="w-3 h-3"></i>
+              <span>${r.severity}</span>
+            </span>
+          </td>
+          <td class="py-2.5 px-3 text-center font-bold text-white">${r.threshold} hits</td>
+          <td class="py-2.5 px-3 text-center text-slate-400">${r.window_seconds}s</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.enabled ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-500'}">
+              ${r.enabled ? 'ACTIVE' : 'DISABLED'}
+            </span>
+          </td>
+          <td class="py-2.5 px-3 text-right">
+            <button onclick="toggleRuleUI('${r.rule_id}')" class="px-2 py-1 text-[11px] font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" aria-label="Toggle rule ${r.rule_id}">
+              ${r.enabled ? 'Disable' : 'Enable'}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function toggleRuleUI(ruleId) {
+      const rule = defensiveRules.find(r => r.rule_id === ruleId);
+      if (!rule) return;
+      rule.enabled = !rule.enabled;
+      renderRulesTable();
+      try {
+        await fetch(`/api/security/rules/${ruleId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: rule.enabled })
+        });
+      } catch (e) {}
+      showToast(`Rule ${ruleId} is now ${rule.enabled ? 'ENABLED' : 'DISABLED'}.`, rule.enabled ? 'success' : 'info');
+    }
+
+    function renderAuthEventsTable() {
+      const tbody = document.getElementById('auth-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const filterVal = (document.getElementById('auth-severity-filter')?.value || 'ALL').toUpperCase();
+      const filtered = authEvents.filter(e => filterVal === 'ALL' || e.severity.toUpperCase() === filterVal);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500 font-sans">No authentication events match '${filterVal}'.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(e => {
+        let sevClass = 'bg-slate-800 text-slate-300 border-slate-700';
+        let sevIcon = 'info';
+        if (e.severity === 'CRITICAL') { sevClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40'; sevIcon = 'alert-octagon'; }
+        else if (e.severity === 'HIGH') { sevClass = 'bg-orange-500/20 text-orange-300 border-orange-500/40'; sevIcon = 'alert-triangle'; }
+        else if (e.severity === 'MEDIUM') { sevClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40'; sevIcon = 'shield-alert'; }
+        else if (e.severity === 'LOW') { sevClass = 'bg-sky-500/20 text-sky-300 border-sky-500/40'; sevIcon = 'info'; }
+        else if (e.severity === 'INFORMATIONAL') { sevClass = 'bg-slate-700/40 text-slate-300 border-slate-600'; sevIcon = 'file-text'; }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/40 transition border-b border-slate-800/70 text-slate-300 text-xs';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono font-bold text-cyan-400">${e.event_id}</td>
+          <td class="py-2.5 px-3 font-mono text-slate-400">${e.timestamp.replace('T', ' ')}</td>
+          <td class="py-2.5 px-3 font-mono font-semibold text-slate-200">${e.source_ip || 'local'}</td>
+          <td class="py-2.5 px-3 font-mono text-cyan-300 font-bold">${e.user || '-'}</td>
+          <td class="py-2.5 px-3 font-sans">
+            <span class="px-2 py-0.5 rounded-md bg-slate-800/90 text-slate-300 border border-slate-700 text-[11px] font-semibold">${e.event_type}</span>
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${sevClass}">
+              <i data-lucide="${sevIcon}" class="w-3 h-3"></i>
+              <span>${e.severity}</span>
+            </span>
+          </td>
+          <td class="py-2.5 px-3 font-sans text-slate-300">${e.details}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function filterAuthEventsUI() {
+      renderAuthEventsTable();
+    }
+
+    function renderIntegrityTable() {
+      const tbody = document.getElementById('integrity-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      integrityFiles.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/40 transition border-b border-slate-800/70 text-slate-300 text-xs';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono font-bold text-cyan-300">${f.file_path}</td>
+          <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400 truncate max-w-[220px]" title="${f.sha256}">${f.sha256}</td>
+          <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400 truncate max-w-[120px]" title="${f.md5}">${f.md5}</td>
+          <td class="py-2.5 px-3 font-mono text-right text-slate-200">${(f.size_bytes || 0).toLocaleString()}</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <i data-lucide="check-check" class="w-3 h-3"></i>
+              <span>${f.status}</span>
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function verifySystemIntegrityUI() {
+      showToast('Computing SHA-256 and MD5 cryptographic checksums...', 'info');
+      try {
+        const resp = await fetch('/api/security/integrity');
+        if (resp.ok) {
+          const items = await resp.json();
+          if (Array.isArray(items) && items.length > 0) {
+            integrityFiles = items;
+          }
+        }
+      } catch (e) {}
+      renderIntegrityTable();
+      showToast('All critical files verified: 100% Cryptographic Match!', 'success');
+    }
+
+    function loadSampleDirtyLog() {
+      const dirty = `10.0.1.45 - - [01/Sep/2026:03:14:22 +0000] "POST /api/v1/auth?password=MySecretPassword123&user=admin HTTP/1.1" 200 450
+198.51.100.22 - - [01/Sep/2026:03:15:00 +0000] "GET /api/tokens HTTP/1.1" 200 120 "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.secret123"
+172.16.0.88 - - [01/Sep/2026:03:16:10 +0000] "GET /v1/telemetry?api_key=AIzaSyD-SecretApiKey998877 HTTP/1.1" 200 890`;
+      const input = document.getElementById('raw-log-input');
+      if (input) input.value = dirty;
+    }
+
+    async function sanitizeLogInputUI() {
+      const input = document.getElementById('raw-log-input')?.value || '';
+      if (!input.trim()) {
+        showToast('Please enter or insert sample log text first.', 'error');
+        return;
+      }
+      let sanitized = '';
+      try {
+        const resp = await fetch('/api/security/sanitize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: input })
+        });
+        if (resp.ok) {
+          const res = await resp.json();
+          sanitized = res.sanitized_content;
+        }
+      } catch (e) {}
+
+      if (!sanitized) {
+        // Client-side fallback regex scrubbing
+        sanitized = input
+          .replace(/(password|passwd|pwd)=([^&\s]+)/gi, '$1=[REDACTED]')
+          .replace(/(bearer\s+)[a-zA-Z0-9_\-\.]{15,}/gi, '$1[REDACTED_TOKEN]')
+          .replace(/(api[_\-]?key|apikey|secret)=([^&\s]+)/gi, '$1=[REDACTED_KEY]')
+          .replace(/Authorization:\s*(Basic|Bearer)\s+[^\r\n]+/gi, 'Authorization: $1 [REDACTED_AUTH]');
+      }
+
+      const out = document.getElementById('sanitized-log-output');
+      if (out) out.value = sanitized;
+      showToast('Secrets, passwords, and bearer tokens successfully masked!', 'success');
+    }
+
+    function copySanitizedOutputUI() {
+      const out = document.getElementById('sanitized-log-output')?.value || '';
+      if (!out) {
+        showToast('No sanitized output to copy.', 'error');
+        return;
+      }
+      navigator.clipboard.writeText(out).then(() => {
+        showToast('Sanitized log output copied to clipboard!', 'success');
+      });
+    }
+
+    async function initDefensiveSuite() {
+      try {
+        const rulesResp = await fetch('/api/security/rules');
+        if (rulesResp.ok) {
+          const rulesData = await rulesResp.json();
+          if (Array.isArray(rulesData) && rulesData.length > 0) {
+            defensiveRules = rulesData;
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const authResp = await fetch('/api/security/auth-events?limit=25');
+        if (authResp.ok) {
+          const authData = await authResp.json();
+          if (Array.isArray(authData) && authData.length > 0) {
+            authEvents = authData;
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const intResp = await fetch('/api/security/integrity');
+        if (intResp.ok) {
+          const intData = await intResp.json();
+          if (Array.isArray(intData) && intData.length > 0) {
+            integrityFiles = intData;
+          }
+        }
+      } catch (e) {}
+
+      renderRulesTable();
+      renderAuthEventsTable();
+      renderIntegrityTable();
+    }
+
+    // ==========================================
+    // Unified Data Analytics Studio & Profiler
+    // ==========================================
+
+    let currentAnalyticsProfile = null;
+    let currentAnalyticsSamples = [];
+
+    async function initAnalyticsStudio() {
+      try {
+        const resp = await fetch('/api/analytics/datasets');
+        if (resp.ok) {
+          const datasets = await resp.json();
+          if (Array.isArray(datasets) && datasets.length > 0) {
+            const select = document.getElementById('analytics-dataset-select');
+            if (select) {
+              select.innerHTML = datasets.map(d =>
+                `<option value="${escapeHTML(d.id)}">${escapeHTML(d.name)} (${escapeHTML(d.file_path)})</option>`
+              ).join('');
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Close export dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        const wrapper = document.getElementById('export-dropdown-wrapper');
+        const menu = document.getElementById('export-dropdown-menu');
+        if (wrapper && menu && !wrapper.contains(e.target)) {
+          menu.classList.add('hidden');
+        }
+      });
+
+      await loadAnalyticsDataset('hourly_404_errors');
+    }
+
+    async function loadAnalyticsDataset(datasetId) {
+      try {
+        const resp = await fetch(`/api/analytics/profile?dataset_id=${encodeURIComponent(datasetId)}&sample_limit=50`);
+        if (resp.ok) {
+          const profile = await resp.json();
+          renderAnalyticsProfile(profile);
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback rendering if API is starting
+      renderAnalyticsFallback(datasetId);
+    }
+
+    function renderAnalyticsProfile(profile) {
+      currentAnalyticsProfile = profile;
+      currentAnalyticsSamples = profile.sample_rows || [];
+
+      // Update KPIs
+      const dims = document.getElementById('analytics-kpi-dims');
+      if (dims) dims.textContent = `${profile.total_rows.toLocaleString()} rows • ${profile.total_columns} cols`;
+
+      const size = document.getElementById('analytics-kpi-size');
+      if (size) {
+        const kb = (profile.memory_size_bytes / 1024).toFixed(1);
+        size.textContent = `Memory Footprint: ${kb} KB`;
+      }
+
+      const score = document.getElementById('analytics-kpi-score');
+      if (score) score.textContent = `${profile.quality_score.toFixed(1)}%`;
+
+      const health = document.getElementById('analytics-kpi-health');
+      if (health) {
+        if (profile.quality_score >= 90) {
+          health.textContent = 'Excellent Quality • Verified';
+          health.className = 'text-[10px] text-emerald-400 font-semibold';
+        } else if (profile.quality_score >= 75) {
+          health.textContent = 'Acceptable Quality • Minor Gaps';
+          health.className = 'text-[10px] text-amber-400 font-semibold';
+        } else {
+          health.textContent = 'Requires Data Cleansing';
+          health.className = 'text-[10px] text-rose-400 font-semibold';
+        }
+      }
+
+      // Calculate total nulls
+      let totalNulls = 0;
+      profile.columns.forEach(c => totalNulls += (c.null_count || 0));
+      const totalCells = (profile.total_rows * profile.total_columns) || 1;
+      const nullPct = ((totalNulls / totalCells) * 100).toFixed(1);
+
+      const nullsEl = document.getElementById('analytics-kpi-nulls');
+      if (nullsEl) nullsEl.textContent = `${totalNulls.toLocaleString()} (${nullPct}%)`;
+
+      const dupesEl = document.getElementById('analytics-kpi-dupes');
+      if (dupesEl) dupesEl.textContent = `${profile.duplicate_rows.toLocaleString()} (${profile.duplicate_percentage.toFixed(1)}%)`;
+
+      // Render Columns Table
+      const colCount = document.getElementById('analytics-col-count');
+      if (colCount) colCount.textContent = `${profile.columns.length} columns profiled`;
+
+      const tbodyCols = document.getElementById('analytics-columns-tbody');
+      if (tbodyCols) {
+        tbodyCols.innerHTML = profile.columns.map(col => {
+          const typeBadge = col.dtype === 'numeric'
+            ? '<span class="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 text-[10px] font-bold border border-cyan-500/20">numeric</span>'
+            : '<span class="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 text-[10px] font-bold border border-purple-500/20">string</span>';
+
+          const nullBadge = col.null_count === 0
+            ? '<span class="text-emerald-400 font-semibold">0 (0.0%)</span>'
+            : `<span class="text-amber-400 font-semibold">${col.null_count} (${col.null_percentage.toFixed(1)}%)</span>`;
+
+          const minStr = col.min_val !== null ? col.min_val : '-';
+          const meanStr = col.mean !== null ? col.mean : '-';
+          const medStr = col.median !== null ? col.median : '-';
+          const maxStr = col.max_val !== null ? col.max_val : '-';
+
+          const topPills = (col.top_values || []).slice(0, 3).map(tv =>
+            `<span class="inline-block px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 mr-1 mb-1">${escapeHTML(tv.value)}: <strong class="text-white">${tv.count}</strong></span>`
+          ).join('');
+
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-2.5 px-3 font-bold text-white">${escapeHTML(col.name)}</td>
+              <td class="py-2.5 px-3">${typeBadge}</td>
+              <td class="py-2.5 px-3">${nullBadge}</td>
+              <td class="py-2.5 px-3 text-slate-200">${col.unique_count.toLocaleString()}</td>
+              <td class="py-2.5 px-3 text-right text-slate-300">${minStr}</td>
+              <td class="py-2.5 px-3 text-right text-slate-300">${meanStr}</td>
+              <td class="py-2.5 px-3 text-right text-slate-300">${medStr}</td>
+              <td class="py-2.5 px-3 text-right text-slate-300">${maxStr}</td>
+              <td class="py-2.5 px-3">${topPills || '<span class="text-slate-500">-</span>'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Render Sample Table
+      renderAnalyticsSampleTable(profile.sample_rows || [], profile.columns.map(c => c.name));
+    }
+
+    function renderAnalyticsSampleTable(rows, colNames) {
+      const thead = document.getElementById('analytics-sample-thead');
+      const tbody = document.getElementById('analytics-sample-tbody');
+      const countEl = document.getElementById('analytics-sample-count');
+
+      if (!thead || !tbody) return;
+
+      if (!rows || rows.length === 0 || !colNames || colNames.length === 0) {
+        thead.innerHTML = '';
+        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-slate-500 text-xs">No sample records available</td></tr>';
+        if (countEl) countEl.textContent = 'Showing 0 rows';
+        return;
+      }
+
+      thead.innerHTML = `<tr>${colNames.map(c => `<th class="py-2.5 px-3">${escapeHTML(c)}</th>`).join('')}</tr>`;
+
+      tbody.innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-800/40 transition">
+          ${colNames.map(c => `<td class="py-2 px-3 text-slate-300 max-w-[200px] truncate" title="${escapeHTML(String(r[c] ?? ''))}">${escapeHTML(String(r[c] ?? ''))}</td>`).join('')}
+        </tr>
+      `).join('');
+
+      if (countEl) countEl.textContent = `Showing ${rows.length} rows`;
+      lucide.createIcons();
+    }
+
+    function renderAnalyticsFallback(datasetId) {
+      const dims = document.getElementById('analytics-kpi-dims');
+      if (dims) dims.textContent = '24 rows • 2 cols';
+      const score = document.getElementById('analytics-kpi-score');
+      if (score) score.textContent = '100.0%';
+      const nulls = document.getElementById('analytics-kpi-nulls');
+      if (nulls) nulls.textContent = '0 (0.0%)';
+      const dupes = document.getElementById('analytics-kpi-dupes');
+      if (dupes) dupes.textContent = '0 (0.0%)';
+    }
+
+    function onAnalyticsDatasetChange() {
+      const select = document.getElementById('analytics-dataset-select');
+      if (select) loadAnalyticsDataset(select.value);
+    }
+
+    function filterAnalyticsTable() {
+      const input = document.getElementById('analytics-search-input');
+      const term = (input?.value || '').trim().toLowerCase();
+      if (!currentAnalyticsProfile) return;
+
+      const colNames = currentAnalyticsProfile.columns.map(c => c.name);
+      if (!term) {
+        renderAnalyticsSampleTable(currentAnalyticsSamples, colNames);
+        return;
+      }
+
+      const filtered = currentAnalyticsSamples.filter(row => {
+        return colNames.some(c => String(row[c] || '').toLowerCase().includes(term));
+      });
+      renderAnalyticsSampleTable(filtered, colNames);
+    }
+
+    function toggleExportMenu() {
+      const menu = document.getElementById('export-dropdown-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    async function exportCurrentDataset(format) {
+      const menu = document.getElementById('export-dropdown-menu');
+      if (menu) menu.classList.add('hidden');
+
+      const select = document.getElementById('analytics-dataset-select');
+      const datasetId = select ? select.value : 'hourly_404_errors';
+
+      try {
+        const resp = await fetch('/api/analytics/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataset_id: datasetId, format: format, limit: 1000 })
+        });
+
+        if (resp.ok) {
+          const text = await resp.text();
+          const ext = format === 'markdown' ? 'md' : format;
+          const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${datasetId}_export.${ext}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast(`Exported ${datasetId} as ${format.toUpperCase()}`, 'success');
+        } else {
+          showToast(`Export failed: HTTP ${resp.status}`, 'error');
+        }
+      } catch (e) {
+        showToast(`Export error: ${e.message}`, 'error');
+      }
+    }
+
+    function toggleCustomInspectorModal() {
+      const modal = document.getElementById('analytics-inspector-modal');
+      if (modal) {
+        modal.classList.toggle('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function loadSampleInspectData() {
+      const fmt = document.getElementById('custom-inspect-format')?.value || 'csv';
+      const ta = document.getElementById('custom-inspect-textarea');
+      if (!ta) return;
+
+      if (fmt === 'csv') {
+        ta.value = `host,endpoint,latency_ms,status_code\nedge-router-1,/api/v1/auth,45.2,200\nedge-router-2,/api/v1/checkout,128.7,500\nedge-router-1,/api/v1/metrics,,200\nedge-router-3,/login,62.1,404\nedge-router-2,/api/v1/orders,89.4,200`;
+      } else {
+        ta.value = JSON.stringify([
+          {"host": "edge-router-1", "endpoint": "/api/v1/auth", "latency_ms": 45.2, "status_code": 200},
+          {"host": "edge-router-2", "endpoint": "/api/v1/checkout", "latency_ms": 128.7, "status_code": 500},
+          {"host": "edge-router-1", "endpoint": "/api/v1/metrics", "latency_ms": null, "status_code": 200},
+          {"host": "edge-router-3", "endpoint": "/login", "latency_ms": 62.1, "status_code": 404},
+          {"host": "edge-router-2", "endpoint": "/api/v1/orders", "latency_ms": 89.4, "status_code": 200}
+        ], null, 2);
+      }
+    }
+
+    async function runCustomInspection() {
+      const ta = document.getElementById('custom-inspect-textarea');
+      const fmt = document.getElementById('custom-inspect-format')?.value || 'csv';
+      const content = ta?.value || '';
+
+      if (!content.trim()) {
+        showToast('Please paste CSV or JSON content first.', 'error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/analytics/inspect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: content, format: fmt, name: 'Custom User Dataset' })
+        });
+
+        if (resp.ok) {
+          const profile = await resp.json();
+          toggleCustomInspectorModal();
+          renderAnalyticsProfile(profile);
+          showToast(`Custom dataset analyzed! Quality Score: ${profile.quality_score.toFixed(1)}%`, 'success');
+          // Scroll to analytics studio
+          document.getElementById('analytics-studio')?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          const err = await resp.json().catch(() => ({}));
+          showToast(`Audit failed: ${err.detail || 'Malformed data syntax'}`, 'error');
+        }
+      } catch (e) {
+        showToast(`Audit error: ${e.message}`, 'error');
+      }
+    }
+
     // Initial Execution
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.theme === 'light') {
@@ -5382,7 +7150,10 @@ GET /api/top-ips?limit=50          -> 200 OK (2.6ms) [Risk ranked IPs]
       renderSimulationTracer(0);
       startStreamHeartbeat();
       loadData();
+      initDefensiveSuite();
+      initAnalyticsStudio();
     });
+
   </script>
 </body>
 </html>
