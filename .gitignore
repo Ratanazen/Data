@@ -1,29 +1,30 @@
-# Python virtual environments & bytecode
-.venv/
-venv/
-env/
+# Python bytecode and virtual environments
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+venv/
+env/
 
-# Jupyter checkpoints
-.ipynb_checkpoints/
+# Uploads and temporary data
+uploads/
+.tmp_uploads/
+*.tmp
 
-# OS / Editor files
-.DS_Store
-Thumbs.db
-# Environment secrets
-.env
-
-# Testing & Linting
+# Testing and coverage caches
 .pytest_cache/
 .ruff_cache/
-*.egg-info/
+.coverage
+htmlcov/
 
-# Data Lakehouse Artifacts (generated at runtime)
-data/bronze/
-data/silver/
-data/gold/
-data/quarantine/
-data/raw/*.log
+# Operating system and editor artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
 
+# Environment variables
+.env
+.env.local
