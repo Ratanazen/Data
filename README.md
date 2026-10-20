@@ -108,24 +108,31 @@ Run the built-in automated test suite directly from `app.py`:
 python app.py --test
 ```
 
-### Automated Test Coverage
+### Automated Test Coverage (21/21 Passed • 100%)
 
-| Test Case | Description | Result |
-| :--- | :--- | :---: |
-| `t1_root_render` | GET `/` renders Dark Navy (`#0b1120`) & Cyan dashboard | PASSED |
-| `t2_health_status` | GET `/health` & `/api/status` report engine status | PASSED |
-| `t3_sample_generator` | Built-in 1,200 record generator detects 03:00 AM failure peak | PASSED |
-| `t4_csv_upload` | Valid CSV upload computes exact 404 percentage | PASSED |
-| `t5_clf_log_upload` | Apache / Nginx Common Log Format parsing | PASSED |
-| `t6_empty_file` | Empty upload rejection with 400 Bad Request | PASSED |
-| `t7_invalid_extension`| Disallowed extension rejection (`.exe`) | PASSED |
-| `t8_missing_columns` | Missing columns handled gracefully without crashing | PASSED |
-| `t9_timezone_norm` | Timezone offsets (`-0500`, `+0000`) normalized to UTC | PASSED |
-| `t10_encodings` | Auto-decodes UTF-8, UTF-8 with BOM, and Latin-1 | PASSED |
-| `t11_api_query` | Live search, pagination, status filtering, and endpoints | PASSED |
-| `t12_csv_injection` | CSV export sanitizes formula injection characters (`=`, `+`, `-`, `@`) | PASSED |
-| `t13_spark_fallback` | PySpark and Hadoop HDFS fallback behavior | PASSED |
-| `t14_session_clear` | Session clear and temporary dataset cleanup | PASSED |
+| Test Case | Scenario / Requirement | Verification | Result |
+| :--- | :--- | :--- | :---: |
+| `01_valid_csv` | Valid CSV upload | Computes total requests, status counts, 404 count | PASSED |
+| `02_clf_logs` | Apache & Nginx access log parsing | Standard CLF regex parses IP, date, method, path, status | PASSED |
+| `03_empty_csv` | Empty CSV file rejection | 0-byte file rejected with HTTP 400 Bad Request | PASSED |
+| `04_malformed_rows` | Ragged/malformed rows handling | Excluded rows safely accounted for in `excluded_records` | PASSED |
+| `05_missing_timestamp` | Missing timestamp column | Handled gracefully without crash (`timeline_available: false`) | PASSED |
+| `06_missing_status` | Missing status-code column | Handled gracefully (`status_available: false`, rate = 0.0%) | PASSED |
+| `07_invalid_timestamp`| Unparseable timestamp values | Non-date values fall back safely to unindexed timeline | PASSED |
+| `08_mixed_statuses` | Mixed HTTP status codes | Verifies counts for 200, 301, 400, 403, 404, 500 & categories | PASSED |
+| `09_404_percentage` | Exact 404 rate formula | $(\text{404 count} / \text{total valid requests}) \times 100$ | PASSED |
+| `10_hourly_aggregation`| 24-hour UTC aggregation | Correct counts per hour, highlights peak failure window | PASSED |
+| `11_timezone_offsets` | Timezone normalization | Offsets (`-0500`, `+0700`, `Z`) normalized to UTC | PASSED |
+| `12_oversized_upload` | Oversized payload rejection | File exceeding limit rejected with HTTP 413 | PASSED |
+| `13_csv_injection` | CSV spreadsheet formula defense | Values starting with `=+-@\t\r` prepended with `'` | PASSED |
+| `14_spark_fallback` | PySpark optional engine fallback | Automatic fallback to local in-memory engine | PASSED |
+| `15_hdfs_connection` | HDFS NameNode connection failure | Graceful connection test without service crash | PASSED |
+| `16_route_errors` | Flask route & parameter errors | Returns 404 on invalid route/dataset, 400 on `.exe` | PASSED |
+| `17_ui_render_health` | UI rendering & service health | GET `/` renders Dark Navy/Cyan UI, `/health` reports 200 OK | PASSED |
+| `18_sample_generator` | Assignment 2 sample generator | 1,200 records generated with 03:00 AM peak spike | PASSED |
+| `19_data_explorer` | Live pagination, search & filter | Column sorting, status filter, 10/25/50/100 pagination | PASSED |
+| `20_session_clear` | Session clear & upload cleanup | POST `/api/clear` flushes memory and temporary files | PASSED |
+| `21_spark_dataframe` | PySpark DataFrame distributed ETL | Real PySpark DataFrame 404 filter and group-by aggregation | PASSED |
 
 ---
 

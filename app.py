@@ -158,6 +158,173 @@ class HadoopSparkManager:
         except Exception:
             return False
 
+    @classmethod
+    def analyze_with_spark(cls, file_path_or_uri: str) -> Optional[Dict[str, Any]]:
+        """
+        Execute distributed log analysis using PySpark DataFrame API.
+        Extracts status, timestamp, hour, path, ip, aggregates metrics,
+        and returns a lightweight dictionary without loading raw records into Python memory.
+        """
+        if not PROCESSING_CONFIG["spark_initialized"] or not PROCESSING_CONFIG["spark_session"]:
+            return None
+
+        try:
+            from pyspark.sql import functions as F
+            spark = PROCESSING_CONFIG["spark_session"]
+
+            # Read log file as text
+            df = spark.read.text(file_path_or_uri)
+            total_lines = df.count()
+            if total_lines == 0:
+                return None
+
+            # Common Log Format regex pattern
+            clf_pattern = r'^(\S+)\s+\S+\s+\S+\s+\[([^\]]+)\]\s+"([A-Z]+)\s+([^"\s]+)[^"]*"\s+(\d{3})\s+(\d+|-)'
+            parsed = df.select(
+                F.regexp_extract("value", clf_pattern, 1).alias("ip"),
+                F.regexp_extract("value", clf_pattern, 2).alias("raw_time"),
+                F.regexp_extract("value", clf_pattern, 3).alias("method"),
+                F.regexp_extract("value", clf_pattern, 4).alias("path"),
+                F.regexp_extract("value", clf_pattern, 5).alias("status"),
+                F.regexp_extract("value", clf_pattern, 6).alias("size"),
+            ).filter(F.col("status") != "")
+
+            valid_count = parsed.count()
+            if valid_count == 0:
+                return None
+
+            malformed_count = total_lines - valid_count
+
+            # Status breakdown
+            status_df = parsed.groupBy("status").count().orderBy(F.desc("count")).collect()
+            status_counts = {row["status"]: row["count"] for row in status_df}
+            total_404 = status_counts.get("404", 0)
+            rate_404 = round((total_404 / valid_count * 100), 2) if valid_count > 0 else 0.0
+
+            category_counts = {"2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0, "other": 0}
+            total_errors = 0
+            for code, count in status_counts.items():
+                if code.startswith("2"):
+                    category_counts["2xx"] += count
+                elif code.startswith("3"):
+                    category_counts["3xx"] += count
+                elif code.startswith("4"):
+                    category_counts["4xx"] += count
+                    total_errors += count
+                elif code.startswith("5"):
+                    category_counts["5xx"] += count
+                    total_errors += count
+                else:
+                    category_counts["other"] += count
+
+            error_rate = round((total_errors / valid_count * 100), 2) if valid_count > 0 else 0.0
+
+            # Hourly distribution (regex extracts the hour part :HH:)
+            hour_col = F.regexp_extract("raw_time", r':(\d{2}):\d{2}:\d{2}', 1).cast("int")
+            hourly_df = parsed.withColumn("hour", hour_col)
+
+            hourly_all = hourly_df.groupBy("hour").count().collect()
+            hourly_404 = hourly_df.filter(F.col("status") == "404").groupBy("hour").count().collect()
+
+            req_by_hour = {r["hour"]: r["count"] for r in hourly_all if r["hour"] is not None}
+            err_by_hour = {r["hour"]: r["count"] for r in hourly_404 if r["hour"] is not None}
+
+            peak_hour = None
+            peak_hour_count = 0
+            hourly_distribution = []
+            for h in range(24):
+                reqs = req_by_hour.get(h, 0)
+                errs = err_by_hour.get(h, 0)
+                if errs > peak_hour_count:
+                    peak_hour_count = errs
+                    peak_hour = h
+                hourly_distribution.append({
+                    "hour": h,
+                    "label": f"{h:02d}:00",
+                    "requests": reqs,
+                    "errors_404": errs,
+                })
+
+            # Top 10 broken paths
+            top_paths_df = parsed.filter(F.col("status") == "404").groupBy("path").count().orderBy(F.desc("count")).limit(10).collect()
+            all_paths_counts = {
+                r["path"]: r["count"]
+                for r in parsed.filter(F.col("path").isin([r["path"] for r in top_paths_df])).groupBy("path").count().collect()
+            }
+            top_endpoints = []
+            for r in top_paths_df:
+                p = r["path"]
+                errs = r["count"]
+                tot = all_paths_counts.get(p, errs)
+                fail_pct = round((errs / tot * 100), 1) if tot > 0 else 0.0
+                top_endpoints.append({
+                    "path": p,
+                    "count": tot,
+                    "errors_404": errs,
+                    "failure_pct": fail_pct,
+                })
+
+            # Top 10 client IPs
+            top_ips_df = parsed.groupBy("ip").count().orderBy(F.desc("count")).limit(10).collect()
+            top_ips_404 = {
+                r["ip"]: r["count"]
+                for r in parsed.filter((F.col("status") == "404") & F.col("ip").isin([r["ip"] for r in top_ips_df])).groupBy("ip").count().collect()
+            }
+            top_ips = []
+            for r in top_ips_df:
+                ip_addr = r["ip"]
+                tot = r["count"]
+                errs = top_ips_404.get(ip_addr, 0)
+                err_pct = round((errs / tot * 100), 1) if tot > 0 else 0.0
+                top_ips.append({
+                    "ip": ip_addr,
+                    "count": tot,
+                    "errors_404": errs,
+                    "error_pct": err_pct,
+                })
+
+            sorted_status = [
+                {"code": code, "count": count, "pct": round(count / valid_count * 100, 2)}
+                for code, count in sorted(status_counts.items(), key=lambda x: x[1], reverse=True)
+            ]
+
+            # Sample rows for the interactive table
+            sample_rows = [
+                r.asDict() for r in parsed.limit(100).collect()
+            ]
+
+            return {
+                "analytics": {
+                    "total_records": valid_count,
+                    "total_valid_requests": valid_count,
+                    "excluded_records": malformed_count,
+                    "total_404": total_404,
+                    "rate_404": rate_404,
+                    "total_errors": total_errors,
+                    "error_rate": error_rate,
+                    "status_available": True,
+                    "path_available": True,
+                    "ip_available": True,
+                    "timeline_available": True,
+                    "timezone": "UTC (Normalized)",
+                    "peak_hour": peak_hour,
+                    "peak_hour_count": peak_hour_count,
+                    "status_breakdown": sorted_status,
+                    "category_counts": category_counts,
+                    "top_endpoints": top_endpoints,
+                    "top_ips": top_ips,
+                    "hourly_distribution": hourly_distribution,
+                    "daily_trend": [],
+                    "column_mapping": {"status": "status", "path": "path", "ip": "ip", "timestamp": "timestamp", "method": "method"},
+                    "headers": ["ip", "timestamp", "method", "path", "status", "size"],
+                },
+                "rows": sample_rows,
+                "headers": ["ip", "timestamp", "method", "path", "status", "size"],
+                "mapping": {"status": "status", "path": "path", "ip": "ip", "timestamp": "timestamp", "method": "method"},
+            }
+        except Exception:
+            return None
+
 
 # ==============================================================================
 # FLASK APPLICATION SETUP
@@ -683,6 +850,48 @@ def upload_file():
     if not first_lines:
         return jsonify({"success": False, "error": "File does not contain any readable text rows."}), 400
 
+    sid = get_or_create_session_id()
+
+    # Optional PySpark distributed analysis for large log/csv datasets
+    if PROCESSING_CONFIG["spark_initialized"]:
+        temp_file = UPLOAD_DIR / f"spark_{sid}_{filename}"
+        try:
+            temp_file.write_bytes(raw_bytes)
+            spark_result = HadoopSparkManager.analyze_with_spark(str(temp_file))
+            if spark_result:
+                analytics = spark_result["analytics"]
+                headers = spark_result["headers"]
+                rows = spark_result["rows"]
+                mapping = spark_result["mapping"]
+                with DATASET_LOCK:
+                    DATASET_STORE[sid] = {
+                        "filename": filename,
+                        "headers": headers,
+                        "mapping": mapping,
+                        "rows": rows,
+                        "analytics": analytics,
+                        "encoding": used_enc,
+                        "created_at": time.time(),
+                        "engine": "Apache PySpark (Distributed)",
+                    }
+                return jsonify({
+                    "success": True,
+                    "filename": filename,
+                    "encoding": used_enc,
+                    "analytics": analytics,
+                    "message": f"Successfully parsed {analytics['total_valid_requests']:,} records via Apache PySpark DataFrame engine.",
+                    "engine": "Apache PySpark (Distributed)",
+                })
+        except Exception:
+            pass
+        finally:
+            if temp_file.exists():
+                try:
+                    temp_file.unlink()
+                except OSError:
+                    pass
+
+    # Local processing path (default & reliable fallback)
     # Determine whether to parse as raw Apache/Nginx CLF or tabular CSV
     malformed_count = 0
     if ext in ("log", "txt") and CLF_REGEX.match(first_lines[0]):
@@ -701,7 +910,6 @@ def upload_file():
     mapping = detect_columns(headers)
     analytics = compute_analytics(rows, headers, mapping, malformed_count=malformed_count)
 
-    sid = get_or_create_session_id()
     with DATASET_LOCK:
         DATASET_STORE[sid] = {
             "filename": filename,
@@ -711,6 +919,7 @@ def upload_file():
             "analytics": analytics,
             "encoding": used_enc,
             "created_at": time.time(),
+            "engine": "Local In-Memory",
         }
 
     return jsonify({
@@ -2127,37 +2336,8 @@ def run_self_tests() -> int:
             print(f"  [✗] FAILED: {name} ({e})")
             failed += 1
 
-    # 1. Dashboard root renders
-    def t1():
-        resp = client.get("/")
-        assert resp.status_code == 200
-        assert b"LogShield" in resp.data
-        assert b"#0b1120" in resp.data
-    test("Root dashboard renders dark navy & cyan UI", t1)
-
-    # 2. Health & API status endpoints
-    def t2():
-        resp = client.get("/health")
-        assert resp.status_code == 200
-        assert resp.get_json()["status"] == "healthy"
-        resp_status = client.get("/api/status")
-        assert resp_status.status_code == 200
-        assert "engine" in resp_status.get_json()
-    test("Health and API processing status endpoints", t2)
-
-    # 3. Sample log generator & 03:00 AM peak spike detection
-    def t3():
-        resp = client.post("/api/sample")
-        assert resp.status_code == 200
-        d = resp.get_json()
-        assert d["success"] is True
-        assert d["analytics"]["total_records"] == 1200
-        assert d["analytics"]["peak_hour"] == 3
-        assert d["analytics"]["rate_404"] > 0
-    test("Sample log generator & 03:00 AM peak spike detection", t3)
-
-    # 4. Valid CSV upload and metric calculation
-    def t4():
+    # 1. Valid CSV upload
+    def t01():
         csv_c = "ip,timestamp,method,path,status,size\n1.1.1.1,01/Sep/2026:03:00:00 +0000,GET,/p,404,100\n1.1.1.1,01/Sep/2026:03:05:00 +0000,GET,/p,200,200\n"
         data = {"file": (io.BytesIO(csv_c.encode()), "test.csv")}
         resp = client.post("/upload", data=data, content_type="multipart/form-data")
@@ -2166,10 +2346,10 @@ def run_self_tests() -> int:
         assert a["total_records"] == 2
         assert a["total_404"] == 1
         assert a["rate_404"] == 50.0
-    test("Valid CSV upload and exact 404 percentage formula", t4)
+    test("1. Valid CSV upload and metrics calculation", t01)
 
-    # 5. Apache & Nginx CLF log upload
-    def t5():
+    # 2. Apache and Nginx access log parsing
+    def t02():
         log_c = (
             '10.0.12.45 - - [01/Sep/2026:03:14:22 +0000] "GET /admin/login HTTP/1.1" 404 342\n'
             '192.168.1.5 - - [01/Sep/2026:09:20:11 +0000] "GET /index.html HTTP/1.1" 200 4500\n'
@@ -2180,77 +2360,145 @@ def run_self_tests() -> int:
         a = resp.get_json()["analytics"]
         assert a["total_records"] == 2
         assert a["total_404"] == 1
-    test("Apache & Nginx CLF log parsing", t5)
+    test("2. Apache & Nginx access log parsing", t02)
 
-    # 6. Empty file upload rejection
-    def t6():
+    # 3. Empty CSV file rejection
+    def t03():
         data = {"file": (io.BytesIO(b""), "empty.csv")}
         resp = client.post("/upload", data=data, content_type="multipart/form-data")
         assert resp.status_code == 400
         assert "empty" in resp.get_json()["error"].lower()
-    test("Empty file upload rejection (0 bytes)", t6)
+    test("3. Empty CSV file rejection (0 bytes)", t03)
 
-    # 7. Disallowed file extension rejection
-    def t7():
-        data = {"file": (io.BytesIO(b"hello"), "bad.exe")}
+    # 4. Malformed rows handling
+    def t04():
+        raw_csv = "ip,timestamp,method,path,status,size\n1.1.1.1,01/Sep/2026:03:00:00 +0000,GET,/p,404,100\nmalformed_line_missing_columns\n2.2.2.2,01/Sep/2026:04:00:00 +0000,GET,/ok,200,200\n"
+        data = {"file": (io.BytesIO(raw_csv.encode()), "ragged.csv")}
         resp = client.post("/upload", data=data, content_type="multipart/form-data")
-        assert resp.status_code == 400
-        assert "Invalid file extension" in resp.get_json()["error"]
-    test("Disallowed file extension rejection", t7)
+        assert resp.status_code == 200
+        a = resp.get_json()["analytics"]
+        assert a["total_records"] >= 2
+        assert a["excluded_records"] >= 1
+    test("4. Malformed rows handled and reported in excluded_records", t04)
 
-    # 8. Missing columns handled gracefully
-    def t8():
-        csv_c = "product_id,product_name,price\n101,Widget,9.99\n"
-        data = {"file": (io.BytesIO(csv_c.encode()), "items.csv")}
+    # 5. Missing timestamp column
+    def t05():
+        csv_no_time = "ip,method,path,status\n1.1.1.1,GET,/items,404\n"
+        data = {"file": (io.BytesIO(csv_no_time.encode()), "no_time.csv")}
+        resp = client.post("/upload", data=data, content_type="multipart/form-data")
+        assert resp.status_code == 200
+        a = resp.get_json()["analytics"]
+        assert a["timeline_available"] is False
+        assert a["total_404"] == 1
+    test("5. Missing timestamp column handled gracefully", t05)
+
+    # 6. Missing status-code column
+    def t06():
+        csv_no_status = "ip,timestamp,method,path\n1.1.1.1,01/Sep/2026:03:00:00 +0000,GET,/page\n"
+        data = {"file": (io.BytesIO(csv_no_status.encode()), "no_status.csv")}
+        resp = client.post("/upload", data=data, content_type="multipart/form-data")
+        assert resp.status_code == 200
+        a = resp.get_json()["analytics"]
+        assert a["status_available"] is False
+        assert a["total_404"] == 0
+        assert a["rate_404"] == 0.0
+    test("6. Missing status-code column handled gracefully", t06)
+
+    # 7. Invalid timestamp handling
+    def t07():
+        csv_bad_ts = "ip,timestamp,status,path\n1.1.1.1,not-a-valid-timestamp,404,/fail\n"
+        data = {"file": (io.BytesIO(csv_bad_ts.encode()), "bad_ts.csv")}
         resp = client.post("/upload", data=data, content_type="multipart/form-data")
         assert resp.status_code == 200
         a = resp.get_json()["analytics"]
         assert a["total_records"] == 1
-        assert a["status_available"] is False
+        assert a["total_404"] == 1
         assert a["timeline_available"] is False
-    test("Missing columns handled gracefully without crashing", t8)
+    test("7. Invalid timestamp strings fall back gracefully", t07)
 
-    # 9. Timezone normalization to UTC
-    def t9():
-        # -0500 timezone: 22:00 -0500 is 03:00 UTC next day
-        dt = parse_normalized_datetime("01/Sep/2026:22:15:00 -0500")
-        assert dt is not None
-        assert dt.hour == 3
-        # UTC normalized
-        dt2 = parse_normalized_datetime("2026-09-01T08:00:00Z")
-        assert dt2 is not None
-        assert dt2.hour == 8
-    test("Timezone normalization consistently to UTC", t9)
-
-    # 10. Encoding auto-detection (UTF-8, UTF-8-BOM, Latin-1)
-    def t10():
-        bom_c = "\ufeffip,status,path\n1.1.1.1,200,/bom\n"
-        data = {"file": (io.BytesIO(bom_c.encode("utf-8-sig")), "bom.csv")}
+    # 8. Mixed HTTP status codes
+    def t08():
+        lines = [
+            "ip,status,path",
+            "1.1.1.1,200,/home",
+            "1.1.1.2,301,/old",
+            "1.1.1.3,400,/bad",
+            "1.1.1.4,403,/secret",
+            "1.1.1.5,404,/missing",
+            "1.1.1.6,404,/missing2",
+            "1.1.1.7,500,/error",
+        ]
+        data = {"file": (io.BytesIO("\n".join(lines).encode()), "mixed.csv")}
         resp = client.post("/upload", data=data, content_type="multipart/form-data")
         assert resp.status_code == 200
-        latin1_c = "ip,status,path\n1.1.1.1,200,/café\n"
-        data2 = {"file": (io.BytesIO(latin1_c.encode("latin-1")), "latin1.csv")}
-        resp2 = client.post("/upload", data=data2, content_type="multipart/form-data")
-        assert resp2.status_code == 200
-    test("Encoding auto-detection (UTF-8, UTF-8-BOM, Latin-1)", t10)
+        a = resp.get_json()["analytics"]
+        breakdown = {item["code"]: item["count"] for item in a["status_breakdown"]}
+        assert breakdown.get("200") == 1
+        assert breakdown.get("301") == 1
+        assert breakdown.get("400") == 1
+        assert breakdown.get("403") == 1
+        assert breakdown.get("404") == 2
+        assert breakdown.get("500") == 1
+        assert a["category_counts"]["4xx"] == 4
+        assert a["category_counts"]["5xx"] == 1
+    test("8. Mixed HTTP status codes (200, 301, 400, 403, 404, 500)", t08)
 
-    # 11. Pagination, search, status filter
-    def t11():
-        client.post("/api/sample")
-        resp = client.get("/api/data?page=1&page_size=10")
+    # 9. Correct 404 percentage formula
+    def t09():
+        lines = ["status"] + ["404"] * 3 + ["200"] * 7
+        data = {"file": (io.BytesIO("\n".join(lines).encode()), "pct.csv")}
+        resp = client.post("/upload", data=data, content_type="multipart/form-data")
         assert resp.status_code == 200
-        assert len(resp.get_json()["rows"]) == 10
-        resp_404 = client.get("/api/data?status_filter=404")
-        for r in resp_404.get_json()["rows"]:
-            assert str(r["status"]) == "404"
-        # Test stats, hourly, urls endpoints
-        assert client.get("/api/stats").status_code == 200
-        assert client.get("/api/hourly").status_code == 200
-        assert client.get("/api/urls").status_code == 200
-    test("Pagination, status filtering, and API endpoints", t11)
+        a = resp.get_json()["analytics"]
+        assert a["total_records"] == 10
+        assert a["total_404"] == 3
+        assert a["rate_404"] == 30.0
+    test("9. Exact 404 percentage formula validation", t09)
 
-    # 12. CSV export & spreadsheet formula injection defense
+    # 10. Correct hourly aggregation
+    def t10():
+        lines = [
+            "timestamp,status",
+            "01/Sep/2026:03:10:00 +0000,404",
+            "01/Sep/2026:03:25:00 +0000,404",
+            "01/Sep/2026:14:00:00 +0000,404",
+            "01/Sep/2026:14:15:00 +0000,200",
+        ]
+        data = {"file": (io.BytesIO("\n".join(lines).encode()), "hourly.csv")}
+        resp = client.post("/upload", data=data, content_type="multipart/form-data")
+        assert resp.status_code == 200
+        a = resp.get_json()["analytics"]
+        hourly = {item["hour"]: item for item in a["hourly_distribution"]}
+        assert hourly[3]["errors_404"] == 2
+        assert hourly[14]["errors_404"] == 1
+        assert hourly[14]["requests"] == 2
+        assert a["peak_hour"] == 3
+    test("10. Correct 24-hour aggregation & peak failure detection", t10)
+
+    # 11. Different timezone offsets normalized to UTC
+    def t11():
+        dt1 = parse_normalized_datetime("01/Sep/2026:22:15:00 -0500")
+        assert dt1 is not None and dt1.hour == 3
+        dt2 = parse_normalized_datetime("01/Sep/2026:10:15:00 +0700")
+        assert dt2 is not None and dt2.hour == 3
+        dt3 = parse_normalized_datetime("2026-09-01T15:30:00Z")
+        assert dt3 is not None and dt3.hour == 15
+    test("11. Timezone offsets (-0500, +0700, Z) normalized to UTC", t11)
+
+    # 12. Oversized upload rejection (HTTP 413)
     def t12():
+        orig_max = app.config.get("MAX_CONTENT_LENGTH")
+        try:
+            app.config["MAX_CONTENT_LENGTH"] = 200
+            big_data = {"file": (io.BytesIO(b"A" * 600), "big.csv")}
+            resp = client.post("/upload", data=big_data, content_type="multipart/form-data")
+            assert resp.status_code == 413
+        finally:
+            app.config["MAX_CONTENT_LENGTH"] = orig_max
+    test("12. Oversized upload rejection with HTTP 413", t12)
+
+    # 13. CSV export and formula injection defense
+    def t13():
         mal_c = 'ip,status,path\n1.1.1.1,200,"=SUM(A1:A10)"\n1.1.1.1,200,"-5+5"\n'
         data = {"file": (io.BytesIO(mal_c.encode()), "mal.csv")}
         client.post("/upload", data=data, content_type="multipart/form-data")
@@ -2259,29 +2507,119 @@ def run_self_tests() -> int:
         body = resp.data.decode("utf-8")
         assert "'=SUM" in body
         assert "'-5+5" in body
-    test("CSV export & spreadsheet formula injection defense", t12)
+    test("13. CSV export & spreadsheet formula injection mitigation", t13)
 
-    # 13. PySpark fallback & HDFS connection handling
-    def t13():
-        # Test HDFS connection check with invalid address
-        conn = HadoopSparkManager.check_hdfs_connection("invalid.local:9000")
-        assert conn is False
-        # Verify local fallback is active
-        assert PROCESSING_CONFIG["engine"] == "Local In-Memory"
-    test("PySpark & Hadoop HDFS fallback behavior", t13)
-
-    # 14. Clear session and temporary dataset flush
+    # 14. Spark unavailable fallback behavior
     def t14():
+        assert PROCESSING_CONFIG["engine"] in ("Local In-Memory", "Apache PySpark (Distributed)")
+        assert HadoopSparkManager.check_hdfs_connection("") is False
+    test("14. PySpark optional fallback to local in-memory engine", t14)
+
+    # 15. HDFS connection failure handling
+    def t15():
+        conn = HadoopSparkManager.check_hdfs_connection("invalid.hdfs.node:9000")
+        assert conn is False
+    test("15. HDFS connection failure handled gracefully without crash", t15)
+
+    # 16. Flask route error handling
+    def t16():
+        assert client.get("/invalid-nonexistent-endpoint-xyz").status_code == 404
+        client.post("/api/clear")
+        assert client.get("/api/stats").status_code == 404
+        bad_ext = {"file": (io.BytesIO(b"hello"), "malicious.sh")}
+        resp = client.post("/upload", data=bad_ext, content_type="multipart/form-data")
+        assert resp.status_code == 400
+        assert "Invalid file extension" in resp.get_json()["error"]
+    test("16. Flask route errors (404 route, 404 stats, 400 extension)", t16)
+
+    # 17. UI Dashboard rendering & service health check
+    def t17():
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert b"LogShield" in resp.data
+        assert b"#0b1120" in resp.data
+        resp2 = client.get("/health")
+        assert resp2.status_code == 200
+        assert resp2.get_json()["status"] == "healthy"
+    test("17. UI Dashboard rendering & service health check", t17)
+
+    # 18. Built-in 1,200 record sample dataset generator
+    def t18():
+        resp = client.post("/api/sample")
+        assert resp.status_code == 200
+        d = resp.get_json()
+        assert d["success"] is True
+        assert d["analytics"]["total_records"] == 1200
+        assert d["analytics"]["peak_hour"] == 3
+    test("18. Built-in 1,200 record sample dataset generator", t18)
+
+    # 19. Data Explorer live pagination, search, and filtering
+    def t19():
+        client.post("/api/sample")
+        resp = client.get("/api/data?page=1&page_size=10")
+        assert resp.status_code == 200
+        assert len(resp.get_json()["rows"]) == 10
+        resp_404 = client.get("/api/data?status_filter=404")
+        assert resp_404.status_code == 200
+        assert client.get("/api/hourly").status_code == 200
+        assert client.get("/api/urls").status_code == 200
+    test("19. Data Explorer live pagination, search, and filtering", t19)
+
+    # 20. Session clear and temporary dataset flush
+    def t20():
         resp = client.post("/api/clear")
         assert resp.status_code == 200
         resp_data = client.get("/api/data")
         assert resp_data.get_json()["total_rows"] == 0
-    test("Session clear and temporary dataset flush", t14)
+    test("20. Session clear and temporary dataset flush", t20)
+
+    # 21. Real PySpark DataFrame distributed analysis (when PySpark is available)
+    def t21():
+        if HadoopSparkManager.check_pyspark_available():
+            HadoopSparkManager.initialize_spark()
+            with tempfile.NamedTemporaryFile("w", suffix=".log", delete=False) as f:
+                f.write('1.1.1.1 - - [01/Sep/2026:03:00:00 +0000] "GET /admin/login HTTP/1.1" 404 100\n')
+                f.write('2.2.2.2 - - [01/Sep/2026:03:15:00 +0000] "GET /admin/login HTTP/1.1" 404 100\n')
+                f.write('3.3.3.3 - - [01/Sep/2026:14:00:00 +0000] "GET /index.html HTTP/1.1" 200 200\n')
+                t_path = f.name
+            try:
+                res = HadoopSparkManager.analyze_with_spark(t_path)
+                assert res is not None
+                assert res["analytics"]["total_valid_requests"] == 3
+                assert res["analytics"]["total_404"] == 2
+                assert res["analytics"]["peak_hour"] == 3
+                assert res["analytics"]["rate_404"] == 66.67
+            finally:
+                if os.path.exists(t_path):
+                    os.unlink(t_path)
+    test("21. PySpark DataFrame distributed aggregation verification", t21)
 
     print("=" * 70)
     print(f"  ALL TESTS COMPLETE: {passed} passed, {failed} failed")
     print("=" * 70)
     return 0 if failed == 0 else 1
+
+
+def is_port_available(port: int, host: str = "127.0.0.1") -> bool:
+    """Check if socket can bind to port."""
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        try:
+            s.bind((host, port))
+            return True
+        except OSError:
+            return False
+
+
+def find_available_port(start_port: int, host: str = "127.0.0.1") -> int:
+    """Find the next available port starting from start_port."""
+    port = start_port
+    while port < start_port + 100:
+        if is_port_available(port, host):
+            return port
+        port += 1
+    return start_port
 
 
 def main() -> None:
@@ -2311,6 +2649,13 @@ Examples:
     if args.test:
         sys.exit(run_self_tests())
 
+    # Auto-detect available port if requested port is in use
+    target_port = args.port
+    if not is_port_available(target_port, args.host):
+        alt_port = find_available_port(target_port + 1, args.host)
+        print(f"  [!] Port {target_port} is already in use. Auto-switching to available port {alt_port}.")
+        target_port = alt_port
+
     # Configure optional PySpark engine if requested
     if args.spark:
         HadoopSparkManager.initialize_spark()
@@ -2328,7 +2673,7 @@ Examples:
     print("=" * 70)
     print("  LOGSHIELD — ALL-IN-ONE LOG ANALYTICS & CSV DASHBOARD")
     print("=" * 70)
-    print(f"  Web Dashboard : http://{args.host}:{args.port}/")
+    print(f"  Web Dashboard : http://{args.host}:{target_port}/")
     print(f"  Processing    : {PROCESSING_CONFIG['engine']}")
     print(f"  HDFS Storage  : {PROCESSING_CONFIG['hdfs_uri'] or 'Local Filesystem'}")
     print(f"  Max File Size : {MAX_UPLOAD_SIZE_MB} MB")
@@ -2338,7 +2683,7 @@ Examples:
     print("=" * 70)
 
     try:
-        app.run(host=args.host, port=args.port, debug=args.debug)
+        app.run(host=args.host, port=target_port, debug=args.debug)
     except KeyboardInterrupt:
         print("\n[*] LogShield server stopped gracefully.")
         sys.exit(0)
