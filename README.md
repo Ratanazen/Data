@@ -45,65 +45,127 @@
 
 ```text
 Data/
-├── app.py              # 🚀 Complete single-file Python web application & engine
+├── Nasa.csv            # 🚀 NASA server log test dataset (1,000 records)
+├── app.py              # 🛡️ Complete single-file Python web application & engine
 ├── requirements.txt    # 📦 Minimal external dependencies (Flask)
+├── run.bat             # 🪟 Windows 1-click launcher (CMD / Explorer)
+├── run.ps1             # 🪟 Windows PowerShell 1-click launcher
+├── run.sh              # 🍎🐧 Linux & macOS 1-click launcher
 ├── .gitignore          # 🚫 Git ignore rules for virtual environments & caches
 └── README.md           # 📖 Project documentation & verification report
 ```
 
 ---
 
-## ⚡ Installation & Quick Start
+## ⚡ Cross-Platform Quick Start (Windows, macOS, Linux)
 
-### 1. Prerequisites
+### 🪟 Windows (10 / 11)
 
-- Python 3.10+ (tested on Python 3.11, 3.12, 3.14)
-- `pip` package manager
+#### Option A: 1-Click Launcher (Easiest)
+Simply **double-click** [`run.bat`](file:///home/reny/Documents/Assignment2/run.bat) in Windows File Explorer. It automatically detects Python, sets up `.venv`, installs requirements, and launches the dashboard!
 
-### 2. Setup Virtual Environment & Dependencies
-
-```bash
-# Clone the repository
+#### Option B: Windows Command Prompt (CMD)
+```cmd
+REM 1. Clone & enter repository
 git clone https://github.com/Ratanazen/Data.git
 cd Data
 
-# Create and activate a virtual environment
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+REM 2. Create and activate virtual environment
+python -m venv .venv
+.venv\Scripts\activate.bat
 
-# Install minimal requirements
+REM 3. Install requirements
 pip install -r requirements.txt
+
+REM 4. Launch application (All-in-one run)
+python app.py --open
 ```
 
-### 3. All-in-One Execution (Run All)
+#### Option C: Windows PowerShell
+```powershell
+# Run the PowerShell launcher directly
+.\run.ps1 -open
 
-Executing a single command automatically runs startup self-tests, initializes Apache PySpark if installed, checks Hadoop HDFS, and launches the web dashboard:
+# Or manual launch:
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python app.py --open
+```
 
+---
+
+### 🍎 macOS (Apple Silicon M1/M2/M3 & Intel)
+
+#### Option A: 1-Click Launcher
 ```bash
-# All-in-one run: self-tests + PySpark auto-detection + web dashboard
-python app.py
+chmod +x run.sh
+./run.sh --open
 ```
 
-Open your browser at **[http://127.0.0.1:8080](http://127.0.0.1:8080)**.
-
-### 4. Advanced CLI Flags & Options
-
+#### Option B: macOS Terminal
 ```bash
-# Specify custom host and port (auto-switches if port is busy)
-python app.py --host 127.0.0.1 --port 8080
+# 1. Clone & enter repository
+git clone https://github.com/Ratanazen/Data.git
+cd Data
 
-# Connect to a remote Hadoop HDFS NameNode
-python app.py --hdfs hdfs://namenode:9000
+# 2. Setup virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
 
-# Run automated tests only and exit
-python app.py --test
+# 3. Install dependencies
+pip install -r requirements.txt
 
-# Launch server immediately without running startup tests
-python app.py --no-test
-
-# Force local in-memory engine without PySpark
-python app.py --no-spark
+# 4. Launch application
+python3 app.py --open
 ```
+
+---
+
+### 🐧 Linux (Ubuntu, Debian, Fedora, Arch, CentOS)
+
+#### Option A: 1-Click Launcher
+```bash
+chmod +x run.sh
+./run.sh --open
+```
+
+#### Option B: Linux Terminal
+```bash
+# 1. Clone & enter repository
+git clone https://github.com/Ratanazen/Data.git
+cd Data
+
+# 2. Setup virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Launch application
+python3 app.py --open
+```
+
+---
+
+### 🌐 Accessing the Dashboard
+
+Once started, open your web browser at:
+**[http://127.0.0.1:8080](http://127.0.0.1:8080)**
+
+### ⚙️ Command Line Arguments (All Platforms)
+
+| Flag | Purpose | Example |
+| :--- | :--- | :--- |
+| *(default)* | All-in-one: self-tests + PySpark auto-init + web server | `python app.py` |
+| `--open` | Automatically open default browser on launch | `python app.py --open` |
+| `--port <N>` | Specify custom port (auto-switches if port is busy) | `python app.py --port 5000` |
+| `--host <IP>` | Specify host address | `python app.py --host 0.0.0.0` |
+| `--test` | Run 21-point test suite and exit | `python app.py --test` |
+| `--no-test` | Skip startup self-tests and start server immediately | `python app.py --no-test` |
+| `--no-spark` | Force local in-memory engine (disable PySpark) | `python app.py --no-spark` |
+| `--hdfs <URI>` | Connect to remote Hadoop HDFS NameNode | `python app.py --hdfs hdfs://nn:9000` |
 
 ---
 

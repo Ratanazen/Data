@@ -2652,6 +2652,7 @@ Examples:
     parser.add_argument("--debug", action="store_true", help="Enable Flask debug mode")
     parser.add_argument("--test", "--test-only", dest="test_only", action="store_true", help="Run automated test suite and exit")
     parser.add_argument("--no-test", action="store_true", help="Skip startup automated self-tests")
+    parser.add_argument("--open", action="store_true", help="Automatically open web browser on startup (Windows, macOS, Linux)")
     parser.add_argument("--spark", action="store_true", help="Force initializing PySpark distributed engine")
     parser.add_argument("--no-spark", action="store_true", help="Disable PySpark and force local engine")
     parser.add_argument("--hdfs", default=os.environ.get("HDFS_URI", ""), help="Hadoop HDFS NameNode URI (e.g. hdfs://namenode:9000)")
@@ -2703,6 +2704,11 @@ Examples:
     print(f"  Architecture  : Single-File Python Flask Application (app.py)")
     print("  Press Ctrl+C to stop the server.")
     print("=" * 70)
+
+    # Auto-open browser across Windows, macOS, Linux
+    if args.open:
+        import webbrowser
+        threading.Timer(1.2, lambda: webbrowser.open(f"http://{args.host}:{target_port}/")).start()
 
     try:
         app.run(host=args.host, port=target_port, debug=args.debug)
