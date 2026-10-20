@@ -75,28 +75,35 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Launch the Application
+### 3. All-in-One Execution (Run All)
+
+Executing a single command automatically runs startup self-tests, initializes Apache PySpark if installed, checks Hadoop HDFS, and launches the web dashboard:
 
 ```bash
-# Run on default address (http://127.0.0.1:8080/)
+# All-in-one run: self-tests + PySpark auto-detection + web dashboard
 python app.py
-
-# Or specify custom host and port
-python app.py --host 127.0.0.1 --port 8080
 ```
 
 Open your browser at **[http://127.0.0.1:8080](http://127.0.0.1:8080)**.
 
-### 4. Optional PySpark & Hadoop Modes
+### 4. Advanced CLI Flags & Options
 
 ```bash
-# Attempt distributed processing with PySpark (if pyspark is installed)
-python app.py --spark
+# Specify custom host and port (auto-switches if port is busy)
+python app.py --host 127.0.0.1 --port 8080
 
 # Connect to a remote Hadoop HDFS NameNode
 python app.py --hdfs hdfs://namenode:9000
+
+# Run automated tests only and exit
+python app.py --test
+
+# Launch server immediately without running startup tests
+python app.py --no-test
+
+# Force local in-memory engine without PySpark
+python app.py --no-spark
 ```
-*Note: If PySpark or Hadoop HDFS are unavailable, the application automatically operates in local in-memory mode without errors.*
 
 ---
 

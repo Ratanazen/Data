@@ -2597,6 +2597,9 @@ def run_self_tests() -> int:
     print("=" * 70)
     print(f"  ALL TESTS COMPLETE: {passed} passed, {failed} failed")
     print("=" * 70)
+    with DATASET_LOCK:
+        DATASET_STORE.clear()
+    app.config["TESTING"] = False
     return 0 if failed == 0 else 1
 
 
@@ -2623,44 +2626,55 @@ def find_available_port(start_port: int, host: str = "127.0.0.1") -> int:
 
 
 def main() -> None:
-    """CLI runner supporting python app.py, python app.py --test, and python app.py --host ... --port ..."""
+    """
+    All-in-One CLI runner:
+      - Automatically runs built-in self-tests verification
+      - Automatically detects & initializes PySpark distributed engine if available
+      - Automatically connects to Hadoop HDFS if configured
+      - Automatically detects open ports and launches the Web Application dashboard
+    """
     parser = argparse.ArgumentParser(
-        description="LogShield — Single-File Python Log Analytics & CSV Web Application",
+        description="LogShield — All-in-One Single-File Python Log Analytics & CSV Web Application",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python app.py
-  python app.py --port 8080
-  python app.py --host 0.0.0.0 --port 5000
-  python app.py --test
-  python app.py --spark
-  python app.py --hdfs hdfs://namenode:9000
+  python app.py                       # All-in-one run: self-tests + PySpark auto-init + web dashboard
+  python app.py --port 8080           # Custom port (auto-switches if port is busy)
+  python app.py --host 0.0.0.0        # Listen on external interfaces
+  python app.py --test                # Run test suite only and exit
+  python app.py --no-test             # Launch server immediately without running startup tests
+  python app.py --no-spark            # Disable PySpark auto-detection and use local engine only
+  python app.py --hdfs hdfs://nn:9000 # Connect to Hadoop HDFS NameNode
         """
     )
     parser.add_argument("--host", default="127.0.0.1", help="Host address to bind (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8080, help="Port to listen on (default: 8080)")
     parser.add_argument("--debug", action="store_true", help="Enable Flask debug mode")
-    parser.add_argument("--test", action="store_true", help="Run automated test suite and exit")
-    parser.add_argument("--spark", action="store_true", help="Attempt initializing PySpark distributed engine")
-    parser.add_argument("--hdfs", default="", help="Hadoop HDFS NameNode URI (e.g. hdfs://namenode:9000)")
+    parser.add_argument("--test", "--test-only", dest="test_only", action="store_true", help="Run automated test suite and exit")
+    parser.add_argument("--no-test", action="store_true", help="Skip startup automated self-tests")
+    parser.add_argument("--spark", action="store_true", help="Force initializing PySpark distributed engine")
+    parser.add_argument("--no-spark", action="store_true", help="Disable PySpark and force local engine")
+    parser.add_argument("--hdfs", default=os.environ.get("HDFS_URI", ""), help="Hadoop HDFS NameNode URI (e.g. hdfs://namenode:9000)")
 
     args = parser.parse_args()
 
-    if args.test:
+    # If --test or --test-only is explicitly requested, run tests and exit
+    if args.test_only:
         sys.exit(run_self_tests())
 
-    # Auto-detect available port if requested port is in use
-    target_port = args.port
-    if not is_port_available(target_port, args.host):
-        alt_port = find_available_port(target_port + 1, args.host)
-        print(f"  [!] Port {target_port} is already in use. Auto-switching to available port {alt_port}.")
-        target_port = alt_port
+    # Step 1: Run automated self-tests verification on startup (unless --no-test)
+    if not args.no_test:
+        test_exit_code = run_self_tests()
+        if test_exit_code != 0:
+            print("  [!] Self-tests encountered failures. Aborting startup.")
+            sys.exit(test_exit_code)
 
-    # Configure optional PySpark engine if requested
-    if args.spark:
-        HadoopSparkManager.initialize_spark()
+    # Step 2: Auto-detect and initialize Apache PySpark if available (unless --no-spark)
+    if not args.no_spark:
+        if args.spark or HadoopSparkManager.check_pyspark_available():
+            HadoopSparkManager.initialize_spark()
 
-    # Configure optional Hadoop HDFS if requested
+    # Step 3: Configure optional Hadoop HDFS if specified or found in HDFS_URI
     if args.hdfs:
         PROCESSING_CONFIG["hdfs_uri"] = args.hdfs
         if HadoopSparkManager.check_hdfs_connection(args.hdfs):
@@ -2670,6 +2684,14 @@ Examples:
             PROCESSING_CONFIG["hdfs_available"] = False
             print(f"  [!] Hadoop HDFS unreachable at {args.hdfs}. Operating in local storage mode.")
 
+    # Step 4: Auto-detect available port if requested port is in use
+    target_port = args.port
+    if not is_port_available(target_port, args.host):
+        alt_port = find_available_port(target_port + 1, args.host)
+        print(f"  [!] Port {target_port} is already in use. Auto-switching to available port {alt_port}.")
+        target_port = alt_port
+
+    # Step 5: Display full startup banner and launch dashboard
     print("=" * 70)
     print("  LOGSHIELD — ALL-IN-ONE LOG ANALYTICS & CSV DASHBOARD")
     print("=" * 70)
@@ -2678,7 +2700,7 @@ Examples:
     print(f"  HDFS Storage  : {PROCESSING_CONFIG['hdfs_uri'] or 'Local Filesystem'}")
     print(f"  Max File Size : {MAX_UPLOAD_SIZE_MB} MB")
     print(f"  Upload Folder : {UPLOAD_DIR}")
-    print(f"  Architecture  : Single-File Python Flask Application")
+    print(f"  Architecture  : Single-File Python Flask Application (app.py)")
     print("  Press Ctrl+C to stop the server.")
     print("=" * 70)
 
